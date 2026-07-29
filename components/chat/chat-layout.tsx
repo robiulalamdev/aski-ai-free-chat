@@ -38,6 +38,7 @@ function ChatContent() {
   const { user, logout } = useAuth()
 
   const isNewChat = pathname === "/chat/new"
+  const isExistingChat = pathname.startsWith("/c/")
 
   const [state, setState] = useState<{ conversations: Conversation[]; activeId: string | null }>({
     conversations: [],
@@ -58,12 +59,12 @@ function ChatContent() {
     })
   }, [])
 
-  // Load conversation from URL if on /chat/{id}
+  // Load conversation from URL if on /c/{id}
   useEffect(() => {
     if (!initialized) return
     const parts = pathname.split("/")
-    const urlId = parts[2] // /chat/{id}
-    if (urlId && urlId !== "new" && urlId !== activeId) {
+    const urlId = parts[2] // /c/{id}
+    if (urlId && parts[1] === "c" && urlId !== activeId) {
       const exists = state.conversations.find((c) => c.id === urlId)
       if (exists) {
         setState((prev) => ({ ...prev, activeId: urlId }))
@@ -96,7 +97,7 @@ function ChatContent() {
 
   const handleSelect = useCallback((id: string) => {
     setState((prev) => ({ ...prev, activeId: id }))
-    router.push(`/chat/${id}`, { scroll: false })
+    router.push(`/c/${id}`, { scroll: false })
     if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [router])
 
@@ -136,7 +137,7 @@ function ChatContent() {
         conversations: [conv, ...prev.conversations.filter((c) => c.id !== conv.id)],
         activeId: conv.id,
       }))
-      router.replace(`/chat/${conv.id}`, { scroll: false })
+      router.replace(`/c/${conv.id}`, { scroll: false })
     }
 
     // Add user message to DB
