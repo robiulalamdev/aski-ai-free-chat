@@ -193,12 +193,15 @@ export function ToolPreviewPanel({
 
   const hasContent = currentHtml.length > 0
 
-  // Auto-select latest when new version arrives
+  // Auto-select latest only on first version or when a NEW version is added
+  const prevVersionCount = useRef(versions.length)
   useEffect(() => {
-    if (versions.length > 0 && (selectedVersion === 0 || selectedVersion < versions.length)) {
+    if (versions.length > prevVersionCount.current) {
+      // New version added - auto-select it
       setSelectedVersion(versions.length)
     }
-  }, [versions.length, selectedVersion])
+    prevVersionCount.current = versions.length
+  }, [versions.length])
 
   // Close version menu on outside click
   useEffect(() => {
@@ -385,6 +388,7 @@ export function ToolPreviewPanel({
           isResume ? <ResumeGeneratingUI /> : <CodeGeneratingUI />
         ) : hasContent ? (
           <iframe
+            key={`${selectedVersion}-${currentHtml.slice(0, 50)}`}
             ref={iframeRef}
             srcDoc={`<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script></head><body>${currentHtml.includes("<body") ? "" : currentHtml}</body></html>`}
             className="w-full h-full border-0"
