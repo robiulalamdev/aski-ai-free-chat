@@ -1073,6 +1073,8 @@ export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof Ad
 export const ConversationScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  isShared: 'isShared',
+  shareSlug: 'shareSlug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'

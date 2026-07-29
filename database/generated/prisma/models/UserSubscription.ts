@@ -569,10 +569,6 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type UserSubscriptionCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.UserSubscriptionCreateWithoutUserInput, Prisma.UserSubscriptionUncheckedCreateWithoutUserInput> | Prisma.UserSubscriptionCreateWithoutUserInput[] | Prisma.UserSubscriptionUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.UserSubscriptionCreateOrConnectWithoutUserInput | Prisma.UserSubscriptionCreateOrConnectWithoutUserInput[]

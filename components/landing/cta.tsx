@@ -16,7 +16,7 @@ export function CTA() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Button asChild size="lg" className="bg-white text-violet-700 hover:bg-violet-50 shadow-lg px-8">
-              <Link href="/chat">
+              <Link href="/c">
                 Start Chatting Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

@@ -27,7 +27,7 @@ export function Hero() {
 
           <div className="mt-10 flex items-center justify-center gap-4">
             <Button asChild size="lg" className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-600/25 px-8">
-              <Link href="/chat">
+              <Link href="/c">
                 Start Chatting Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

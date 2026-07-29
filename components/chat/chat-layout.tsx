@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
 import { ChatHeader } from "./chat-header"
 import { ChatMessages } from "./chat-messages"
 import { ChatInput } from "./chat-input"
@@ -18,7 +19,19 @@ import {
   renameConversation,
 } from "@/store/chat-store"
 
+function generateSmartTitle(firstMessage: string): string {
+  const cleaned = firstMessage.trim()
+  if (cleaned.length <= 50) return cleaned
+
+  const words = cleaned.split(/\s+/).slice(0, 8)
+  let title = words.join(" ")
+  if (title.length > 50) title = title.slice(0, 47) + "..."
+  return title
+}
+
 function ChatContent() {
+  const router = useRouter()
+  const pathname = usePathname()
   const [initialized, setInitialized] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -42,6 +55,13 @@ function ChatContent() {
   const activeConversation = conversations.find((c) => c.id === activeId)
   const messages = activeConversation?.messages || []
 
+  // Sync URL with active conversation
+  useEffect(() => {
+    if (activeId && pathname !== `/c/${activeId}`) {
+      router.replace(`/c/${activeId}`, { scroll: false })
+    }
+  }, [activeId, pathname, router])
+
   const refresh = useCallback(() => {
     setState((prev) => ({ ...prev, conversations: [...getConversations()] }))
   }, [])
@@ -49,12 +69,14 @@ function ChatContent() {
   const handleNew = useCallback(() => {
     const conv = createAndSaveConversation()
     setState((prev) => ({ ...prev, activeId: conv.id, conversations: [...getConversations()] }))
-  }, [])
+    router.push("/c", { scroll: false })
+  }, [router])
 
   const handleSelect = useCallback((id: string) => {
     setState((prev) => ({ ...prev, activeId: id }))
+    router.push(`/c/${id}`, { scroll: false })
     if (window.innerWidth < 1024) setSidebarOpen(false)
-  }, [])
+  }, [router])
 
   const handleDelete = useCallback((id: string) => {
     deleteConversation(id)
@@ -76,18 +98,28 @@ function ChatContent() {
     setIsGenerating(true)
     setStreamingText("")
 
+    const conv = getConversation(currentId)
+    const isFirstMessage = !conv || conv.messages.length === 0
+
     addMessage(currentId, "user", content)
     refresh()
 
-    const conv = getConversation(currentId)
-    if (!conv) {
+    // Generate smart title from first message
+    if (isFirstMessage) {
+      const smartTitle = generateSmartTitle(content)
+      renameConversation(currentId, smartTitle)
+      refresh()
+    }
+
+    const updatedConv = getConversation(currentId)
+    if (!updatedConv) {
       setIsGenerating(false)
       return
     }
 
     let fullResponse = ""
     try {
-      fullResponse = await processMessage(conv.messages, (token) => {
+      fullResponse = await processMessage(updatedConv.messages, (token) => {
         setStreamingText((prev) => prev + token)
       })
     } catch (err: unknown) {
@@ -172,6 +204,7 @@ function ChatContent() {
           sidebarOpen={sidebarOpen}
           onRegenerate={messages.length >= 2 ? handleRegenerate : undefined}
           conversations={conversations}
+          activeConversationId={activeId}
         />
 
         <ChatMessages messages={messages} isGenerating={isGenerating} streamingText={streamingText} />

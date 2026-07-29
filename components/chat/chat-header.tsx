@@ -3,6 +3,7 @@
 import { Sparkles, Menu, PanelLeftClose, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ExportChat } from "./export-chat"
+import { ShareButton } from "./share-button"
 import type { Conversation } from "@/types/chat"
 import { useState } from "react"
 
@@ -12,12 +13,14 @@ export function ChatHeader({
   sidebarOpen,
   onRegenerate,
   conversations,
+  activeConversationId,
 }: {
   title: string
   onToggleSidebar: () => void
   sidebarOpen: boolean
   onRegenerate?: () => void
   conversations?: Conversation[]
+  activeConversationId?: string | null
 }) {
   const [showExport, setShowExport] = useState(false)
 
@@ -37,6 +40,9 @@ export function ChatHeader({
       </div>
 
       <div className="flex items-center gap-1.5">
+        {activeConversationId && (
+          <ShareButton conversationId={activeConversationId} />
+        )}
         {conversations && conversations.length > 0 && (
           <div className="relative">
             <Button
