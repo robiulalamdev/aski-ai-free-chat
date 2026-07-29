@@ -12,12 +12,12 @@ export function CTA() {
             Ready to Start Chatting?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-violet-100">
-            No sign-up required. No credit card. Just you and the AI.
+            Create a free account and start chatting with AI in seconds. No credit card required.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Button asChild size="lg" className="bg-white text-violet-700 hover:bg-violet-50 shadow-lg px-8">
-              <Link href="/chat/new">
-                Start Chatting Free
+              <Link href="/signup">
+                Sign Up Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>

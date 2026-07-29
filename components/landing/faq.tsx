@@ -6,28 +6,32 @@ import { cn } from "@/lib/utils"
 
 const faqs = [
   {
-    question: "How does NexaChat work?",
-    answer: "NexaChat uses AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
+    question: "What AI model does NexaChat use?",
+    answer: "NexaChat uses DeepSeek AI via OpenRouter. It's a powerful language model that handles coding, analysis, writing, and general questions with high accuracy.",
   },
   {
     question: "Is my data private?",
-    answer: "Yes. Your conversations are stored locally in your browser. We don't store any chat data on our servers.",
+    answer: "Yes. Your conversations are stored securely in our PostgreSQL database with encrypted authentication. We never share your data with third parties.",
   },
   {
-    question: "What AI model is used?",
-    answer: "We use a powerful AI model optimized for fast and accurate responses.",
+    question: "How does authentication work?",
+    answer: "We use server-side JWT authentication with httpOnly cookies. Your session tokens are never exposed to the browser, providing strong security against XSS attacks.",
+  },
+  {
+    question: "What's the difference between Free, Pro, and Enterprise?",
+    answer: "Free plan gives you daily token limits. Pro ($9/month) unlocks higher limits, custom prompts, share conversations, and priority support. Enterprise ($29/month) adds team management, custom integrations, and dedicated support.",
+  },
+  {
+    question: "Can I share my conversations?",
+    answer: "Yes! Pro and Enterprise users can generate public share links for any conversation. Anyone with the link can read the shared chat.",
   },
   {
     question: "Does it work on mobile?",
-    answer: "Yes! The app is fully responsive and works great on mobile devices.",
+    answer: "Yes! The app is fully responsive and works great on mobile devices and tablets.",
   },
   {
-    question: "Do I need an API key?",
-    answer: "No, the API key is configured server-side. Just open the app and start chatting.",
-  },
-  {
-    question: "Is it really free?",
-    answer: "Yes, the app is free to use with generous daily token limits.",
+    question: "How do token limits work?",
+    answer: "Each plan has a daily token limit. Free users get a limited number of tokens per day. When you exceed the limit, you'll need to wait until the next day or upgrade your plan.",
   },
 ]
 

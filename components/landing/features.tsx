@@ -1,35 +1,45 @@
-import { Shield, Server, Wifi, Zap, FileText, Code, Brain, Globe } from "lucide-react"
+import { Shield, Wifi, FileText, Code, Brain, Share2, Users, BarChart3 } from "lucide-react"
 
 const features = [
   {
-    title: "Advanced AI",
-    description: "Powered by cutting-edge AI technology — fast, accurate, and always improving.",
+    title: "AI-Powered Chat",
+    description: "Powered by DeepSeek AI via OpenRouter. Fast, accurate responses with real-time streaming.",
     icon: Brain,
   },
   {
-    title: "Server-Side Security",
-    description: "API key stays on the server. Never exposed to the client. Your data stays safe.",
+    title: "Secure Authentication",
+    description: "Server-side JWT authentication with httpOnly cookies. Your account and data are protected.",
     icon: Shield,
   },
   {
     title: "Streaming Responses",
-    description: "Real-time streaming tokens for instant feedback. No waiting for full responses.",
+    description: "See AI responses in real-time as they're generated. No waiting for the full answer.",
     icon: Wifi,
   },
   {
-    title: "Markdown Support",
-    description: "Beautiful formatted responses with code blocks, tables, and rich text.",
-    icon: FileText,
+    title: "Share Conversations",
+    description: "Share any chat via a public link. Others can read your shared conversations.",
+    icon: Share2,
   },
   {
     title: "Conversation History",
-    description: "All your chats saved securely. Access any conversation anytime.",
-    icon: Globe,
+    description: "All chats saved securely in PostgreSQL. Access any conversation from any device.",
+    icon: FileText,
   },
   {
-    title: "Code Generation",
-    description: "Write, explain, and debug code in any programming language.",
+    title: "Team Management",
+    description: "Invite team members, manage access, and collaborate on conversations (Pro/Enterprise).",
+    icon: Users,
+  },
+  {
+    title: "Export Chats",
+    description: "Download your conversations as Markdown, JSON, or plain text files.",
     icon: Code,
+  },
+  {
+    title: "Usage Analytics",
+    description: "Track your daily token usage, conversation count, and plan limits.",
+    icon: BarChart3,
   },
 ]
 
@@ -42,11 +52,11 @@ export function Features() {
             Everything You Need
           </h2>
           <p className="mt-4 text-lg text-zinc-400">
-            A modern AI chat experience built for developers and everyone.
+            A modern AI chat platform built for individuals and teams.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon
             return (
