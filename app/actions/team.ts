@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { requireFeature } from "@/lib/features-server"
 
 export async function getTeamMembers() {
   const user = await getCurrentUser()
@@ -25,6 +26,9 @@ export async function getTeamMembers() {
 export async function inviteTeamMember(email: string) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
+
+  const planCheck = await requireFeature("team_management")
+  if (!planCheck.allowed) return { error: planCheck.error }
 
   const targetUser = await prisma.user.findUnique({ where: { email } })
   if (!targetUser) return { error: "User not found with this email" }
@@ -53,6 +57,9 @@ export async function removeTeamMember(memberId: string) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
 
+  const planCheck = await requireFeature("team_management")
+  if (!planCheck.allowed) return { error: planCheck.error }
+
   const member = await prisma.teamMember.findUnique({ where: { id: memberId } })
   if (!member || member.teamOwnerId !== user.userId) return { error: "Not found" }
 
@@ -63,6 +70,9 @@ export async function removeTeamMember(memberId: string) {
 export async function updateTeamMemberRole(memberId: string, role: string) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
+
+  const planCheck = await requireFeature("team_management")
+  if (!planCheck.allowed) return { error: planCheck.error }
 
   const member = await prisma.teamMember.findUnique({ where: { id: memberId } })
   if (!member || member.teamOwnerId !== user.userId) return { error: "Not found" }
