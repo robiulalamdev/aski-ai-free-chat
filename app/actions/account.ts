@@ -85,6 +85,24 @@ export async function hasFeatureAction(featureSlug: string): Promise<boolean> {
   }
 }
 
+export async function getUserFeatures(): Promise<string[]> {
+  const payload = await getCurrentUser()
+  if (!payload) return []
+
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId: payload.userId, isActive: true },
+    include: { subscription: true },
+  })
+
+  if (!sub) return []
+
+  try {
+    return JSON.parse(sub.subscription.features)
+  } catch {
+    return []
+  }
+}
+
 export async function getSubscriptionAction() {
   try {
     const plans = await prisma.subscription.findMany({

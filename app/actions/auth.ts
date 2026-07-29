@@ -86,5 +86,22 @@ export async function getCurrentUserAction() {
     select: { id: true, firstName: true, lastName: true, email: true, plan: true, createdAt: true },
   })
 
-  return user
+  if (!user) return null
+
+  // Get user's features from subscription
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId: payload.userId, isActive: true },
+    include: { subscription: true },
+  })
+
+  let features: string[] = []
+  if (sub) {
+    try {
+      features = JSON.parse(sub.subscription.features)
+    } catch {
+      features = []
+    }
+  }
+
+  return { ...user, features }
 }

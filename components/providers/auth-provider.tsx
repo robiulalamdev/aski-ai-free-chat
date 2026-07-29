@@ -9,6 +9,7 @@ type User = {
   lastName: string
   email: string
   plan: string
+  features: string[]
 }
 
 type AuthContextType = {

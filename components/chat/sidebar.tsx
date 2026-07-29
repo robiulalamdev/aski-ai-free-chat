@@ -42,7 +42,7 @@ export function Sidebar({
   onDelete: (id: string) => void
   onRename: (id: string, title: string) => void
   open: boolean
-  user?: { firstName: string; lastName: string; email: string; plan: string } | null
+  user?: { firstName: string; lastName: string; email: string; plan: string; features: string[] } | null
   onLogout?: () => void
   onToolSelect?: (toolId: string) => void
 }) {
@@ -54,7 +54,6 @@ export function Sidebar({
   const toolChats = sorted.filter((c) => c.toolType)
   const fullName = user ? `${user.firstName} ${user.lastName}` : "User"
   const userInitial = user ? user.firstName.charAt(0).toUpperCase() : "U"
-  const isPaid = user?.plan === "pro" || user?.plan === "enterprise"
 
   return (
     <div
@@ -185,11 +184,12 @@ export function Sidebar({
         <div className="mt-2 space-y-1">
           {TOOL_ITEMS.map((tool) => {
             const Icon = tool.icon
+            const hasAccess = user?.features?.includes(tool.id) || false
             return (
               <button
                 key={tool.id}
                 onClick={() => {
-                  if (isPaid) {
+                  if (hasAccess) {
                     onToolSelect?.(tool.id)
                   } else {
                     window.location.href = "/account/subscription"
@@ -201,7 +201,7 @@ export function Sidebar({
                   <Icon className="h-3.5 w-3.5 text-white" />
                 </div>
                 <span>{tool.label}</span>
-                {!isPaid && (
+                {!hasAccess && (
                   <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-violet-600/20 text-violet-400">Pro</span>
                 )}
               </button>

@@ -27,6 +27,7 @@ export type AggregateConversation = {
 export type ConversationMinAggregateOutputType = {
   id: string | null
   title: string | null
+  toolType: string | null
   isShared: boolean | null
   shareSlug: string | null
   createdAt: Date | null
@@ -37,6 +38,7 @@ export type ConversationMinAggregateOutputType = {
 export type ConversationMaxAggregateOutputType = {
   id: string | null
   title: string | null
+  toolType: string | null
   isShared: boolean | null
   shareSlug: string | null
   createdAt: Date | null
@@ -47,6 +49,7 @@ export type ConversationMaxAggregateOutputType = {
 export type ConversationCountAggregateOutputType = {
   id: number
   title: number
+  toolType: number
   isShared: number
   shareSlug: number
   createdAt: number
@@ -59,6 +62,7 @@ export type ConversationCountAggregateOutputType = {
 export type ConversationMinAggregateInputType = {
   id?: true
   title?: true
+  toolType?: true
   isShared?: true
   shareSlug?: true
   createdAt?: true
@@ -69,6 +73,7 @@ export type ConversationMinAggregateInputType = {
 export type ConversationMaxAggregateInputType = {
   id?: true
   title?: true
+  toolType?: true
   isShared?: true
   shareSlug?: true
   createdAt?: true
@@ -79,6 +84,7 @@ export type ConversationMaxAggregateInputType = {
 export type ConversationCountAggregateInputType = {
   id?: true
   title?: true
+  toolType?: true
   isShared?: true
   shareSlug?: true
   createdAt?: true
@@ -162,6 +168,7 @@ export type ConversationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type ConversationGroupByOutputType = {
   id: string
   title: string
+  toolType: string | null
   isShared: boolean
   shareSlug: string | null
   createdAt: Date
@@ -193,6 +200,7 @@ export type ConversationWhereInput = {
   NOT?: Prisma.ConversationWhereInput | Prisma.ConversationWhereInput[]
   id?: Prisma.StringFilter<"Conversation"> | string
   title?: Prisma.StringFilter<"Conversation"> | string
+  toolType?: Prisma.StringNullableFilter<"Conversation"> | string | null
   isShared?: Prisma.BoolFilter<"Conversation"> | boolean
   shareSlug?: Prisma.StringNullableFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
@@ -205,6 +213,7 @@ export type ConversationWhereInput = {
 export type ConversationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  toolType?: Prisma.SortOrderInput | Prisma.SortOrder
   isShared?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -221,6 +230,7 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ConversationWhereInput[]
   NOT?: Prisma.ConversationWhereInput | Prisma.ConversationWhereInput[]
   title?: Prisma.StringFilter<"Conversation"> | string
+  toolType?: Prisma.StringNullableFilter<"Conversation"> | string | null
   isShared?: Prisma.BoolFilter<"Conversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
@@ -232,6 +242,7 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<{
 export type ConversationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  toolType?: Prisma.SortOrderInput | Prisma.SortOrder
   isShared?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -248,6 +259,7 @@ export type ConversationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ConversationScalarWhereWithAggregatesInput | Prisma.ConversationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Conversation"> | string
   title?: Prisma.StringWithAggregatesFilter<"Conversation"> | string
+  toolType?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   isShared?: Prisma.BoolWithAggregatesFilter<"Conversation"> | boolean
   shareSlug?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Conversation"> | Date | string
@@ -258,6 +270,7 @@ export type ConversationScalarWhereWithAggregatesInput = {
 export type ConversationCreateInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -269,6 +282,7 @@ export type ConversationCreateInput = {
 export type ConversationUncheckedCreateInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -280,6 +294,7 @@ export type ConversationUncheckedCreateInput = {
 export type ConversationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -291,6 +306,7 @@ export type ConversationUpdateInput = {
 export type ConversationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -302,6 +318,7 @@ export type ConversationUncheckedUpdateInput = {
 export type ConversationCreateManyInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -312,6 +329,7 @@ export type ConversationCreateManyInput = {
 export type ConversationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -321,6 +339,7 @@ export type ConversationUpdateManyMutationInput = {
 export type ConversationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -331,6 +350,7 @@ export type ConversationUncheckedUpdateManyInput = {
 export type ConversationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  toolType?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -341,6 +361,7 @@ export type ConversationCountOrderByAggregateInput = {
 export type ConversationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  toolType?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -351,6 +372,7 @@ export type ConversationMaxOrderByAggregateInput = {
 export type ConversationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  toolType?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -436,6 +458,7 @@ export type ConversationUncheckedUpdateManyWithoutUserNestedInput = {
 export type ConversationCreateWithoutMessagesInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -446,6 +469,7 @@ export type ConversationCreateWithoutMessagesInput = {
 export type ConversationUncheckedCreateWithoutMessagesInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -472,6 +496,7 @@ export type ConversationUpdateToOneWithWhereWithoutMessagesInput = {
 export type ConversationUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -482,6 +507,7 @@ export type ConversationUpdateWithoutMessagesInput = {
 export type ConversationUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -492,6 +518,7 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
 export type ConversationCreateWithoutUserInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -502,6 +529,7 @@ export type ConversationCreateWithoutUserInput = {
 export type ConversationUncheckedCreateWithoutUserInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -541,6 +569,7 @@ export type ConversationScalarWhereInput = {
   NOT?: Prisma.ConversationScalarWhereInput | Prisma.ConversationScalarWhereInput[]
   id?: Prisma.StringFilter<"Conversation"> | string
   title?: Prisma.StringFilter<"Conversation"> | string
+  toolType?: Prisma.StringNullableFilter<"Conversation"> | string | null
   isShared?: Prisma.BoolFilter<"Conversation"> | boolean
   shareSlug?: Prisma.StringNullableFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
@@ -551,6 +580,7 @@ export type ConversationScalarWhereInput = {
 export type ConversationCreateManyUserInput = {
   id?: string
   title?: string
+  toolType?: string | null
   isShared?: boolean
   shareSlug?: string | null
   createdAt?: Date | string
@@ -560,6 +590,7 @@ export type ConversationCreateManyUserInput = {
 export type ConversationUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -570,6 +601,7 @@ export type ConversationUpdateWithoutUserInput = {
 export type ConversationUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -580,6 +612,7 @@ export type ConversationUncheckedUpdateWithoutUserInput = {
 export type ConversationUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  toolType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -620,6 +653,7 @@ export type ConversationCountOutputTypeCountMessagesArgs<ExtArgs extends runtime
 export type ConversationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  toolType?: boolean
   isShared?: boolean
   shareSlug?: boolean
   createdAt?: boolean
@@ -633,6 +667,7 @@ export type ConversationSelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type ConversationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  toolType?: boolean
   isShared?: boolean
   shareSlug?: boolean
   createdAt?: boolean
@@ -644,6 +679,7 @@ export type ConversationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 export type ConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  toolType?: boolean
   isShared?: boolean
   shareSlug?: boolean
   createdAt?: boolean
@@ -655,6 +691,7 @@ export type ConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type ConversationSelectScalar = {
   id?: boolean
   title?: boolean
+  toolType?: boolean
   isShared?: boolean
   shareSlug?: boolean
   createdAt?: boolean
@@ -662,7 +699,7 @@ export type ConversationSelectScalar = {
   userId?: boolean
 }
 
-export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "isShared" | "shareSlug" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["conversation"]>
+export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "toolType" | "isShared" | "shareSlug" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["conversation"]>
 export type ConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.Conversation$messagesArgs<ExtArgs>
@@ -684,6 +721,7 @@ export type $ConversationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
+    toolType: string | null
     isShared: boolean
     shareSlug: string | null
     createdAt: Date
@@ -1116,6 +1154,7 @@ export interface Prisma__ConversationClient<T, Null = never, ExtArgs extends run
 export interface ConversationFieldRefs {
   readonly id: Prisma.FieldRef<"Conversation", 'String'>
   readonly title: Prisma.FieldRef<"Conversation", 'String'>
+  readonly toolType: Prisma.FieldRef<"Conversation", 'String'>
   readonly isShared: Prisma.FieldRef<"Conversation", 'Boolean'>
   readonly shareSlug: Prisma.FieldRef<"Conversation", 'String'>
   readonly createdAt: Prisma.FieldRef<"Conversation", 'DateTime'>
