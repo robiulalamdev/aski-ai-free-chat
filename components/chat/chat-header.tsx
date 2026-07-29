@@ -22,6 +22,7 @@ export function ChatHeader({
 }) {
   const activeConversation = conversations?.find((c) => c.id === activeConversationId)
   const hasMessages = activeConversation && activeConversation.messages.length > 0
+  const isResume = activeConversation?.toolType === "resume_builder"
 
   return (
     <header className="flex h-14 items-center justify-between border-b border-[var(--border-custom)] bg-[var(--background)] px-4">
@@ -42,7 +43,7 @@ export function ChatHeader({
         {activeConversationId && (
           <ShareButton conversationId={activeConversationId} />
         )}
-        {hasMessages && (
+        {hasMessages && !isResume && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

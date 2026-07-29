@@ -1,44 +1,33 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { Eye, EyeOff, Download, FileText, FileImage, Loader2, CheckCircle2 } from "lucide-react"
+import { useState, useEffect, useRef, useMemo } from "react"
+import { Eye, EyeOff, Download, FileText, Loader2, CheckCircle2, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-function extractHtmlFromResponse(content: string): string {
-  // Try markdown code block first
-  const htmlBlockRegex = /```html\s*\n([\s\S]*?)```/
-  const htmlMatch = content.match(htmlBlockRegex)
-  if (htmlMatch) return htmlMatch[1].trim()
-
-  // Try generic code block
-  const codeBlockRegex = /```\s*\n([\s\S]*?)```/
-  const codeMatch = content.match(codeBlockRegex)
-  if (codeMatch) {
-    const inner = codeMatch[1].trim()
-    if (inner.includes("<html") || inner.includes("<!DOCTYPE") || inner.includes("<div")) {
-      return inner
-    }
+function extractAllCodeBlocks(content: string): string[] {
+  const regex = /```(?:html|css|javascript|js)?\s*\n([\s\S]*?)```/g
+  const blocks: string[] = []
+  let match
+  while ((match = regex.exec(content)) !== null) {
+    blocks.push(match[1].trim())
   }
+  return blocks
+}
 
-  // Try to find raw HTML (doctype, html tag, or substantial HTML)
+function extractLatestHtml(content: string): string {
+  const blocks = extractAllCodeBlocks(content)
+  if (blocks.length > 0) return blocks[blocks.length - 1]
+
   if (content.includes("<!DOCTYPE html") || content.includes("<html")) {
     const startIdx = content.indexOf("<!DOCTYPE") !== -1 ? content.indexOf("<!DOCTYPE") : content.indexOf("<html")
     if (startIdx !== -1) return content.slice(startIdx)
   }
-
   return ""
 }
 
 function extractCodeBlocks(content: string): string {
-  const codeBlockRegex = /```(?:html|css|javascript|js)?\s*\n([\s\S]*?)```/g
-  const matches: string[] = []
-  let match
-  while ((match = codeBlockRegex.exec(content)) !== null) {
-    matches.push(match[1].trim())
-  }
-  if (matches.length > 0) return matches.join("\n\n")
-  return ""
+  return extractAllCodeBlocks(content).join("\n\n")
 }
 
 function ResumeGeneratingUI() {
@@ -126,79 +115,6 @@ async function exportToPdf(html: string, filename: string) {
   document.body.removeChild(container)
 }
 
-async function exportToDoc(html: string, filename: string) {
-  const docx = await import("docx")
-  const { saveAs } = await import("file-saver")
-
-  const tempDiv = document.createElement("div")
-  tempDiv.innerHTML = html
-
-  const paragraphs: InstanceType<typeof docx.Paragraph>[] = []
-
-  const processElement = (el: Element) => {
-    const tag = el.tagName?.toLowerCase()
-    const text = el.textContent?.trim() || ""
-    if (!text) return
-
-    if (tag === "h1") {
-      paragraphs.push(new docx.Paragraph({
-        children: [new docx.TextRun({ text, bold: true, size: 32, font: "Calibri" })],
-        heading: docx.HeadingLevel.HEADING_1,
-        alignment: docx.AlignmentType.CENTER,
-        spacing: { after: 200 },
-      }))
-    } else if (tag === "h2") {
-      paragraphs.push(new docx.Paragraph({
-        children: [new docx.TextRun({ text, bold: true, size: 24, font: "Calibri" })],
-        heading: docx.HeadingLevel.HEADING_2,
-        spacing: { before: 200, after: 100 },
-      }))
-    } else if (tag === "h3" || tag === "h4") {
-      paragraphs.push(new docx.Paragraph({
-        children: [new docx.TextRun({ text, bold: true, size: 22, font: "Calibri" })],
-        spacing: { before: 100, after: 50 },
-      }))
-    } else if (tag === "p" || tag === "li") {
-      const runs: InstanceType<typeof docx.TextRun>[] = []
-      el.childNodes.forEach((child) => {
-        if (child.nodeType === 3) {
-          const t = child.textContent?.trim()
-          if (t) runs.push(new docx.TextRun({ text: t, size: 20, font: "Calibri" }))
-        } else if (child.nodeType === 1) {
-          const childEl = child as Element
-          const t = childEl.textContent?.trim()
-          if (t) {
-            runs.push(new docx.TextRun({
-              text: t,
-              bold: childEl.tagName === "STRONG" || childEl.tagName === "B",
-              size: 20,
-              font: "Calibri",
-            }))
-          }
-        }
-      })
-      if (runs.length > 0) {
-        paragraphs.push(new docx.Paragraph({ children: runs, spacing: { after: 80 } }))
-      }
-    }
-  }
-
-  tempDiv.querySelectorAll("h1, h2, h3, h4, p, li").forEach(processElement)
-
-  if (paragraphs.length === 0) {
-    paragraphs.push(new docx.Paragraph({
-      children: [new docx.TextRun({ text: tempDiv.textContent || "Resume", size: 20, font: "Calibri" })],
-    }))
-  }
-
-  const doc = new docx.Document({
-    sections: [{ properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } }, children: paragraphs }],
-  })
-
-  const blob = await docx.Packer.toBlob(doc)
-  saveAs(blob, `${filename}.docx`)
-}
-
 export function ToolPreviewPanel({
   toolType,
   content,
@@ -213,26 +129,52 @@ export function ToolPreviewPanel({
   onToggle: () => void
 }) {
   const [exporting, setExporting] = useState(false)
+  const [selectedVersion, setSelectedVersion] = useState<number>(0)
+  const [showVersionMenu, setShowVersionMenu] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const isResume = toolType === "resume_builder"
-  const html = isResume ? extractHtmlFromResponse(content) : extractCodeBlocks(content)
-  const hasContent = html.length > 0
 
-  // Debug: log extracted HTML
-  useEffect(() => {
-    if (isResume && content) {
-      console.log("[Resume Preview] Content length:", content.length)
-      console.log("[Resume Preview] Extracted HTML length:", html.length)
-      console.log("[Resume Preview] HTML preview:", html.slice(0, 200))
+  // Extract all versions (code blocks)
+  const versions = useMemo(() => {
+    if (isResume) {
+      return extractAllCodeBlocks(content)
     }
-  }, [content, html, isResume])
+    return []
+  }, [content, isResume])
+
+  const latestVersion = versions.length
+  const currentHtml = isResume
+    ? (versions[selectedVersion - 1] || extractLatestHtml(content))
+    : extractCodeBlocks(content)
+  const hasContent = currentHtml.length > 0
+
+  // Auto-select latest version when new content arrives
+  useEffect(() => {
+    if (versions.length > 0 && selectedVersion === 0) {
+      setSelectedVersion(versions.length)
+    } else if (versions.length > selectedVersion) {
+      setSelectedVersion(versions.length)
+    }
+  }, [versions.length, selectedVersion])
+
+  // Close version menu on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowVersionMenu(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
 
   const handleExportPdf = async () => {
-    if (!html) return
+    if (!currentHtml) return
     setExporting(true)
     try {
-      await exportToPdf(html, "resume")
+      await exportToPdf(currentHtml, "resume")
     } catch (err) {
       console.error("PDF export failed:", err)
     } finally {
@@ -240,21 +182,9 @@ export function ToolPreviewPanel({
     }
   }
 
-  const handleExportDoc = async () => {
-    if (!html) return
-    setExporting(true)
-    try {
-      await exportToDoc(html, "resume")
-    } catch (err) {
-      console.error("DOC export failed:", err)
-    } finally {
-      setExporting(false)
-    }
-  }
-
   const handleDownloadHtml = () => {
-    if (!html) return
-    const blob = new Blob([html], { type: "text/html" })
+    if (!currentHtml) return
+    const blob = new Blob([currentHtml], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
@@ -279,33 +209,68 @@ export function ToolPreviewPanel({
     <div className={cn("flex flex-col border-l border-[var(--border-custom)] bg-[var(--background)]", "w-1/2")}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-custom)]">
-        <span className="text-sm font-medium text-[var(--foreground)]">
-          {isResume ? "Resume Preview" : "Code Preview"}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-[var(--foreground)]">
+            {isResume ? "Resume Preview" : "Code Preview"}
+          </span>
+
+          {/* Version selector for resume */}
+          {isResume && versions.length > 0 && (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowVersionMenu(!showVersionMenu)}
+                className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-custom)] text-xs text-zinc-400 hover:text-[var(--foreground)] transition-colors"
+              >
+                v{selectedVersion}
+                {selectedVersion === latestVersion && (
+                  <span className="text-[10px] px-1 py-0.5 rounded bg-green-600/20 text-green-400 ml-1">latest</span>
+                )}
+                <ChevronDown className="h-3 w-3" />
+              </button>
+
+              {showVersionMenu && (
+                <div className="absolute top-full left-0 mt-1 w-40 rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl z-50 py-1">
+                  {[...versions].reverse().map((_, idx) => {
+                    const versionNum = versions.length - idx
+                    return (
+                      <button
+                        key={versionNum}
+                        onClick={() => {
+                          setSelectedVersion(versionNum)
+                          setShowVersionMenu(false)
+                        }}
+                        className={cn(
+                          "flex items-center w-full px-3 py-2 text-xs transition-colors",
+                          selectedVersion === versionNum
+                            ? "bg-violet-600/10 text-violet-400"
+                            : "text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)]"
+                        )}
+                      >
+                        <span>Version {versionNum}</span>
+                        {versionNum === latestVersion && (
+                          <span className="ml-auto text-[10px] px-1 py-0.5 rounded bg-green-600/20 text-green-400">latest</span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flex items-center gap-1">
           {isResume && hasContent ? (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
-                onClick={handleExportPdf}
-                disabled={exporting}
-              >
-                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileImage className="h-3.5 w-3.5" />}
-                PDF
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
-                onClick={handleExportDoc}
-                disabled={exporting}
-              >
-                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
-                DOC
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
+              onClick={handleExportPdf}
+              disabled={exporting}
+            >
+              {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+              PDF
+            </Button>
           ) : hasContent ? (
             <Button
               variant="ghost"
@@ -334,7 +299,7 @@ export function ToolPreviewPanel({
         ) : hasContent ? (
           <iframe
             ref={iframeRef}
-            srcDoc={html}
+            srcDoc={currentHtml}
             className="w-full h-full border-0"
             title="Preview"
             sandbox="allow-scripts"

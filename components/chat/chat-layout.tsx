@@ -397,6 +397,7 @@ function ChatContent() {
                 isGenerating={isGenerating}
                 streamingText={streamingText}
                 onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
+                toolType={activeToolRef.current}
               />
             )}
 

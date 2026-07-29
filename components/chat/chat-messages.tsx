@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Bot, Loader2, CheckCheck, RefreshCw, Copy, Check } from "lucide-react"
+import { Bot, Loader2, CheckCheck, RefreshCw, Copy, Check, FileText } from "lucide-react"
 import { MarkdownRenderer } from "./markdown-renderer"
 import type { Message } from "@/types/chat"
 
@@ -14,16 +14,41 @@ function formatTime(ts: number): string {
   return `${hour12}:${m} ${ampm}`
 }
 
+function stripCodeBlocks(content: string): string {
+  return content.replace(/```[\s\S]*?```/g, "").trim()
+}
+
+function ResumeStatusMessage({ content }: { content: string }) {
+  const textOnly = stripCodeBlocks(content)
+  return (
+    <div className="flex items-start gap-2">
+      <FileText className="h-4 w-4 text-violet-400 mt-0.5 shrink-0" />
+      <div>
+        {textOnly ? (
+          <p className="text-sm text-zinc-300">{textOnly}</p>
+        ) : (
+          <p className="text-sm text-zinc-400 italic">Resume updated</p>
+        )}
+        <p className="text-xs text-zinc-600 mt-1">View preview on the right →</p>
+      </div>
+    </div>
+  )
+}
+
 function AssistantMessage({
   message,
   isLast,
   onRegenerate,
+  toolType,
 }: {
   message: Message
   isLast: boolean
   onRegenerate?: () => void
+  toolType?: string | null
 }) {
   const [copied, setCopied] = useState(false)
+  const isResume = toolType === "resume_builder"
+  const hasCode = /```[\s\S]*?```/.test(message.content)
 
   const copyMessage = () => {
     navigator.clipboard.writeText(message.content)
@@ -39,7 +64,11 @@ function AssistantMessage({
       <div className="flex flex-col items-start max-w-[75%]">
         <div className="rounded-2xl rounded-bl-md bg-[var(--surface-light)] px-4 py-3">
           <div className="text-sm leading-relaxed text-[var(--foreground)]">
-            <MarkdownRenderer content={message.content} />
+            {isResume && hasCode ? (
+              <ResumeStatusMessage content={message.content} />
+            ) : (
+              <MarkdownRenderer content={message.content} />
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1.5 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -63,15 +92,16 @@ export function ChatMessages({
   isGenerating,
   streamingText,
   onRegenerate,
+  toolType,
 }: {
   messages: Message[]
   isGenerating: boolean
   streamingText?: string
   onRegenerate?: () => void
+  toolType?: string | null
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
-
-
+  const isResume = toolType === "resume_builder"
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -86,7 +116,7 @@ export function ChatMessages({
           </div>
           <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
           <p className="mt-2 text-sm text-zinc-500">
-            Ask me anything — I&apos;m powered by AI.
+            {isResume ? "Tell me about your experience to build your resume" : "Ask me anything — I&apos;m powered by AI."}
           </p>
         </div>
       </div>
@@ -121,6 +151,7 @@ export function ChatMessages({
             message={message}
             isLast={message.id === lastAssistantId}
             onRegenerate={message.id === lastAssistantId ? onRegenerate : undefined}
+            toolType={toolType}
           />
         )
       })}
@@ -131,10 +162,20 @@ export function ChatMessages({
             <Bot className="h-5 w-5 text-white" />
           </div>
           <div className="flex flex-col items-start max-w-[75%]">
-        <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
+            <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
               <div className="text-sm leading-relaxed">
-                <MarkdownRenderer content={streamingText} />
-                <span className="inline-block h-4 w-1.5 animate-pulse bg-violet-500 ml-0.5 rounded-sm align-text-bottom" />
+                {isResume ? (
+                  <div className="flex items-center gap-2 text-zinc-400">
+                    <FileText className="h-4 w-4 text-violet-400" />
+                    <span>Updating your resume...</span>
+                    <span className="inline-block h-3 w-1 animate-pulse bg-violet-500 rounded-sm" />
+                  </div>
+                ) : (
+                  <>
+                    <MarkdownRenderer content={streamingText} />
+                    <span className="inline-block h-4 w-1.5 animate-pulse bg-violet-500 ml-0.5 rounded-sm align-text-bottom" />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -147,7 +188,14 @@ export function ChatMessages({
             <Bot className="h-5 w-5 text-white" />
           </div>
           <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
-            <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
+            {isResume ? (
+              <div className="flex items-center gap-2 text-zinc-400 text-sm">
+                <FileText className="h-4 w-4 text-violet-400" />
+                <span>Building your resume...</span>
+              </div>
+            ) : (
+              <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
+            )}
           </div>
         </div>
       )}
