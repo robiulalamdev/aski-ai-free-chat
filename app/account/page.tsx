@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Loader2, Save, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { getProfileAction, updateProfileAction } from "@/app/actions/profile"
+import { getAccountAction, updateAccountAction } from "@/app/actions/account"
 
 export default function AccountPage() {
   const [loading, setLoading] = useState(true)
@@ -18,7 +18,7 @@ export default function AccountPage() {
   const [plan, setPlan] = useState("free")
 
   useEffect(() => {
-    getProfileAction().then((user) => {
+    getAccountAction().then((user) => {
       if (user) {
         setFirstName(user.firstName)
         setLastName(user.lastName)
@@ -34,7 +34,7 @@ export default function AccountPage() {
     setSaving(true)
     setError("")
     setSuccess("")
-    const result = await updateProfileAction({ firstName, lastName, bio })
+    const result = await updateAccountAction({ firstName, lastName, bio })
     if (result?.error) setError(result.error)
     else setSuccess("Account updated")
     setSaving(false)

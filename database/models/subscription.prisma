@@ -1,0 +1,31 @@
+model Subscription {
+    id              String   @id @default(cuid())
+    name            String
+    slug            String   @unique
+    description     String   @default("")
+    price           Float    @default(0)
+    currency        String   @default("USD")
+    maxTokensPerDay Int      @default(0)
+    features        String   @default("[]")
+    isActive        Boolean  @default(true)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    userSubscriptions UserSubscription[]
+}
+
+model UserSubscription {
+    id              String    @id @default(cuid())
+    startDate       DateTime  @default(now())
+    endDate         DateTime?
+    isActive        Boolean   @default(true)
+    tokensUsedToday Int       @default(0)
+    lastResetAt     DateTime  @default(now())
+
+    userId         String
+    user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    subscriptionId String
+    subscription   Subscription   @relation(fields: [subscriptionId], references: [id])
+
+    @@unique([userId, subscriptionId])
+}

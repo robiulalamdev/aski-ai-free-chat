@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Loader2, Save, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { getProfileAction, updatePreferencesAction } from "@/app/actions/profile"
+import { getAccountAction, updatePreferencesAction } from "@/app/actions/account"
 import { ThemeToggle } from "@/components/providers/theme-toggle"
 
 export default function SettingsPage() {
@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const [systemPrompt, setSystemPrompt] = useState("")
 
   useEffect(() => {
-    getProfileAction().then((user) => {
+    getAccountAction().then((user) => {
       if (user) {
         setSystemPrompt(user.systemPrompt || "")
       }
@@ -46,7 +46,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[var(--background)]">
       <div className="mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center gap-4">
-          <Link href="/profile" className="rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-2 text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors">
+          <Link href="/account" className="rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-2 text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-2xl font-bold text-[var(--foreground)]">Settings</h1>
@@ -59,7 +59,6 @@ export default function SettingsPage() {
           <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
         )}
 
-        {/* AI Preferences */}
         <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
           <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">AI Preferences</h2>
           <div className="space-y-4">
@@ -72,7 +71,7 @@ export default function SettingsPage() {
                 className="w-full resize-none rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 placeholder="How should the AI behave?"
               />
-              <p className="mt-1.5 text-xs text-zinc-600">Custom instructions for the AI. This will be sent with every conversation.</p>
+              <p className="mt-1.5 text-xs text-zinc-600">Custom instructions for Aria. This will be sent with every conversation.</p>
             </div>
             <button
               onClick={handleSave}
@@ -85,7 +84,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Appearance */}
         <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
           <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Appearance</h2>
           <ThemeToggle />

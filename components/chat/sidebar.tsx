@@ -153,7 +153,7 @@ export function Sidebar({
           {menuOpen && (
             <div className="absolute bottom-full left-0 right-0 mb-1 rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl p-1">
               <Link
-                href="/profile"
+                href="/account"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
               >
@@ -161,7 +161,7 @@ export function Sidebar({
                 Account
               </Link>
               <Link
-                href="/profile/settings"
+                href="/account/settings"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
               >

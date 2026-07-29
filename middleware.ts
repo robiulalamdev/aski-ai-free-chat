@@ -63,7 +63,7 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get(env.REFRESH_COOKIE_NAME)?.value
 
   const isAuthPage = pathname === "/login" || pathname === "/signup"
-  const isProtected = pathname.startsWith("/c") || pathname.startsWith("/profile")
+  const isProtected = pathname.startsWith("/c") || pathname.startsWith("/account")
   const isLanding = pathname === "/"
 
   if (isLanding) return NextResponse.next()
@@ -110,5 +110,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/c/:path*", "/profile/:path*", "/login", "/signup"],
+  matcher: ["/c/:path*", "/account/:path*", "/login", "/signup"],
 }

@@ -51,11 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
   Conversation: 'Conversation',
   Message: 'Message',
   Subscription: 'Subscription',
-  UserSubscription: 'UserSubscription'
+  UserSubscription: 'UserSubscription',
+  User: 'User'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,23 +72,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  email: 'email',
-  password: 'password',
-  bio: 'bio',
-  systemPrompt: 'systemPrompt',
-  theme: 'theme',
-  plan: 'plan',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {
@@ -142,6 +125,23 @@ export const UserSubscriptionScalarFieldEnum = {
 } as const
 
 export type UserSubscriptionScalarFieldEnum = (typeof UserSubscriptionScalarFieldEnum)[keyof typeof UserSubscriptionScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  password: 'password',
+  bio: 'bio',
+  systemPrompt: 'systemPrompt',
+  theme: 'theme',
+  plan: 'plan',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const SortOrder = {

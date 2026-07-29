@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 
-export async function updateProfileAction(data: {
+export async function updateAccountAction(data: {
   firstName?: string
   lastName?: string
   bio?: string
@@ -34,7 +34,7 @@ export async function updatePreferencesAction(data: {
   return { success: true }
 }
 
-export async function getProfileAction() {
+export async function getAccountAction() {
   const payload = await getCurrentUser()
   if (!payload) return null
 
