@@ -9,6 +9,7 @@ import {
   deleteSubscription,
   toggleSubscriptionActive,
 } from "@/app/actions/admin"
+import { ALL_FEATURES } from "@/lib/features"
 
 interface Subscription {
   id: string
@@ -21,7 +22,7 @@ interface Subscription {
   isActive: boolean
 }
 
-const emptyForm = { name: "", slug: "", description: "", price: 0, maxTokensPerDay: 50000, features: "" }
+const emptyForm = { name: "", slug: "", description: "", price: 0, maxTokensPerDay: 50000, selectedFeatures: [] as string[] }
 
 export default function SubscriptionsPage() {
   const [subs, setSubs] = useState<Subscription[]>([])
@@ -49,23 +50,36 @@ export default function SubscriptionsPage() {
 
   const openEdit = (sub: Subscription) => {
     setEditingId(sub.id)
+    let features: string[] = []
+    try { features = JSON.parse(sub.features) } catch { features = [] }
     setForm({
       name: sub.name,
       slug: sub.slug,
       description: sub.description,
       price: sub.price,
       maxTokensPerDay: sub.maxTokensPerDay,
-      features: (() => { try { return JSON.parse(sub.features).join(", ") } catch { return "" } })(),
+      selectedFeatures: features,
     })
     setShowModal(true)
     setError("")
   }
 
+  const toggleFeature = (slug: string) => {
+    setForm((prev) => ({
+      ...prev,
+      selectedFeatures: prev.selectedFeatures.includes(slug)
+        ? prev.selectedFeatures.filter((f) => f !== slug)
+        : [...prev.selectedFeatures, slug],
+    }))
+  }
+
   const handleSave = async () => {
+    if (!form.name.trim()) { setError("Plan name is required"); return }
+    if (!form.slug.trim()) { setError("Slug is required"); return }
+
     setSaving(true)
     setError("")
-    const featuresArr = form.features.split(",").map((f) => f.trim()).filter(Boolean)
-    const payload = { ...form, features: featuresArr }
+    const payload = { ...form, features: form.selectedFeatures }
 
     const result = editingId
       ? await updateSubscription(editingId, payload)
@@ -85,6 +99,12 @@ export default function SubscriptionsPage() {
   const handleToggle = async (id: string) => {
     await toggleSubscriptionActive(id)
     await load()
+  }
+
+  const getFeatureLabel = (slug: string) => ALL_FEATURES.find((f) => f.slug === slug)?.name || slug
+
+  const getFeaturesArray = (featuresJson: string): string[] => {
+    try { return JSON.parse(featuresJson) } catch { return [] }
   }
 
   if (loading) {
@@ -153,16 +173,12 @@ export default function SubscriptionsPage() {
             </div>
 
             <div className="space-y-1.5">
-              {(() => {
-                try {
-                  return JSON.parse(sub.features).map((f: string) => (
-                    <div key={f} className="flex items-center gap-2 text-xs text-zinc-400">
-                      <Check className="h-3 w-3 shrink-0 text-violet-400" />
-                      {f}
-                    </div>
-                  ))
-                } catch { return null }
-              })()}
+              {getFeaturesArray(sub.features).map((f) => (
+                <div key={f} className="flex items-center gap-2 text-xs text-zinc-400">
+                  <Check className="h-3 w-3 shrink-0 text-violet-400" />
+                  {getFeatureLabel(f)}
+                </div>
+              ))}
             </div>
           </div>
         ))}
@@ -171,7 +187,7 @@ export default function SubscriptionsPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold text-[var(--foreground)]">
                 {editingId ? "Edit Plan" : "Create Plan"}
@@ -200,7 +216,7 @@ export default function SubscriptionsPage() {
                   <label className="mb-1.5 block text-sm font-medium text-zinc-400">Slug</label>
                   <input
                     value={form.slug}
-                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })}
                     className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
                     placeholder="pro"
                   />
@@ -223,6 +239,7 @@ export default function SubscriptionsPage() {
                   <input
                     type="number"
                     step="0.01"
+                    min="0"
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
                     className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
@@ -232,6 +249,8 @@ export default function SubscriptionsPage() {
                   <label className="mb-1.5 block text-sm font-medium text-zinc-400">Max Tokens/Day</label>
                   <input
                     type="number"
+                    min="1000"
+                    step="1000"
                     value={form.maxTokensPerDay}
                     onChange={(e) => setForm({ ...form, maxTokensPerDay: parseInt(e.target.value) || 0 })}
                     className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
@@ -239,15 +258,38 @@ export default function SubscriptionsPage() {
                 </div>
               </div>
 
+              {/* Features Checkboxes */}
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-zinc-400">Features (comma separated)</label>
-                <textarea
-                  value={form.features}
-                  onChange={(e) => setForm({ ...form, features: e.target.value })}
-                  rows={3}
-                  className="w-full resize-none rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
-                  placeholder="500K tokens/day, Priority support, Custom prompts"
-                />
+                <label className="mb-2 block text-sm font-medium text-zinc-400">Features</label>
+                <div className="space-y-2 rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] p-4">
+                  {ALL_FEATURES.map((feature) => {
+                    const isSelected = form.selectedFeatures.includes(feature.slug)
+                    return (
+                      <label
+                        key={feature.slug}
+                        className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-[var(--surface)]"
+                      >
+                        <div
+                          className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
+                            isSelected
+                              ? "border-violet-500 bg-violet-600"
+                              : "border-zinc-600 bg-transparent"
+                          }`}
+                        >
+                          {isSelected && <Check className="h-3 w-3 text-white" />}
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleFeature(feature.slug)}
+                          className="sr-only"
+                        />
+                        <span className="text-sm text-[var(--foreground)]">{feature.name}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+                <p className="mt-1.5 text-xs text-zinc-500">{form.selectedFeatures.length} features selected</p>
               </div>
             </div>
 
