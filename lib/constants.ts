@@ -1,4 +1,4 @@
-export const APP_NAME = "FreeAI Chat"
+export const APP_NAME = "NexaChat"
 export const APP_DESCRIPTION = "Privacy-first AI chat that runs entirely in your browser. No servers, no tracking."
 export const APP_URL = "https://freeaichat.app"
 

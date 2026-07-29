@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "FreeAI Chat",
-    short_name: "FreeAI",
+    name: "NexaChat",
+    short_name: "NexaChat",
     description: "AI chat that runs entirely in your browser",
     start_url: "/chat",
     display: "standalone",

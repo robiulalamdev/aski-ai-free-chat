@@ -25,7 +25,7 @@ export function ChatHeader({
         </Button>
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-violet-500" />
-          <span className="text-sm font-semibold text-white">FreeAI Chat</span>
+          <span className="text-sm font-semibold text-white">NexaChat</span>
         </div>
       </div>
 

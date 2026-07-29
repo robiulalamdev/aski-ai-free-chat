@@ -14,7 +14,7 @@ model User {
     email        String   @unique
     password     String
     bio          String   @default("")
-    systemPrompt String   @default("You are FreeAI, a helpful AI assistant. Respond naturally and concisely.")
+    systemPrompt String   @default("You are Aria, a helpful AI assistant. Respond naturally and concisely.")
     theme        String   @default("dark")
     plan         String   @default("free")
     createdAt    DateTime @default(now())

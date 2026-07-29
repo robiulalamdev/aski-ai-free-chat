@@ -10,10 +10,10 @@ export function Footer() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
               <Brain className="h-3.5 w-3.5 text-white" />
             </div>
-            FreeAI
+            NexaChat
           </Link>
           <p className="text-sm text-zinc-500">
-            Built with privacy in mind. &copy; {new Date().getFullYear()} FreeAI Chat
+            Built with privacy in mind. &copy; {new Date().getFullYear()} NexaChat
           </p>
         </div>
       </div>

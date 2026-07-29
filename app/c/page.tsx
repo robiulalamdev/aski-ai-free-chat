@@ -9,7 +9,7 @@ const ChatLayout = dynamic(() => import("@/components/chat/chat-layout").then((m
 
 export default function ChatPage() {
   useEffect(() => {
-    document.title = "Chat | FreeAI Chat"
+    document.title = "NexaChat"
   }, [])
 
   return <ChatLayout />

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Trash2, Pencil, Check, X, MessageSquare, Settings, Brain, LogOut, User } from "lucide-react"
+import { Plus, Trash2, Pencil, Check, X, MessageSquare, Brain, LogOut, User, Settings, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -39,24 +39,24 @@ export function Sidebar({
 }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
   const fullName = user ? `${user.firstName} ${user.lastName}` : "User"
   const userInitial = user ? user.firstName.charAt(0).toUpperCase() : "U"
-  const userPlan = user?.plan === "pro" ? "Pro Plan" : "Free Plan"
 
   return (
     <div
       className={cn(
-        "flex h-full flex-col bg-[#13101c] transition-all duration-300",
-        open ? "w-72 border-r border-[#2e2840]" : "w-0 overflow-hidden"
+        "flex h-full flex-col bg-[var(--sidebar-bg)] transition-all duration-300 border-r border-[var(--border-custom)]",
+        open ? "w-72" : "w-0 overflow-hidden"
       )}
     >
       <div className="flex items-center gap-2.5 px-5 pt-5 pb-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
           <Brain className="h-4 w-4 text-white" />
         </div>
-        <span className="text-base font-semibold text-white">FreeAI</span>
+        <span className="text-base font-semibold text-[var(--foreground)]">NexaChat</span>
       </div>
 
       <div className="px-3 py-3">
@@ -84,8 +84,8 @@ export function Sidebar({
             className={cn(
               "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors cursor-pointer",
               conv.id === activeId
-                ? "bg-[#2a2438] text-white"
-                : "text-zinc-400 hover:bg-[#231e30] hover:text-zinc-200"
+                ? "bg-[var(--surface-light)] text-[var(--foreground)]"
+                : "text-zinc-400 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
             )}
           >
             <MessageSquare className="h-4 w-4 shrink-0 opacity-50" />
@@ -95,7 +95,7 @@ export function Sidebar({
                 <Input
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="h-7 text-xs bg-[#1e1929] border-[#2e2840] text-white"
+                  className="h-7 text-xs bg-[var(--background)] border-[var(--border-custom)] text-[var(--foreground)]"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -105,10 +105,10 @@ export function Sidebar({
                     if (e.key === "Escape") setEditingId(null)
                   }}
                 />
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-white" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-[var(--foreground)]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
                   <Check className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-white" onClick={() => setEditingId(null)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-[var(--foreground)]" onClick={() => setEditingId(null)}>
                   <X className="h-3 w-3" />
                 </Button>
               </div>
@@ -133,25 +133,50 @@ export function Sidebar({
         ))}
       </div>
 
-      <div className="border-t border-[#2e2840] p-3">
-        <div className="flex items-center gap-3 rounded-xl px-3 py-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-semibold text-white">
-            {userInitial}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">{fullName}</p>
-            <p className="text-[11px] text-zinc-500">{userPlan}</p>
-          </div>
-          <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-zinc-500 hover:text-zinc-300" title="Profile">
-            <Link href="/chat/profile"><User className="h-4 w-4" /></Link>
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300" title="Settings">
-            <Settings className="h-4 w-4" />
-          </Button>
-          {onLogout && (
-            <Button variant="ghost" size="icon" onClick={onLogout} className="h-8 w-8 text-zinc-500 hover:text-red-400" title="Logout">
-              <LogOut className="h-4 w-4" />
-            </Button>
+      {/* User Menu */}
+      <div className="border-t border-[var(--border-custom)] p-2">
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--surface)]"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-semibold text-white">
+              {userInitial}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-[var(--foreground)] truncate">{fullName}</p>
+              <p className="text-[11px] text-zinc-500">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
+            </div>
+            <ChevronUp className={cn("h-4 w-4 text-zinc-500 transition-transform", menuOpen && "rotate-180")} />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl p-1">
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <User className="h-4 w-4" />
+                Account
+              </Link>
+              <Link
+                href="/profile/settings"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
+              <div className="my-1 border-t border-[var(--border-custom)]" />
+              <button
+                onClick={() => { onLogout?.(); setMenuOpen(false) }}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
           )}
         </div>
       </div>

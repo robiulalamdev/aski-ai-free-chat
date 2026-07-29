@@ -14,7 +14,7 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         </div>
 
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white">FreeAI Chat</h2>
+          <h2 className="text-2xl font-bold text-white">NexaChat</h2>
           <p className="mt-2 text-sm text-zinc-500 flex items-center gap-1.5 justify-center">
             <Sparkles className="h-3.5 w-3.5 text-violet-400" />
             Powered by DeepSeek AI

@@ -63,7 +63,7 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get(env.REFRESH_COOKIE_NAME)?.value
 
   const isAuthPage = pathname === "/login" || pathname === "/signup"
-  const isChatPage = pathname.startsWith("/chat")
+  const isProtected = pathname.startsWith("/c") || pathname.startsWith("/profile")
   const isLanding = pathname === "/"
 
   if (isLanding) return NextResponse.next()
@@ -72,12 +72,12 @@ export async function middleware(request: NextRequest) {
   if (isAuthPage) {
     if (accessToken) {
       const { valid } = await verifyAccessToken(accessToken)
-      if (valid) return NextResponse.redirect(new URL("/chat", request.url))
+      if (valid) return NextResponse.redirect(new URL("/c", request.url))
     }
     if (refreshToken) {
       const result = await verifyRefreshToken(refreshToken)
       if (result.valid && result.payload) {
-        const response = NextResponse.redirect(new URL("/chat", request.url))
+        const response = NextResponse.redirect(new URL("/c", request.url))
         setCookie(response, env.ACCESS_COOKIE_NAME, await mintAccessToken(result.payload), env.ACCESS_COOKIE_MAX_AGE)
         setCookie(response, env.REFRESH_COOKIE_NAME, await mintRefreshToken(result.payload), env.REFRESH_COOKIE_MAX_AGE)
         return response
@@ -86,8 +86,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Chat pages — require auth
-  if (isChatPage) {
+  // Protected pages — require auth
+  if (isProtected) {
     if (accessToken) {
       const { valid } = await verifyAccessToken(accessToken)
       if (valid) return NextResponse.next()
@@ -110,5 +110,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/login", "/signup"],
+  matcher: ["/c/:path*", "/profile/:path*", "/login", "/signup"],
 }

@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils"
 
 const faqs = [
   {
-    question: "How does FreeAI work?",
-    answer: "FreeAI uses DeepSeek AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
+    question: "How does NexaChat work?",
+    answer: "NexaChat uses DeepSeek AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
   },
   {
     question: "Is my data private?",

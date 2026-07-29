@@ -3,12 +3,9 @@
 import { useState, useEffect } from "react"
 import { Loader2, Save, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { getProfileAction, updateProfileAction, updatePreferencesAction } from "@/app/actions/profile"
-import { ThemeToggle } from "@/components/providers/theme-toggle"
+import { getProfileAction, updateProfileAction } from "@/app/actions/profile"
 
-export default function ProfilePage() {
-  const router = useRouter()
+export default function AccountPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState("")
@@ -17,7 +14,7 @@ export default function ProfilePage() {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [bio, setBio] = useState("")
-  const [systemPrompt, setSystemPrompt] = useState("")
+  const [email, setEmail] = useState("")
   const [plan, setPlan] = useState("free")
 
   useEffect(() => {
@@ -26,39 +23,20 @@ export default function ProfilePage() {
         setFirstName(user.firstName)
         setLastName(user.lastName)
         setBio(user.bio || "")
-        setSystemPrompt(user.systemPrompt || "")
+        setEmail(user.email)
         setPlan(user.plan)
       }
       setLoading(false)
     })
   }, [])
 
-  const handleSaveProfile = async () => {
+  const handleSave = async () => {
     setSaving(true)
     setError("")
     setSuccess("")
-
     const result = await updateProfileAction({ firstName, lastName, bio })
-    if (result?.error) {
-      setError(result.error)
-    } else {
-      setSuccess("Profile updated")
-    }
-    setSaving(false)
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  const handleSavePreferences = async () => {
-    setSaving(true)
-    setError("")
-    setSuccess("")
-
-    const result = await updatePreferencesAction({ systemPrompt })
-    if (result?.error) {
-      setError(result.error)
-    } else {
-      setSuccess("Preferences saved")
-    }
+    if (result?.error) setError(result.error)
+    else setSuccess("Account updated")
     setSaving(false)
     setTimeout(() => setSuccess(""), 3000)
   }
@@ -75,10 +53,10 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[var(--background)]">
       <div className="mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center gap-4">
-          <Link href="/chat" className="rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-2 text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors">
+          <Link href="/c" className="rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-2 text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Profile & Settings</h1>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">Account</h1>
         </div>
 
         {success && (
@@ -88,9 +66,8 @@ export default function ProfilePage() {
           <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
         )}
 
-        {/* Profile Section */}
-        <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Profile Information</h2>
+        <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
+          <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Account Information</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -113,6 +90,15 @@ export default function ProfilePage() {
               </div>
             </div>
             <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-400">Email</label>
+              <input
+                type="email"
+                value={email}
+                disabled
+                className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-zinc-500 cursor-not-allowed"
+              />
+            </div>
+            <div>
               <label className="mb-1.5 block text-sm font-medium text-zinc-400">Bio</label>
               <textarea
                 value={bio}
@@ -130,46 +116,14 @@ export default function ProfilePage() {
               <span className="rounded-lg bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400 capitalize">{plan}</span>
             </div>
             <button
-              onClick={handleSaveProfile}
+              onClick={handleSave}
               disabled={saving}
               className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save Profile
+              Save Changes
             </button>
           </div>
-        </div>
-
-        {/* Preferences Section */}
-        <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">AI Preferences</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">System Prompt</label>
-              <textarea
-                value={systemPrompt}
-                onChange={(e) => setSystemPrompt(e.target.value)}
-                rows={4}
-                className="w-full resize-none rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
-                placeholder="How should the AI behave?"
-              />
-              <p className="mt-1.5 text-xs text-zinc-600">Custom instructions for the AI. Default: &quot;You are FreeAI, a helpful AI assistant.&quot;</p>
-            </div>
-            <button
-              onClick={handleSavePreferences}
-              disabled={saving}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
-            >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save Preferences
-            </button>
-          </div>
-        </div>
-
-        {/* Theme Section */}
-        <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Appearance</h2>
-          <ThemeToggle />
         </div>
       </div>
     </div>

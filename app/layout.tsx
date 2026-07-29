@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "FreeAI Chat",
-    template: "%s | FreeAI Chat",
+    default: "NexaChat",
+    template: "%s | NexaChat",
   },
   description: "AI-powered chat assistant. Ask anything, get answers.",
   keywords: ["AI chat", "assistant", "free AI", "chatbot"],
-  authors: [{ name: "FreeAI Chat" }],
-  creator: "FreeAI Chat",
+  authors: [{ name: "NexaChat" }],
+  creator: "NexaChat",
 }
 
 export const viewport: Viewport = {

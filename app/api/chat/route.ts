@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   const body = JSON.stringify({
     model: "deepseek/deepseek-chat",
     messages: [
-      { role: "system", content: "You are FreeAI, a helpful AI assistant. Respond naturally and concisely." },
+      { role: "system", content: "You are Aria, a helpful AI assistant. Respond naturally and concisely." },
       ...messages,
     ],
     stream: true,

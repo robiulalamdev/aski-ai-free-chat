@@ -35,7 +35,7 @@ export default function LoginPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
               <Brain className="h-5 w-5 text-white" />
             </div>
-            FreeAI
+            NexaChat
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-white">Welcome back</h1>
           <p className="mt-2 text-sm text-zinc-400">Sign in to continue chatting</p>
