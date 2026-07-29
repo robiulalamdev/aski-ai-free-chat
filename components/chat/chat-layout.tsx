@@ -140,25 +140,26 @@ function ChatContent() {
       router.replace(`/c/${conv.id}`, { scroll: false })
     }
 
-    // Add user message to DB
-    await addMessageToConversation(currentId, "user", content)
-
-    // Reload conversations
-    const convs = await getUserConversations()
-    const updatedActive = convs.find((c) => c.id === currentId)
-    const isFirstMessage = !updatedActive || updatedActive.messages.length <= 1
-
-    setState({ conversations: convs, activeId: currentId })
+    // Add user message to DB and get updated conversation
+    const updatedConv = await addMessageToConversation(currentId, "user", content)
+    if (updatedConv) {
+      // Immediately update state with new message
+      setState((prev) => ({
+        conversations: [updatedConv, ...prev.conversations.filter((c) => c.id !== updatedConv.id)],
+        activeId: updatedConv.id,
+      }))
+    }
 
     // Generate smart title from first message
+    const currentConv = state.conversations.find((c) => c.id === currentId)
+    const isFirstMessage = !currentConv || currentConv.messages.length === 0
     if (isFirstMessage) {
       const smartTitle = generateSmartTitle(content)
       await updateConversationTitle(currentId, smartTitle)
-      const refreshedConvs = await getUserConversations()
-      setState({ conversations: refreshedConvs, activeId: currentId })
     }
 
-    const convForAI = convs.find((c) => c.id === currentId)
+    // Get full conversation for AI
+    const convForAI = updatedConv || state.conversations.find((c) => c.id === currentId)
     if (!convForAI) {
       setIsGenerating(false)
       return
@@ -178,11 +179,17 @@ function ChatContent() {
       }
     }
 
+    // Add AI response to DB and update state
     setStreamingText("")
-    await addMessageToConversation(currentId, "assistant", fullResponse)
-    await refresh()
+    const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
+    if (finalConv) {
+      setState((prev) => ({
+        conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
+        activeId: finalConv.id,
+      }))
+    }
     setIsGenerating(false)
-  }, [state.activeId, refresh, processMessage, router])
+  }, [state.activeId, state.conversations, processMessage, router])
 
   const handleRegenerate = useCallback(async () => {
     const currentId = state.activeId
@@ -208,22 +215,34 @@ function ChatContent() {
     }
 
     setStreamingText("")
-    await addMessageToConversation(currentId, "assistant", fullResponse)
-    await refresh()
+    const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
+    if (finalConv) {
+      setState((prev) => ({
+        conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
+        activeId: finalConv.id,
+      }))
+    }
     setIsGenerating(false)
-  }, [state.activeId, state.conversations, refresh, processMessage])
+  }, [state.activeId, state.conversations, processMessage])
 
   const handleStop = useCallback(() => {
     cancel()
     if (streamingText) {
       const currentId = state.activeId
       if (currentId) {
-        addMessageToConversation(currentId, "assistant", streamingText).then(() => refresh())
+        addMessageToConversation(currentId, "assistant", streamingText).then((finalConv) => {
+          if (finalConv) {
+            setState((prev) => ({
+              conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
+              activeId: finalConv.id,
+            }))
+          }
+        })
       }
       setStreamingText("")
     }
     setIsGenerating(false)
-  }, [cancel, streamingText, state.activeId, refresh])
+  }, [cancel, streamingText, state.activeId])
 
   if (!initialized) {
     return (
