@@ -1,38 +1,43 @@
 import Link from "next/link"
-import { Check } from "lucide-react"
+import { Check, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { prisma } from "@/lib/prisma"
 
-const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    description: "For casual users",
-    features: ["DeepSeek AI model", "Streaming responses", "Markdown support", "Conversation history"],
-    cta: "Start Chat",
-    href: "/chat",
-  },
-  {
-    name: "Pro",
-    price: "$9",
-    period: "/month",
-    description: "For power users",
-    features: ["Faster models", "All tools", "Unlimited conversations", "Custom prompts"],
-    cta: "Coming Soon",
-    href: "#",
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: "$29",
-    period: "/month",
-    description: "For teams",
-    features: ["Priority models", "API access", "Team management", "Dedicated support"],
-    cta: "Coming Soon",
-    href: "#",
-  },
-]
+const FEATURE_MAP: Record<string, string> = {
+  custom_prompts: "Custom System Prompts",
+  export_data: "Export Chat History",
+  priority_support: "Priority Support",
+  team_management: "Team Management",
+  dedicated_support: "Dedicated Support",
+  custom_integrations: "Custom Integrations",
+  advanced_analytics: "Advanced Analytics",
+  custom_theme: "Custom Theme",
+}
 
-export function Pricing() {
+async function getPlans() {
+  try {
+    const plans = await prisma.subscription.findMany({
+      where: { isActive: true },
+      orderBy: { price: "asc" },
+    })
+    return plans.map((p) => ({
+      name: p.name,
+      price: p.price === 0 ? "Free" : `$${Math.round(p.price)}`,
+      period: p.price > 0 ? "/month" : undefined,
+      description: p.description,
+      features: (() => { try { return JSON.parse(p.features).map((f: string) => FEATURE_MAP[f] || f) } catch { return [] } })(),
+      tokensPerDay: p.maxTokensPerDay.toLocaleString(),
+      slug: p.slug,
+      popular: p.slug === "pro",
+    }))
+  } catch {
+    return []
+  }
+}
+
+export async function Pricing() {
+  const plans = await getPlans()
+
   return (
     <section id="pricing" className="py-20 sm:py-28 bg-[#13101c]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -46,7 +51,7 @@ export function Pricing() {
         <div className="mt-16 grid gap-8 lg:grid-cols-3">
           {plans.map((plan) => (
             <div
-              key={plan.name}
+              key={plan.slug}
               className={`relative flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg ${
                 plan.popular
                   ? "border-violet-500/50 bg-[#231e30] shadow-violet-600/10"
@@ -64,8 +69,14 @@ export function Pricing() {
                 {plan.period && <span className="text-sm text-zinc-500">{plan.period}</span>}
               </div>
               <p className="mt-2 text-sm text-zinc-400">{plan.description}</p>
+
+              <div className="mt-4 flex items-center gap-2 rounded-xl bg-violet-500/10 px-3 py-2">
+                <Zap className="h-4 w-4 text-violet-400" />
+                <span className="text-sm font-medium text-violet-400">{plan.tokensPerDay} tokens/day</span>
+              </div>
+
               <ul className="mt-6 flex-1 space-y-3">
-                {plan.features.map((feature) => (
+                {plan.features.map((feature: string) => (
                   <li key={feature} className="flex items-center gap-2 text-sm text-zinc-300">
                     <Check className="h-4 w-4 text-violet-400" />
                     {feature}
@@ -73,7 +84,7 @@ export function Pricing() {
                 ))}
               </ul>
               <Button asChild variant={plan.popular ? "default" : "outline"} className={`mt-6 w-full ${plan.popular ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700" : "border-[#2e2840] bg-transparent text-zinc-300 hover:bg-[#2a2438]"}`}>
-                <Link href={plan.href}>{plan.cta}</Link>
+                <Link href="/signup">{plan.price === "Free" ? "Start Chat" : "Upgrade"}</Link>
               </Button>
             </div>
           ))}

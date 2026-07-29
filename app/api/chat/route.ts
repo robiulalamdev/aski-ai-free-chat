@@ -1,11 +1,91 @@
 import { NextRequest } from "next/server"
 import env from "@/config/env"
+import { verifyAccessToken } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1"
+
+async function getUserFromRequest(req: NextRequest) {
+  const token = req.cookies.get(env.ACCESS_COOKIE_NAME)?.value
+  if (!token) return null
+  return verifyAccessToken(token)
+}
+
+async function checkAndUpdateTokenUsage(userId: string): Promise<{ allowed: boolean; remaining: number; limit: number }> {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } })
+  if (!user) return { allowed: false, remaining: 0, limit: 0 }
+
+  const sub = await prisma.subscription.findUnique({ where: { slug: user.plan } })
+  if (!sub) return { allowed: false, remaining: 0, limit: 0 }
+
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  let userSub = await prisma.userSubscription.findFirst({
+    where: { userId, isActive: true },
+    orderBy: { startDate: "desc" },
+  })
+
+  if (!userSub) {
+    userSub = await prisma.userSubscription.create({
+      data: {
+        userId,
+        subscriptionId: sub.id,
+        tokensUsedToday: 0,
+        lastResetAt: todayStart,
+      },
+    })
+  }
+
+  const lastReset = new Date(userSub.lastResetAt)
+  const needsReset = lastReset < todayStart
+
+  if (needsReset) {
+    await prisma.userSubscription.update({
+      where: { id: userSub.id },
+      data: { tokensUsedToday: 0, lastResetAt: todayStart },
+    })
+    userSub.tokensUsedToday = 0
+  }
+
+  const remaining = sub.maxTokensPerDay - userSub.tokensUsedToday
+  if (remaining <= 0) {
+    return { allowed: false, remaining: 0, limit: sub.maxTokensPerDay }
+  }
+
+  return { allowed: true, remaining, limit: sub.maxTokensPerDay }
+}
+
+async function incrementTokenUsage(userId: string, tokens: number) {
+  const userSub = await prisma.userSubscription.findFirst({
+    where: { userId, isActive: true },
+    orderBy: { startDate: "desc" },
+  })
+
+  if (userSub) {
+    await prisma.userSubscription.update({
+      where: { id: userSub.id },
+      data: { tokensUsedToday: { increment: tokens } },
+    })
+  }
+}
 
 export async function POST(req: NextRequest) {
   if (!env.MIMO_API_KEY) {
     return Response.json({ error: "API key not configured" }, { status: 500 })
+  }
+
+  const user = await getUserFromRequest(req)
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const { allowed, remaining, limit } = await checkAndUpdateTokenUsage(user.userId)
+  if (!allowed) {
+    return Response.json(
+      { error: `Daily token limit reached (${limit.toLocaleString()} tokens/day). Upgrade your plan for more.`, limitReached: true },
+      { status: 429 }
+    )
   }
 
   const { messages } = await req.json()
@@ -17,7 +97,7 @@ export async function POST(req: NextRequest) {
       ...messages,
     ],
     stream: true,
-    max_tokens: 4096,
+    max_tokens: Math.min(4096, remaining),
   })
 
   const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
@@ -40,6 +120,8 @@ export async function POST(req: NextRequest) {
   }
 
   const encoder = new TextEncoder()
+  let totalTokens = 0
+
   const stream = new ReadableStream({
     async start(controller) {
       const decoder = new TextDecoder()
@@ -58,12 +140,22 @@ export async function POST(req: NextRequest) {
             if (line.startsWith("data: ")) {
               const data = line.slice(6)
               if (data === "[DONE]") continue
+              try {
+                const parsed = JSON.parse(data)
+                const usage = parsed.usage
+                if (usage) {
+                  totalTokens = usage.total_tokens || 0
+                }
+              } catch {}
               controller.enqueue(encoder.encode(line + "\n"))
             }
           }
         }
       } catch {
       } finally {
+        if (totalTokens > 0) {
+          await incrementTokenUsage(user.userId, totalTokens)
+        }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"))
         controller.close()
       }

@@ -90,8 +90,13 @@ function ChatContent() {
       fullResponse = await processMessage(conv.messages, (token) => {
         setStreamingText((prev) => prev + token)
       })
-    } catch (err) {
-      fullResponse = "Sorry, an error occurred while generating the response."
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Sorry, an error occurred."
+      if (message.includes("Daily token limit reached")) {
+        fullResponse = "⚠️ " + message
+      } else {
+        fullResponse = "Sorry, an error occurred while generating the response."
+      }
     }
 
     setStreamingText("")
