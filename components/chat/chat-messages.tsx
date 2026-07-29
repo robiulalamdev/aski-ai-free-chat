@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Bot, Loader2, CheckCheck, RefreshCw, Copy, Check, FileText } from "lucide-react"
+import { Bot, Loader2, CheckCheck, RefreshCw, Copy, Check, FileText, Eye } from "lucide-react"
 import { MarkdownRenderer } from "./markdown-renderer"
+import { triggerVersionSelect } from "./tool-preview-panel"
 import type { Message } from "@/types/chat"
 
 function formatTime(ts: number): string {
@@ -29,7 +30,6 @@ function ResumeStatusMessage({ content }: { content: string }) {
         ) : (
           <p className="text-sm text-zinc-400 italic">Resume updated</p>
         )}
-        <p className="text-xs text-zinc-600 mt-1">View preview on the right →</p>
       </div>
     </div>
   )
@@ -40,11 +40,13 @@ function AssistantMessage({
   isLast,
   onRegenerate,
   toolType,
+  versionIndex,
 }: {
   message: Message
   isLast: boolean
   onRegenerate?: () => void
   toolType?: string | null
+  versionIndex?: number
 }) {
   const [copied, setCopied] = useState(false)
   const isResume = toolType === "resume_builder"
@@ -73,6 +75,18 @@ function AssistantMessage({
         </div>
         <div className="flex items-center gap-1.5 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <span className="text-[10px] text-zinc-600">{formatTime(message.createdAt)}</span>
+
+          {/* View button for resume versions */}
+          {isResume && hasCode && versionIndex !== undefined && (
+            <button
+              onClick={() => triggerVersionSelect(versionIndex + 1)}
+              className="rounded p-1 text-violet-400 hover:text-violet-300 hover:bg-[var(--surface-light)] transition-colors"
+              title="View this version in preview"
+            >
+              <Eye className="h-3 w-3" />
+            </button>
+          )}
+
           <button onClick={copyMessage} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[var(--surface-light)] transition-colors" title="Copy message">
             {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
           </button>
@@ -126,6 +140,9 @@ export function ChatMessages({
   const lastAssistantIdx = [...messages].reverse().findIndex((m) => m.role === "assistant")
   const lastAssistantId = lastAssistantIdx !== -1 ? messages[messages.length - 1 - lastAssistantIdx].id : null
 
+  // Track version index for resume messages
+  let resumeVersionCounter = 0
+
   return (
     <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6 w-full">
       {messages.map((message) => {
@@ -145,6 +162,13 @@ export function ChatMessages({
           )
         }
 
+        // Calculate version index for resume messages
+        let versionIdx: number | undefined
+        if (isResume && /```[\s\S]*?```/.test(message.content)) {
+          versionIdx = resumeVersionCounter
+          resumeVersionCounter++
+        }
+
         return (
           <AssistantMessage
             key={message.id}
@@ -152,6 +176,7 @@ export function ChatMessages({
             isLast={message.id === lastAssistantId}
             onRegenerate={message.id === lastAssistantId ? onRegenerate : undefined}
             toolType={toolType}
+            versionIndex={versionIdx}
           />
         )
       })}

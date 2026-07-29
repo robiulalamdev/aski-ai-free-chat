@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
-import { Eye, EyeOff, Download, FileText, Loader2, CheckCircle2, ChevronDown, Printer, ExternalLink } from "lucide-react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { Eye, EyeOff, Download, FileText, Loader2, CheckCircle2, ChevronDown, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Message } from "@/types/chat"
@@ -96,40 +96,33 @@ function CodeGeneratingUI() {
   )
 }
 
-async function exportToPdf(html: string, filename: string) {
-  // Open in new window and use browser print
-  const printWindow = window.open("", "_blank")
-  if (!printWindow) {
-    alert("Please allow popups to export PDF")
-    return
-  }
+function buildFullHtml(bodyHtml: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <style>
+    @media print {
+      body { margin: 0 !important; }
+      @page { margin: 0; size: A4; }
+    }
+  </style>
+</head>
+<body class="bg-white m-0 p-0">
+  ${bodyHtml}
+</body>
+</html>`
+}
 
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>${filename}</title>
-      <script src="https://cdn.tailwindcss.com"><\/script>
-      <style>
-        @media print {
-          body { margin: 0; }
-          @page { margin: 10mm; }
-        }
-      </style>
-    </head>
-    <body>
-      ${html}
-      <script>
-        window.onload = function() {
-          setTimeout(function() {
-            window.print();
-          }, 1000);
-        };
-      <\/script>
-    </body>
-    </html>
-  `)
-  printWindow.document.close()
+// Shared version state for communication between chat messages and preview
+let globalSetVersion: ((v: number) => void) | null = null
+let globalSetOpen: ((v: boolean) => void) | null = null
+
+export function triggerVersionSelect(version: number) {
+  if (globalSetVersion) globalSetVersion(version)
+  if (globalSetOpen) globalSetOpen(true)
 }
 
 export function ToolPreviewPanel({
@@ -147,30 +140,36 @@ export function ToolPreviewPanel({
   isOpen: boolean
   onToggle: () => void
 }) {
-  const [exporting, setExporting] = useState(false)
   const [selectedVersion, setSelectedVersion] = useState(0)
   const [showVersionMenu, setShowVersionMenu] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const printFrameRef = useRef<HTMLIFrameElement>(null)
 
   const isResume = toolType === "resume_builder"
+
+  // Register global callbacks for version selection from chat
+  useEffect(() => {
+    globalSetVersion = setSelectedVersion
+    globalSetOpen = () => {} // onToggle is called externally
+    return () => { globalSetVersion = null; globalSetOpen = null }
+  }, [])
 
   // Extract versions from ALL assistant messages
   const versions = useMemo(() => {
     const assistantMessages = messages.filter((m) => m.role === "assistant")
-    const versionList: { html: string; messageIndex: number }[] = []
+    const versionList: { html: string; messageId: string }[] = []
 
-    assistantMessages.forEach((msg, idx) => {
+    assistantMessages.forEach((msg) => {
       const html = isResume ? extractHtmlFromText(msg.content) : extractCodeBlocks(msg.content)
       if (html) {
-        versionList.push({ html, messageIndex: idx })
+        versionList.push({ html, messageId: msg.id })
       }
     })
 
     return versionList
   }, [messages, isResume])
 
-  // Current streaming HTML
   const streamingHtml = useMemo(() => {
     if (!streamingText) return ""
     return isResume ? extractHtmlFromText(streamingText) : extractCodeBlocks(streamingText)
@@ -182,7 +181,7 @@ export function ToolPreviewPanel({
   // Current displayed HTML
   const currentHtml = useMemo(() => {
     if (isGenerating && streamingHtml) return streamingHtml
-    if (versions.length > 0 && selectedVersion > 0) {
+    if (versions.length > 0 && selectedVersion > 0 && selectedVersion <= versions.length) {
       return versions[selectedVersion - 1]?.html || ""
     }
     if (versions.length > 0) {
@@ -193,11 +192,10 @@ export function ToolPreviewPanel({
 
   const hasContent = currentHtml.length > 0
 
-  // Auto-select latest only on first version or when a NEW version is added
+  // Auto-select latest only when NEW version added
   const prevVersionCount = useRef(versions.length)
   useEffect(() => {
     if (versions.length > prevVersionCount.current) {
-      // New version added - auto-select it
       setSelectedVersion(versions.length)
     }
     prevVersionCount.current = versions.length
@@ -214,19 +212,32 @@ export function ToolPreviewPanel({
     return () => document.removeEventListener("mousedown", handleClick)
   }, [])
 
-  const handleExportPdf = async () => {
+  const handleExportPdf = useCallback(() => {
     if (!currentHtml) return
-    setExporting(true)
-    try {
-      await exportToPdf(currentHtml, "resume")
-    } catch (err) {
-      console.error("PDF export failed:", err)
-    } finally {
-      setExporting(false)
-    }
-  }
+    const fullHtml = buildFullHtml(currentHtml)
 
-  const handleDownloadHtml = () => {
+    // Use hidden iframe for high-quality print
+    const frame = printFrameRef.current
+    if (frame) {
+      frame.srcdoc = fullHtml
+      frame.onload = () => {
+        setTimeout(() => {
+          frame.contentWindow?.print()
+        }, 1500)
+      }
+    }
+  }, [currentHtml])
+
+  const handleViewFull = useCallback(() => {
+    if (!currentHtml) return
+    const fullHtml = buildFullHtml(currentHtml)
+    const win = window.open("", "_blank")
+    if (!win) return
+    win.document.write(fullHtml)
+    win.document.close()
+  }, [currentHtml])
+
+  const handleDownloadHtml = useCallback(() => {
     if (!currentHtml) return
     const blob = new Blob([currentHtml], { type: "text/html" })
     const url = URL.createObjectURL(blob)
@@ -235,15 +246,7 @@ export function ToolPreviewPanel({
     a.download = "resume.html"
     a.click()
     URL.revokeObjectURL(url)
-  }
-
-  const handleViewFull = () => {
-    if (!currentHtml) return
-    const win = window.open("", "_blank")
-    if (!win) return
-    win.document.write(`<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script><title>Resume</title></head><body>${currentHtml}</body></html>`)
-    win.document.close()
-  }
+  }, [currentHtml])
 
   if (!isOpen) {
     return (
@@ -259,6 +262,9 @@ export function ToolPreviewPanel({
 
   return (
     <div className={cn("flex flex-col border-l border-[var(--border-custom)] bg-[var(--background)]", "w-1/2")}>
+      {/* Hidden iframe for PDF print */}
+      <iframe ref={printFrameRef} className="hidden" title="print" />
+
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-custom)]">
         <div className="flex items-center gap-3">
@@ -291,20 +297,13 @@ export function ToolPreviewPanel({
 
               {showVersionMenu && (
                 <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl z-50 py-1 max-h-60 overflow-y-auto">
-                  {/* Show streaming version if generating */}
                   {isGenerating && hasStreamedVersion && (
-                    <button
-                      onClick={() => {
-                        setShowVersionMenu(false)
-                      }}
-                      className="flex items-center w-full px-3 py-2 text-xs text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
-                    >
+                    <div className="flex items-center w-full px-3 py-2 text-xs text-zinc-400">
                       <Loader2 className="h-3 w-3 animate-spin mr-2" />
                       <span>Building new version...</span>
-                    </button>
+                    </div>
                   )}
 
-                  {/* Show saved versions (newest first) */}
                   {[...versions].reverse().map((_, idx) => {
                     const versionNum = versions.length - idx
                     return (
@@ -339,7 +338,7 @@ export function ToolPreviewPanel({
         </div>
 
         <div className="flex items-center gap-1">
-          {isResume && hasContent ? (
+          {isResume && hasContent && (
             <>
               <Button
                 variant="ghost"
@@ -355,13 +354,13 @@ export function ToolPreviewPanel({
                 size="sm"
                 className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
                 onClick={handleExportPdf}
-                disabled={exporting}
               >
-                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Printer className="h-3.5 w-3.5" />}
+                <FileText className="h-3.5 w-3.5" />
                 PDF
               </Button>
             </>
-          ) : hasContent ? (
+          )}
+          {!isResume && hasContent && (
             <Button
               variant="ghost"
               size="icon"
@@ -370,7 +369,7 @@ export function ToolPreviewPanel({
             >
               <Download className="h-3.5 w-3.5" />
             </Button>
-          ) : null}
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -388,9 +387,9 @@ export function ToolPreviewPanel({
           isResume ? <ResumeGeneratingUI /> : <CodeGeneratingUI />
         ) : hasContent ? (
           <iframe
-            key={`${selectedVersion}-${currentHtml.slice(0, 50)}`}
+            key={`v${selectedVersion}-${latestVersion}`}
             ref={iframeRef}
-            srcDoc={`<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script></head><body>${currentHtml.includes("<body") ? "" : currentHtml}</body></html>`}
+            srcDoc={buildFullHtml(currentHtml)}
             className="w-full h-full border-0"
             title="Preview"
             sandbox="allow-scripts"
