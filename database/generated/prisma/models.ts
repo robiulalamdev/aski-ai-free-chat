@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Admin'
 export type * from './models/Conversation'
 export type * from './models/Message'
 export type * from './models/Subscription'

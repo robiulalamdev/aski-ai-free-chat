@@ -16,6 +16,17 @@ const env = {
   COOKIE_HTTP_ONLY: process.env.COOKIE_HTTP_ONLY !== "false",
   COOKIE_SAME_SITE: (process.env.COOKIE_SAME_SITE || "lax") as "lax" | "strict" | "none",
 
+  ADMIN_ACCESS_TOKEN_SECRET: process.env.ADMIN_ACCESS_TOKEN_SECRET!,
+  ADMIN_REFRESH_TOKEN_SECRET: process.env.ADMIN_REFRESH_TOKEN_SECRET!,
+  ADMIN_ACCESS_TOKEN_EXPIRES_IN: process.env.ADMIN_ACCESS_TOKEN_EXPIRES_IN || "1h",
+  ADMIN_REFRESH_TOKEN_EXPIRES_IN: process.env.ADMIN_REFRESH_TOKEN_EXPIRES_IN || "7d",
+  ADMIN_ACCESS_COOKIE_NAME: process.env.ADMIN_ACCESS_COOKIE_NAME || "nexachat_admin_access",
+  ADMIN_REFRESH_COOKIE_NAME: process.env.ADMIN_REFRESH_COOKIE_NAME || "nexachat_admin_refresh",
+  ADMIN_ACCESS_COOKIE_MAX_AGE: parseInt(process.env.ADMIN_ACCESS_COOKIE_MAX_AGE || "3600", 10),
+  ADMIN_REFRESH_COOKIE_MAX_AGE: parseInt(process.env.ADMIN_REFRESH_COOKIE_MAX_AGE || "604800", 10),
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@nexachat.com",
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "Admin@123",
+
   MIMO_API_KEY: process.env.MIMO_API_KEY!,
   DATABASE_URL: process.env.DATABASE_URL!,
 }
