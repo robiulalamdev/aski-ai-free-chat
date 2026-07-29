@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Save, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { Loader2, Save } from "lucide-react"
 import { getAccountAction, updateAccountAction } from "@/app/actions/account"
 
 export default function AccountPage() {
@@ -43,31 +42,39 @@ export default function AccountPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+      <div className="flex items-center justify-center py-20">
         <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
-      <div className="mx-auto max-w-2xl px-4 py-12">
-        <div className="mb-8 flex items-center gap-4">
-          <Link href="/c" className="rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-2 text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Account</h1>
-        </div>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Account</h1>
+        <p className="mt-1 text-sm text-zinc-500">Manage your account information</p>
+      </div>
 
-        {success && (
-          <div className="mb-6 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">{success}</div>
-        )}
-        {error && (
-          <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
-        )}
+      {success && (
+        <div className="mb-6 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">{success}</div>
+      )}
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
+      )}
 
+      <div className="space-y-6">
+        {/* Profile Card */}
         <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Account Information</h2>
+          <div className="flex items-center gap-5 mb-6">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-xl font-bold text-white">
+              {firstName.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-[var(--foreground)]">{firstName} {lastName}</p>
+              <p className="text-sm text-zinc-500">{email}</p>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -108,22 +115,33 @@ export default function AccountPage() {
                 placeholder="Tell us about yourself..."
               />
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3">
-              <div>
-                <p className="text-sm font-medium text-[var(--foreground)]">Plan</p>
-                <p className="text-xs text-zinc-500 capitalize">{plan}</p>
-              </div>
-              <span className="rounded-lg bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400 capitalize">{plan}</span>
+          </div>
+        </div>
+
+        {/* Plan Card */}
+        <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
+          <h3 className="mb-3 text-sm font-semibold text-[var(--foreground)]">Current Plan</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="rounded-lg bg-violet-500/10 px-3 py-1.5 text-sm font-medium text-violet-400 capitalize">{plan}</span>
+              <span className="text-sm text-zinc-500">50,000 tokens/day</span>
             </div>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
-            >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save Changes
+            <button className="rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-400 hover:bg-violet-500/20 transition-colors">
+              Upgrade
             </button>
           </div>
+        </div>
+
+        {/* Save */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            Save Changes
+          </button>
         </div>
       </div>
     </div>
