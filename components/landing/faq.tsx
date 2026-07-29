@@ -6,28 +6,28 @@ import { cn } from "@/lib/utils"
 
 const faqs = [
   {
-    question: "How does the AI run in my browser?",
-    answer: "We use WebGPU and WebAssembly to run optimized AI models directly in your browser. The model is downloaded once and cached locally.",
+    question: "How does FreeAI work?",
+    answer: "FreeAI uses DeepSeek AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
   },
   {
     question: "Is my data private?",
-    answer: "Yes. Everything runs locally on your device. No chat data is sent to any server. Only tool requests (like web searches) go through our proxy.",
+    answer: "Yes. Your conversations are stored locally in your browser. We don't store any chat data on our servers.",
   },
   {
-    question: "What models are available?",
-    answer: "We support Qwen 0.5B, SmolLM2, TinyLlama, and Gemma 1B. You can switch models anytime.",
+    question: "What AI model is used?",
+    answer: "We use DeepSeek Chat, one of the most capable open-source AI models available.",
   },
   {
     question: "Does it work on mobile?",
-    answer: "Yes! The app is fully responsive and works as a PWA on mobile devices with WebGPU support.",
+    answer: "Yes! The app is fully responsive and works great on mobile devices.",
   },
   {
-    question: "Do I need internet after setup?",
-    answer: "After the initial model download, basic chat works offline. Internet is only needed for web search and website reading tools.",
+    question: "Do I need an API key?",
+    answer: "No, the API key is configured server-side. Just open the app and start chatting.",
   },
   {
     question: "Is it really free?",
-    answer: "Yes, the Free plan gives you full access to the local AI model. No hidden costs or API usage limits.",
+    answer: "Yes, the app is free to use. DeepSeek offers generous free tier limits for development.",
   },
 ]
 
@@ -35,11 +35,11 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-20 sm:py-28">
+    <section id="faq" className="py-20 sm:py-28 bg-[#1e1929]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Frequently Asked Questions</h2>
-          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Frequently Asked Questions</h2>
+          <p className="mt-4 text-lg text-zinc-400">
             Got questions? We&apos;ve got answers.
           </p>
         </div>
@@ -48,13 +48,13 @@ export function FAQ() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="rounded-2xl border border-zinc-200 bg-white transition-all duration-200 dark:border-zinc-800 dark:bg-zinc-950"
+              className="rounded-2xl border border-[#2e2840] bg-[#231e30] transition-all duration-200"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="flex w-full items-center justify-between px-6 py-4 text-left"
               >
-                <span className="text-sm font-medium sm:text-base">{faq.question}</span>
+                <span className="text-sm font-medium text-white sm:text-base">{faq.question}</span>
                 <ChevronDown
                   className={cn(
                     "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200",
@@ -63,29 +63,11 @@ export function FAQ() {
                 />
               </button>
               <div className={cn("overflow-hidden transition-all duration-300", openIndex === index ? "max-h-96" : "max-h-0")}>
-                <p className="px-6 pb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{faq.answer}</p>
+                <p className="px-6 pb-4 text-sm leading-relaxed text-zinc-400">{faq.answer}</p>
               </div>
             </div>
           ))}
         </div>
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: faqs.map((faq) => ({
-                "@type": "Question",
-                name: faq.question,
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: faq.answer,
-                },
-              })),
-            }),
-          }}
-        />
       </div>
     </section>
   )

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const { messages } = await req.json()
 
   const body = JSON.stringify({
-    model: "deepseek/deepseek-chat:free",
+    model: "deepseek/deepseek-chat",
     messages: [
       { role: "system", content: "You are FreeAI, a helpful AI assistant. Respond naturally and concisely." },
       ...messages,

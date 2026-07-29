@@ -18,6 +18,14 @@
   --color-primary-800: #5b21b6;
   --color-primary-900: #4c1d95;
 
+  --color-surface: #1a1625;
+  --color-surface-light: #231e30;
+  --color-surface-lighter: #2a2438;
+  --color-surface-hover: #312b42;
+  --color-sidebar: #13101c;
+  --color-input-bg: #1e1929;
+  --color-border-custom: #2e2840;
+
   --animate-fade-in: fade-in 0.5s ease-out;
   --animate-slide-up: slide-up 0.5s ease-out;
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
@@ -37,34 +45,41 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #fafafa;
-  }
+  --background: #1e1929;
+  --foreground: #f0ecf7;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-@utility scrollbar-thin {
+* {
   scrollbar-width: thin;
-  scrollbar-color: rgb(0 0 0 / 0.1) transparent;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
 }
 
-@utility scrollbar-thin-dark {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 0.1) transparent;
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
 }
 
 @layer base {
   * {
-    @apply border-zinc-200 dark:border-zinc-800;
+    @apply border-border-custom;
   }
 }

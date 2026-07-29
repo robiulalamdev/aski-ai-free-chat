@@ -7,6 +7,7 @@ import { ChatInput } from "./chat-input"
 import { Sidebar } from "./sidebar"
 import { LoadingScreen } from "./loading-screen"
 import { AIProvider, useAI } from "@/components/providers/ai-provider"
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider"
 import type { Conversation, Message } from "@/types/chat"
 import {
   createAndSaveConversation,
@@ -23,6 +24,7 @@ function ChatContent() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [streamingText, setStreamingText] = useState("")
   const { processMessage, cancel } = useAI()
+  const { user, logout } = useAuth()
 
   const [state, setState] = useState<{ conversations: Conversation[]; activeId: string | null }>(() => {
     if (typeof window === "undefined") {
@@ -145,7 +147,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-[#1e1929]">
       <Sidebar
         conversations={conversations}
         activeId={activeId}
@@ -154,6 +156,8 @@ function ChatContent() {
         onDelete={handleDelete}
         onRename={handleRename}
         open={sidebarOpen}
+        user={user}
+        onLogout={logout}
       />
 
       <div className="flex flex-1 flex-col min-w-0">
@@ -174,8 +178,10 @@ function ChatContent() {
 
 export function ChatLayout() {
   return (
-    <AIProvider>
-      <ChatContent />
-    </AIProvider>
+    <AuthProvider>
+      <AIProvider>
+        <ChatContent />
+      </AIProvider>
+    </AuthProvider>
   )
 }

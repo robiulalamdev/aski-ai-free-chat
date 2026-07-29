@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Send, Square, Sparkles } from "lucide-react"
+import { Send, Square, Paperclip, Mic } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function ChatInput({
@@ -38,8 +38,8 @@ export function ChatInput({
   }
 
   return (
-    <div className="border-t border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="mx-auto flex max-w-3xl items-end gap-2">
+    <div className="border-t border-[#2e2840] bg-[#1e1929] p-4">
+      <div className="mx-auto flex w-full items-end gap-3 px-6">
         <div className="relative flex-1">
           <textarea
             ref={textareaRef}
@@ -48,20 +48,25 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Ask anything..."
             rows={1}
-            className="max-h-[200px] w-full resize-none rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 pr-12 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 dark:border-zinc-800 dark:bg-zinc-900 dark:placeholder:text-zinc-500"
+            className="max-h-[200px] w-full resize-none rounded-2xl border border-[#2e2840] bg-[#231e30] px-5 py-3.5 pr-24 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
             disabled={isGenerating}
           />
-          {!input.trim() && !isGenerating && (
-            <Sparkles className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-300 dark:text-zinc-600" />
-          )}
+          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438]">
+              <Paperclip className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438]">
+              <Mic className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {isGenerating ? (
-          <Button variant="destructive" size="icon" onClick={onStop} className="shrink-0">
+          <Button onClick={onStop} className="h-11 w-11 shrink-0 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg">
             <Square className="h-4 w-4" />
           </Button>
         ) : (
-          <Button variant="premium" size="icon" onClick={handleSubmit} disabled={!input.trim()} className="shrink-0">
+          <Button onClick={handleSubmit} disabled={!input.trim()} className="h-11 w-11 shrink-0 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-600/20 disabled:opacity-40 disabled:shadow-none">
             <Send className="h-4 w-4" />
           </Button>
         )}
