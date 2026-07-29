@@ -99,7 +99,7 @@ export async function middleware(request: NextRequest) {
   // ── User routes ──
   const isLanding = pathname === "/"
   const isAuthPage = pathname === "/login" || pathname === "/signup"
-  const isProtected = pathname.startsWith("/c") || pathname.startsWith("/account")
+  const isProtected = pathname.startsWith("/c") || pathname.startsWith("/account") || pathname.startsWith("/t")
 
   if (isLanding) return NextResponse.next()
 
@@ -144,5 +144,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/c/:path*", "/account/:path*", "/login", "/signup", "/dashboard/:path*"],
+  matcher: ["/chat/:path*", "/c/:path*", "/t/:path*", "/account/:path*", "/login", "/signup", "/dashboard/:path*"],
 }

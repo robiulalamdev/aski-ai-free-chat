@@ -42,9 +42,6 @@ export function Nav() {
           <Link href="#features" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
             Features
           </Link>
-          <Link href="/tools" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
-            Tools
-          </Link>
           <Link href="#pricing" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
             Pricing
           </Link>
@@ -84,9 +81,6 @@ export function Nav() {
         <div className="space-y-1 border-t border-[var(--border-custom)] bg-[var(--background)]/95 backdrop-blur-xl px-4 pb-4 pt-3">
           <Link href="#features" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface)] hover:text-white transition-colors">
             Features
-          </Link>
-          <Link href="/tools" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface)] hover:text-white transition-colors">
-            Tools
           </Link>
           <Link href="#pricing" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface)] hover:text-white transition-colors">
             Pricing

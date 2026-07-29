@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { User, Settings, Shield, CreditCard, ArrowLeft, Users, Webhook, BarChart3, Wrench } from "lucide-react"
+import { User, Settings, Shield, CreditCard, ArrowLeft, Users, Webhook, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -10,7 +10,6 @@ const navItems = [
   { href: "/account/settings", label: "Settings", icon: Settings },
   { href: "/account/security", label: "Security", icon: Shield },
   { href: "/account/subscription", label: "Subscription", icon: CreditCard },
-  { href: "/tools", label: "AI Tools", icon: Wrench },
   { href: "/account/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/account/team", label: "Team", icon: Users },
   { href: "/account/integrations", label: "Integrations", icon: Webhook },

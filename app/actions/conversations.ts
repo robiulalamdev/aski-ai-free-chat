@@ -16,7 +16,7 @@ async function getUser() {
   }
 }
 
-export async function createConversation(title?: string) {
+export async function createConversation(title?: string, toolType?: string) {
   const user = await getUser()
   if (!user) return null
 
@@ -24,6 +24,7 @@ export async function createConversation(title?: string) {
     data: {
       userId: user.userId,
       title: title || "New Chat",
+      toolType: toolType || null,
     },
     include: { messages: true },
   })
@@ -31,6 +32,7 @@ export async function createConversation(title?: string) {
   return {
     id: conv.id,
     title: conv.title,
+    toolType: conv.toolType,
     messages: conv.messages.map((m) => ({ id: m.id, role: m.role as "user" | "assistant", content: m.content, createdAt: m.createdAt.getTime() })),
     createdAt: conv.createdAt.getTime(),
     updatedAt: conv.updatedAt.getTime(),
@@ -51,6 +53,7 @@ export async function getUserConversations() {
   return convs.map((c) => ({
     id: c.id,
     title: c.title,
+    toolType: c.toolType,
     messages: c.messages.map((m) => ({ id: m.id, role: m.role as "user" | "assistant", content: m.content, createdAt: m.createdAt.getTime() })),
     createdAt: c.createdAt.getTime(),
     updatedAt: c.updatedAt.getTime(),
@@ -72,6 +75,7 @@ export async function getConversationById(id: string) {
   return {
     id: conv.id,
     title: conv.title,
+    toolType: conv.toolType,
     messages: conv.messages.map((m) => ({ id: m.id, role: m.role as "user" | "assistant", content: m.content, createdAt: m.createdAt.getTime() })),
     createdAt: conv.createdAt.getTime(),
     updatedAt: conv.updatedAt.getTime(),
@@ -102,6 +106,7 @@ export async function addMessageToConversation(conversationId: string, role: str
   return {
     id: conv.id,
     title: conv.title,
+    toolType: conv.toolType,
     messages: [...conv.messages, message].map((m) => ({
       id: m.id,
       role: m.role as "user" | "assistant",

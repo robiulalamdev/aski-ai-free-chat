@@ -25,7 +25,8 @@ class AIRuntimeService {
 
   async processMessage(
     messages: { role: string; content: string }[],
-    onToken?: (token: string) => void
+    onToken?: (token: string) => void,
+    toolType?: string | null
   ): Promise<string> {
     this.abortController = new AbortController()
 
@@ -34,6 +35,7 @@ class AIRuntimeService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        toolType: toolType || undefined,
       }),
       signal: this.abortController.signal,
     })

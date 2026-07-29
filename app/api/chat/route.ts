@@ -88,12 +88,31 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const { messages } = await req.json()
+  const { messages, toolType } = await req.json()
+
+  const systemPrompts: Record<string, string> = {
+    code_generator: `You are an expert web developer. Generate clean, modern HTML/CSS/JavaScript code based on the user's description.
+Always wrap code in markdown code blocks with the appropriate language tag (html, css, javascript).
+For complete pages, provide a single HTML file with embedded CSS and JS when possible.
+Use modern CSS (flexbox, grid, variables) and clean JavaScript.
+Make designs responsive and visually appealing.
+When the user asks for changes, provide the COMPLETE updated code, not just diffs.
+Always include all necessary code in your response - never say "here's what changed" without the full code.`,
+    resume_builder: `You are a professional resume writer and HTML/CSS expert. Create beautiful, ATS-friendly resumes in HTML format.
+Based on the user's description, generate a complete resume with proper HTML structure and inline CSS styling.
+Include sections like: Header (name, contact), Summary, Experience, Education, Skills as appropriate.
+Use clean, modern design with professional typography.
+Make it printer-friendly and responsive.
+When the user asks for changes, provide the COMPLETE updated resume HTML.
+Always wrap your HTML output in a markdown code block with html tag.`,
+  }
+
+  const defaultPrompt = "You are Aria, a helpful AI assistant. Respond naturally and concisely."
 
   const body = JSON.stringify({
     model: "deepseek/deepseek-chat",
     messages: [
-      { role: "system", content: "You are Aria, a helpful AI assistant. Respond naturally and concisely." },
+      { role: "system", content: systemPrompts[toolType] || defaultPrompt },
       ...messages,
     ],
     stream: true,

@@ -6,6 +6,7 @@ import { ChatHeader } from "./chat-header"
 import { ChatMessages } from "./chat-messages"
 import { ChatInput } from "./chat-input"
 import { Sidebar } from "./sidebar"
+import { ToolPreviewPanel } from "./tool-preview-panel"
 import { AIProvider, useAI } from "@/components/providers/ai-provider"
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider"
 import type { Conversation, Message } from "@/types/chat"
@@ -17,6 +18,24 @@ import {
   updateConversationTitle,
   deleteUserConversation,
 } from "@/app/actions/conversations"
+
+const TOOL_URL_MAP: Record<string, string> = {
+  code_generator: "code-generator",
+  resume_builder: "resume-builder",
+}
+
+const TOOL_SLUG_MAP: Record<string, string> = {
+  "code-generator": "code_generator",
+  "resume-builder": "resume_builder",
+}
+
+function extractToolAndId(pathname: string): { toolType: string | null; id: string | null } {
+  const parts = pathname.split("/")
+  if (parts[1] === "t" && parts[2] && parts[3]) {
+    return { toolType: TOOL_SLUG_MAP[parts[2]] || parts[2], id: parts[3] }
+  }
+  return { toolType: null, id: null }
+}
 
 async function generateAITitle(message: string): Promise<string> {
   try {
@@ -47,12 +66,15 @@ function ChatContent() {
   const { user, logout } = useAuth()
 
   const activeIdRef = useRef<string | null>(null)
+  const activeToolRef = useRef<string | null>(null)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loadingConversation, setLoadingConversation] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(true)
 
   const activeConversation = conversations.find((c) => c.id === activeIdRef.current)
   const isNewChat = !activeIdRef.current
+  const isToolChat = !!activeToolRef.current
 
   // Load conversations on mount
   useEffect(() => {
@@ -66,9 +88,12 @@ function ChatContent() {
   useEffect(() => {
     if (!initialized) return
     const parts = pathname.split("/")
-    const urlId = parts[2]
-    if (urlId && parts[1] === "c" && !activeIdRef.current) {
+
+    // Handle /c/{id} (normal chat)
+    if (parts[1] === "c" && parts[2] && !activeIdRef.current) {
+      const urlId = parts[2]
       activeIdRef.current = urlId
+      activeToolRef.current = null
       setLoadingConversation(true)
       getConversationById(urlId).then((conv) => {
         if (!conv) {
@@ -77,6 +102,31 @@ function ChatContent() {
           setLoadingConversation(false)
           return
         }
+        activeToolRef.current = conv.toolType || null
+        setConversations((prev) => {
+          const exists = prev.find((c) => c.id === conv.id)
+          if (exists) return prev
+          return [conv, ...prev.filter((c) => c.id !== conv.id)]
+        })
+        setDisplayMessages(conv.messages)
+        setLoadingConversation(false)
+      })
+    }
+    // Handle /t/{tool}/{id} (tool chat)
+    else if (parts[1] === "t" && parts[2] && parts[3] && !activeIdRef.current) {
+      const { toolType, id } = extractToolAndId(pathname)
+      activeIdRef.current = id
+      activeToolRef.current = toolType
+      setLoadingConversation(true)
+      getConversationById(id!).then((conv) => {
+        if (!conv) {
+          activeIdRef.current = null
+          activeToolRef.current = null
+          window.history.replaceState(null, "", "/chat/new")
+          setLoadingConversation(false)
+          return
+        }
+        activeToolRef.current = conv.toolType || toolType
         setConversations((prev) => {
           const exists = prev.find((c) => c.id === conv.id)
           if (exists) return prev
@@ -95,6 +145,7 @@ function ChatContent() {
 
   const handleNew = useCallback(() => {
     activeIdRef.current = null
+    activeToolRef.current = null
     setDisplayMessages([])
     setStreamingText("")
     setIsGenerating(false)
@@ -105,17 +156,36 @@ function ChatContent() {
   const handleSelect = useCallback((id: string) => {
     activeIdRef.current = id
     const conv = conversations.find((c) => c.id === id)
+    activeToolRef.current = conv?.toolType || null
     setDisplayMessages(conv?.messages || [])
     setStreamingText("")
     setIsGenerating(false)
-    window.history.replaceState(null, "", `/c/${id}`)
+
+    if (conv?.toolType) {
+      const slug = TOOL_URL_MAP[conv.toolType] || conv.toolType
+      window.history.replaceState(null, "", `/t/${slug}/${id}`)
+    } else {
+      window.history.replaceState(null, "", `/c/${id}`)
+    }
     if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [conversations])
+
+  const handleToolSelect = useCallback((toolId: string) => {
+    activeIdRef.current = null
+    activeToolRef.current = toolId
+    setDisplayMessages([])
+    setStreamingText("")
+    setIsGenerating(false)
+    const slug = TOOL_URL_MAP[toolId] || toolId
+    window.history.replaceState(null, "", `/t/${slug}/new`)
+    if (window.innerWidth < 1024) setSidebarOpen(false)
+  }, [])
 
   const handleDelete = useCallback(async (id: string) => {
     await deleteUserConversation(id)
     if (activeIdRef.current === id) {
       activeIdRef.current = null
+      activeToolRef.current = null
       setDisplayMessages([])
       window.history.replaceState(null, "", "/chat/new")
     }
@@ -130,6 +200,7 @@ function ChatContent() {
   const handleSend = useCallback(async (content: string) => {
     const userMsg = makeMsg("user", content)
     const isFirstMessage = displayMessages.length === 0
+    const currentToolType = activeToolRef.current
 
     // Show user message instantly
     setDisplayMessages((prev) => [...prev, userMsg])
@@ -142,7 +213,7 @@ function ChatContent() {
 
       // Create conversation if needed
       if (!currentId) {
-        const conv = await createConversation()
+        const conv = await createConversation(undefined, currentToolType || undefined)
         if (!conv) {
           setIsGenerating(false)
           setDisplayMessages((prev) => prev.filter((m) => m.id !== userMsg.id))
@@ -173,7 +244,7 @@ function ChatContent() {
       try {
         fullResponse = await processMessage(messagesForAI, (token) => {
           setStreamingText((prev) => prev + token)
-        })
+        }, currentToolType)
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Sorry, an error occurred."
         fullResponse = message.includes("Daily token limit reached")
@@ -187,7 +258,12 @@ function ChatContent() {
       setDisplayMessages((prev) => [...prev, aiMsg])
 
       if (isNewConversation) {
-        window.history.replaceState(null, "", `/c/${currentId}`)
+        if (currentToolType) {
+          const slug = TOOL_URL_MAP[currentToolType] || currentToolType
+          window.history.replaceState(null, "", `/t/${slug}/${currentId}`)
+        } else {
+          window.history.replaceState(null, "", `/c/${currentId}`)
+        }
       }
 
       const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
@@ -214,7 +290,7 @@ function ChatContent() {
     try {
       fullResponse = await processMessage(msgsForAI, (token) => {
         setStreamingText((prev) => prev + token)
-      })
+      }, activeToolRef.current)
     } catch (err) {
       fullResponse = "Sorry, an error occurred while generating the response."
     }
@@ -253,6 +329,9 @@ function ChatContent() {
     )
   }
 
+  // Get latest AI message for preview
+  const latestAiMessage = [...displayMessages].reverse().find((m) => m.role === "assistant")
+
   return (
     <div className="flex h-screen bg-[var(--background)]">
       <Sidebar
@@ -265,6 +344,7 @@ function ChatContent() {
         open={sidebarOpen}
         user={user}
         onLogout={logout}
+        onToolSelect={handleToolSelect}
       />
 
       <div className="flex flex-1 flex-col min-w-0">
@@ -276,33 +356,55 @@ function ChatContent() {
           activeConversationId={activeIdRef.current}
         />
 
-        {isNewChat && displayMessages.length === 0 && !isGenerating ? (
-          <div className="flex flex-1 items-center justify-center">
-            <div className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 mb-4">
-                <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
-                  <path d="M12 12 2.1 9.3" />
-                </svg>
+        <div className="flex flex-1 min-h-0">
+          {/* Chat Messages */}
+          <div className={cn("flex flex-col min-w-0", isToolChat && previewOpen ? "w-1/2" : "flex-1")}>
+            {isNewChat && displayMessages.length === 0 && !isGenerating ? (
+              <div className="flex flex-1 items-center justify-center">
+                <div className="text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 mb-4">
+                    <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                      <path d="M12 12 2.1 9.3" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
+                  <p className="mt-2 text-sm text-zinc-500">Ask me anything — I&apos;m powered by AI.</p>
+                  {isToolChat && (
+                    <p className="mt-1 text-xs text-violet-400">
+                      {activeToolRef.current === "code_generator" ? "Describe what you want to build" : "Tell me about your experience"}
+                    </p>
+                  )}
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
-              <p className="mt-2 text-sm text-zinc-500">Ask me anything — I&apos;m powered by AI.</p>
-            </div>
-          </div>
-        ) : (
-          <ChatMessages
-            messages={displayMessages}
-            isGenerating={isGenerating}
-            streamingText={streamingText}
-            onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
-          />
-        )}
+            ) : (
+              <ChatMessages
+                messages={displayMessages}
+                isGenerating={isGenerating}
+                streamingText={streamingText}
+                onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
+              />
+            )}
 
-        <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />
+            <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />
+          </div>
+
+          {/* Tool Preview Panel */}
+          {isToolChat && (
+            <ToolPreviewPanel
+              toolType={activeToolRef.current!}
+              content={latestAiMessage?.content || ""}
+              isOpen={previewOpen}
+              onToggle={() => setPreviewOpen(!previewOpen)}
+            />
+          )}
+        </div>
       </div>
     </div>
   )
 }
+
+import { cn } from "@/lib/utils"
 
 export function ChatLayout() {
   return (

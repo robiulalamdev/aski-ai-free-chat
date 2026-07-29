@@ -1,6 +1,7 @@
 model Conversation {
     id          String    @id @default(cuid())
     title       String    @default("New Chat")
+    toolType    String?   // "code_generator" | "resume_builder" | null for normal chat
     isShared    Boolean   @default(false)
     shareSlug   String?   @unique
     createdAt   DateTime  @default(now())

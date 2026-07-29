@@ -10,6 +10,7 @@ export type Message = {
 export type Conversation = {
   id: string
   title: string
+  toolType?: string | null
   messages: Message[]
   createdAt: number
   updatedAt: number

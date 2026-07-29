@@ -6,7 +6,7 @@ import type { AIStatus } from "@/types/ai"
 
 type AIContextType = {
   status: AIStatus
-  processMessage: (messages: { role: string; content: string }[], onToken?: (token: string) => void) => Promise<string>
+  processMessage: (messages: { role: string; content: string }[], onToken?: (token: string) => void, toolType?: string | null) => Promise<string>
   cancel: () => void
 }
 
@@ -16,10 +16,10 @@ export function AIProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AIStatus>("ready")
 
   const processMessage = useCallback(
-    async (messages: { role: string; content: string }[], onToken?: (token: string) => void) => {
+    async (messages: { role: string; content: string }[], onToken?: (token: string) => void, toolType?: string | null) => {
       setStatus("generating")
       try {
-        const result = await aiRuntime.processMessage(messages, onToken)
+        const result = await aiRuntime.processMessage(messages, onToken, toolType)
         setStatus("ready")
         return result
       } catch (err) {
