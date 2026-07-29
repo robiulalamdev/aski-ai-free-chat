@@ -71,14 +71,18 @@ function ChatContent() {
       activeIdRef.current = urlId
       setLoadingConversation(true)
       getConversationById(urlId).then((conv) => {
-        if (conv) {
-          setConversations((prev) => {
-            const exists = prev.find((c) => c.id === conv.id)
-            if (exists) return prev
-            return [conv, ...prev.filter((c) => c.id !== conv.id)]
-          })
-          setDisplayMessages(conv.messages)
+        if (!conv) {
+          activeIdRef.current = null
+          window.history.replaceState(null, "", "/chat/new")
+          setLoadingConversation(false)
+          return
         }
+        setConversations((prev) => {
+          const exists = prev.find((c) => c.id === conv.id)
+          if (exists) return prev
+          return [conv, ...prev.filter((c) => c.id !== conv.id)]
+        })
+        setDisplayMessages(conv.messages)
         setLoadingConversation(false)
       })
     }
