@@ -37,18 +37,18 @@ function AssistantMessage({
         <Bot className="h-5 w-5 text-white" />
       </div>
       <div className="flex flex-col items-start max-w-[75%]">
-        <div className="rounded-2xl rounded-bl-md bg-[#231e30] px-4 py-3">
-          <div className="text-sm leading-relaxed">
+        <div className="rounded-2xl rounded-bl-md bg-[var(--surface-light)] px-4 py-3">
+          <div className="text-sm leading-relaxed text-[var(--foreground)]">
             <MarkdownRenderer content={message.content} />
           </div>
         </div>
         <div className="flex items-center gap-1.5 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <span className="text-[10px] text-zinc-600">{formatTime(message.createdAt)}</span>
-          <button onClick={copyMessage} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438] transition-colors" title="Copy message">
+          <button onClick={copyMessage} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[var(--surface-light)] transition-colors" title="Copy message">
             {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
           </button>
           {isLast && onRegenerate && (
-            <button onClick={onRegenerate} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438] transition-colors" title="Regenerate response">
+            <button onClick={onRegenerate} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[var(--surface-light)] transition-colors" title="Regenerate response">
               <RefreshCw className="h-3 w-3" />
             </button>
           )}
@@ -71,9 +71,7 @@ export function ChatMessages({
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    console.log("[ChatMessages] RENDER msgs:", messages.length, "generating:", isGenerating, "stream:", streamingText ? streamingText.substring(0, 30) : "empty")
-  })
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -133,7 +131,7 @@ export function ChatMessages({
             <Bot className="h-5 w-5 text-white" />
           </div>
           <div className="flex flex-col items-start max-w-[75%]">
-            <div className="rounded-2xl rounded-bl-md bg-[#231e30] px-4 py-3">
+        <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
               <div className="text-sm leading-relaxed">
                 <MarkdownRenderer content={streamingText} />
                 <span className="inline-block h-4 w-1.5 animate-pulse bg-violet-500 ml-0.5 rounded-sm align-text-bottom" />
@@ -148,7 +146,7 @@ export function ChatMessages({
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-600/20">
             <Bot className="h-5 w-5 text-white" />
           </div>
-          <div className="rounded-2xl rounded-bl-md bg-[#231e30] px-4 py-3">
+          <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
             <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
           </div>
         </div>

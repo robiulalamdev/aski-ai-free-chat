@@ -38,7 +38,7 @@ export function ChatInput({
   }
 
   return (
-    <div className="border-t border-[#2e2840] bg-[#1e1929] p-4">
+    <div className="border-t border-[var(--border-custom)] bg-[var(--background)] p-4">
       <div className="mx-auto flex w-full items-end gap-3 px-6">
         <div className="relative flex-1">
           <textarea
@@ -48,7 +48,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Ask anything..."
             rows={1}
-            className="max-h-[200px] w-full resize-none rounded-2xl border border-[#2e2840] bg-[#231e30] px-5 py-3.5 pr-14 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+            className="max-h-[200px] w-full resize-none rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] px-5 py-3.5 pr-14 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
             disabled={isGenerating}
           />
         </div>

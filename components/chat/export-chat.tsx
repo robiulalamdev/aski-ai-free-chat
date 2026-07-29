@@ -90,30 +90,30 @@ export function ExportChat({ conversations }: { conversations: Conversation[] })
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-1 p-1">
       <button
         onClick={() => handleExport("markdown")}
-        className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as Markdown"
       >
-        {exported === "markdown" ? <Check className="h-3 w-3 text-green-400" /> : <FileText className="h-3 w-3" />}
-        MD
+        {exported === "markdown" ? <Check className="h-4 w-4 text-green-400" /> : <FileText className="h-4 w-4" />}
+        Markdown
       </button>
       <button
         onClick={() => handleExport("json")}
-        className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as JSON"
       >
-        {exported === "json" ? <Check className="h-3 w-3 text-green-400" /> : <FileJson className="h-3 w-3" />}
+        {exported === "json" ? <Check className="h-4 w-4 text-green-400" /> : <FileJson className="h-4 w-4" />}
         JSON
       </button>
       <button
         onClick={() => handleExport("text")}
-        className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as Text"
       >
-        {exported === "text" ? <Check className="h-3 w-3 text-green-400" /> : <Download className="h-3 w-3" />}
-        TXT
+        {exported === "text" ? <Check className="h-4 w-4 text-green-400" /> : <Download className="h-4 w-4" />}
+        Text
       </button>
     </div>
   )

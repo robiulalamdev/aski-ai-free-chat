@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import type { Conversation } from "@/types/chat"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts
@@ -39,7 +40,6 @@ export function Sidebar({
 }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
-  const [menuOpen, setMenuOpen] = useState(false)
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
   const fullName = user ? `${user.firstName} ${user.lastName}` : "User"
@@ -135,50 +135,39 @@ export function Sidebar({
 
       {/* User Menu */}
       <div className="border-t border-[var(--border-custom)] p-2">
-        <div className="relative">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--surface)]"
-          >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-semibold text-white">
-              {userInitial}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--foreground)] truncate">{fullName}</p>
-              <p className="text-[11px] text-zinc-500">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
-            </div>
-            <ChevronUp className={cn("h-4 w-4 text-zinc-500 transition-transform", menuOpen && "rotate-180")} />
-          </button>
-
-          {menuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-1 rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl p-1">
-              <Link
-                href="/account"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
-              >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--surface)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-semibold text-white">
+                {userInitial}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-[var(--foreground)] truncate">{fullName}</p>
+                <p className="text-[11px] text-zinc-500">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
+              </div>
+              <ChevronUp className="h-4 w-4 text-zinc-500" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[calc(100%-1rem)]">
+            <DropdownMenuItem asChild>
+              <Link href="/account">
                 <User className="h-4 w-4" />
                 Account
               </Link>
-              <Link
-                href="/account/settings"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
-              >
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/account/settings">
                 <Settings className="h-4 w-4" />
                 Settings
               </Link>
-              <div className="my-1 border-t border-[var(--border-custom)]" />
-              <button
-                onClick={() => { onLogout?.(); setMenuOpen(false) }}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onLogout?.()} className="text-red-400 focus:text-red-400 focus:bg-red-500/10">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )

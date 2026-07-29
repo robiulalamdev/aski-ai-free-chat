@@ -18,13 +18,19 @@ import {
   deleteUserConversation,
 } from "@/app/actions/conversations"
 
-function generateSmartTitle(firstMessage: string): string {
-  const cleaned = firstMessage.trim()
-  if (cleaned.length <= 50) return cleaned
-  const words = cleaned.split(/\s+/).slice(0, 8)
-  let title = words.join(" ")
-  if (title.length > 50) title = title.slice(0, 47) + "..."
-  return title
+async function generateAITitle(message: string): Promise<string> {
+  try {
+    const res = await fetch("/api/title", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    })
+    if (!res.ok) return message.slice(0, 50)
+    const data = await res.json()
+    return data.title || message.slice(0, 50)
+  } catch {
+    return message.slice(0, 50)
+  }
 }
 
 function makeMsg(role: "user" | "assistant", content: string): Message {
@@ -43,9 +49,10 @@ function ChatContent() {
   const activeIdRef = useRef<string | null>(null)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const loadingFromUrl = useRef(false)
+  const [loadingConversation, setLoadingConversation] = useState(false)
 
   const activeConversation = conversations.find((c) => c.id === activeIdRef.current)
+  const isNewChat = !activeIdRef.current
 
   // Load conversations on mount
   useEffect(() => {
@@ -55,14 +62,14 @@ function ChatContent() {
     })
   }, [])
 
-  // Load conversation from URL (only on initial page load / direct navigation)
+  // Load conversation from URL (only on direct navigation)
   useEffect(() => {
     if (!initialized) return
     const parts = pathname.split("/")
     const urlId = parts[2]
     if (urlId && parts[1] === "c" && !activeIdRef.current) {
-      loadingFromUrl.current = true
       activeIdRef.current = urlId
+      setLoadingConversation(true)
       getConversationById(urlId).then((conv) => {
         if (conv) {
           setConversations((prev) => {
@@ -72,7 +79,7 @@ function ChatContent() {
           })
           setDisplayMessages(conv.messages)
         }
-        loadingFromUrl.current = false
+        setLoadingConversation(false)
       })
     }
   }, [pathname, initialized]) // eslint-disable-line
@@ -149,11 +156,11 @@ function ChatContent() {
         setConversations((prev) => [updatedConv, ...prev.filter((c) => c.id !== updatedConv.id)])
       }
 
-      // Generate smart title
+      // Generate AI title in background (non-blocking)
       if (isFirstMessage) {
-        const smartTitle = generateSmartTitle(content)
-        await updateConversationTitle(currentId, smartTitle)
-        await syncConversations()
+        generateAITitle(content).then((title) => {
+          updateConversationTitle(currentId, title).then(() => syncConversations())
+        })
       }
 
       // Stream AI response
@@ -170,12 +177,11 @@ function ChatContent() {
           : "Sorry, an error occurred while generating the response."
       }
 
-      // AI done - NOW change URL and show response
+      // AI done - show response and change URL
       setStreamingText("")
       const aiMsg = makeMsg("assistant", fullResponse)
       setDisplayMessages((prev) => [...prev, aiMsg])
 
-      // Change URL only after AI response is complete
       if (isNewConversation) {
         window.history.replaceState(null, "", `/c/${currentId}`)
       }
@@ -235,16 +241,16 @@ function ChatContent() {
     setIsGenerating(false)
   }, [cancel, streamingText])
 
-  if (!initialized) {
+  if (!initialized || loadingConversation) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#1e1929]">
+      <div className="flex h-screen items-center justify-center bg-[var(--background)]">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-[#1e1929]">
+    <div className="flex h-screen bg-[var(--background)]">
       <Sidebar
         conversations={conversations}
         activeId={activeIdRef.current}
@@ -266,12 +272,27 @@ function ChatContent() {
           activeConversationId={activeIdRef.current}
         />
 
-        <ChatMessages
-          messages={displayMessages}
-          isGenerating={isGenerating}
-          streamingText={streamingText}
-          onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
-        />
+        {isNewChat && displayMessages.length === 0 && !isGenerating ? (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 mb-4">
+                <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                  <path d="M12 12 2.1 9.3" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
+              <p className="mt-2 text-sm text-zinc-500">Ask me anything — I&apos;m powered by AI.</p>
+            </div>
+          </div>
+        ) : (
+          <ChatMessages
+            messages={displayMessages}
+            isGenerating={isGenerating}
+            streamingText={streamingText}
+            onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
+          />
+        )}
 
         <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />
       </div>

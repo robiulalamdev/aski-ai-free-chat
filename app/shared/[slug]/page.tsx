@@ -42,7 +42,7 @@ export default function SharedChatPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#1e1929]">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
         <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
       </div>
     )
@@ -50,7 +50,7 @@ export default function SharedChatPage() {
 
   if (notFound || !conv) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#1e1929]">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-2">Chat Not Found</h1>
           <p className="text-zinc-500 text-sm">This conversation doesn&apos;t exist or is no longer shared.</p>
@@ -63,8 +63,8 @@ export default function SharedChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e1929]">
-      <header className="border-b border-[#2e2840] bg-[#1e1929] px-6 py-4">
+    <div className="min-h-screen bg-[var(--background)]">
+      <header className="border-b border-[var(--border-custom)] bg-[var(--background)] px-6 py-4">
         <div className="mx-auto max-w-3xl flex items-center justify-between">
           <div>
             <h1 className="text-lg font-semibold text-white">{conv.title}</h1>
@@ -89,7 +89,7 @@ export default function SharedChatPage() {
               <div className={`rounded-2xl px-4 py-3 ${
                 msg.role === "user"
                   ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-br-md"
-                  : "bg-[#231e30] text-zinc-100 rounded-bl-md"
+                  : "bg-[var(--surface-light)] text-zinc-100 rounded-bl-md"
               }`}>
                 {msg.role === "user" ? (
                   <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
@@ -103,7 +103,7 @@ export default function SharedChatPage() {
             </div>
 
             {msg.role === "user" && (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2a2438] border border-[#2e2840]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface)] border border-[var(--border-custom)]">
                 <User className="h-4 w-4 text-zinc-400" />
               </div>
             )}
@@ -111,7 +111,7 @@ export default function SharedChatPage() {
         ))}
       </div>
 
-      <footer className="border-t border-[#2e2840] px-6 py-6 text-center">
+      <footer className="border-t border-[var(--border-custom)] px-6 py-6 text-center">
         <p className="text-xs text-zinc-600">Powered by NexaChat</p>
       </footer>
     </div>

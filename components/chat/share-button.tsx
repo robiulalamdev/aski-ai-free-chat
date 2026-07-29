@@ -1,19 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Share2, Link2, Copy, Check, Globe, GlobeOff, Lock } from "lucide-react"
+import { Share2, Link2, Copy, Check, Globe, GlobeOff, Lock, X } from "lucide-react"
 import { toggleShare, getShareStatus } from "@/app/actions/share"
 import { hasFeatureAction } from "@/app/actions/account"
 import { FEATURES } from "@/lib/features"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function ShareButton({ conversationId }: { conversationId: string }) {
   const [isShared, setIsShared] = useState(false)
   const [shareSlug, setShareSlug] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [showDropdown, setShowDropdown] = useState(false)
   const [hasAccess, setHasAccess] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     hasFeatureAction(FEATURES.SHARE_CHAT).then((allowed) => setHasAccess(allowed))
@@ -28,13 +29,12 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
   const handleToggle = async () => {
     setError(null)
 
-    // Re-check feature access before every action
     const allowed = await hasFeatureAction(FEATURES.SHARE_CHAT)
     if (!allowed) {
       setHasAccess(false)
       setError("This feature requires a paid plan. Please upgrade to access share.")
       setLoading(false)
-      setShowDropdown(false)
+      setOpen(false)
       return
     }
 
@@ -42,7 +42,6 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
     const result = await toggleShare(conversationId)
     if (result?.error) {
       setError(result.error)
-      // If server says no access, update UI
       if (result.error.includes("upgrade") || result.error.includes("paid plan")) {
         setHasAccess(false)
       }
@@ -51,7 +50,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
       setShareSlug(result.slug || null)
     }
     setLoading(false)
-    setShowDropdown(false)
+    setOpen(false)
   }
 
   const shareUrl = shareSlug ? `${typeof window !== "undefined" ? window.location.origin : ""}/shared/${shareSlug}` : ""
@@ -66,22 +65,22 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
 
   if (!hasAccess) {
     return (
-      <div className="relative">
-        <button
-          onClick={() => setShowDropdown(!showDropdown)}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-500 cursor-not-allowed opacity-60"
-          title="Upgrade to share conversations"
-        >
-          <Lock className="h-3 w-3" />
-          Share
-        </button>
-
-        {showDropdown && (
-          <div className="absolute right-0 top-full mt-2 w-72 rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-4 shadow-xl z-50">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-500 cursor-not-allowed opacity-60"
+            title="Upgrade to share conversations"
+          >
+            <Lock className="h-3 w-3" />
+            Share
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" sideOffset={8} className="w-72 p-0">
+          <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium text-[var(--foreground)]">Share Conversation</h4>
-              <button onClick={() => setShowDropdown(false)} className="text-zinc-500 hover:text-[var(--foreground)]">
-                <span className="text-xs">✕</span>
+              <button onClick={() => setOpen(false)} className="text-zinc-500 hover:text-[var(--foreground)]">
+                <X className="h-3 w-3" />
               </button>
             </div>
             <div className="space-y-3">
@@ -98,28 +97,28 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
               </a>
             </div>
           </div>
-        )}
-      </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setShowDropdown(!showDropdown)}
-        className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
-        title="Share conversation"
-      >
-        {isShared ? <Globe className="h-3 w-3 text-green-400" /> : <Share2 className="h-3 w-3" />}
-        Share
-      </button>
-
-      {showDropdown && (
-        <div className="absolute right-0 top-full mt-2 w-72 rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] p-4 shadow-xl z-50">
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+          title="Share conversation"
+        >
+          {isShared ? <Globe className="h-3 w-3 text-green-400" /> : <Share2 className="h-3 w-3" />}
+          Share
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={8} className="w-72 p-0">
+        <div className="p-4">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-medium text-[var(--foreground)]">Share Conversation</h4>
-            <button onClick={() => setShowDropdown(false)} className="text-zinc-500 hover:text-[var(--foreground)]">
-              <span className="text-xs">✕</span>
+            <button onClick={() => setOpen(false)} className="text-zinc-500 hover:text-[var(--foreground)]">
+              <X className="h-3 w-3" />
             </button>
           </div>
 
@@ -168,7 +167,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
             </div>
           )}
         </div>
-      )}
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
