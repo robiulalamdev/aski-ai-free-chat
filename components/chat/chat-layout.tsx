@@ -6,7 +6,6 @@ import { ChatHeader } from "./chat-header"
 import { ChatMessages } from "./chat-messages"
 import { ChatInput } from "./chat-input"
 import { Sidebar } from "./sidebar"
-import { LoadingScreen } from "./loading-screen"
 import { AIProvider, useAI } from "@/components/providers/ai-provider"
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider"
 import type { Conversation } from "@/types/chat"
@@ -217,7 +216,11 @@ function ChatContent() {
   }, [cancel, streamingText, state.activeId, refresh])
 
   if (!initialized) {
-    return <LoadingScreen onComplete={() => setInitialized(true)} />
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#1e1929]">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+      </div>
+    )
   }
 
   return (
