@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { Loader2, Check, Zap, CreditCard, ExternalLink } from "lucide-react"
+import { Loader2, Check, Zap, CreditCard, ExternalLink, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getAccountAction, getSubscriptionAction } from "@/app/actions/account"
 import { createCheckoutSession, createPortalSession } from "@/app/actions/checkout"
@@ -16,6 +16,19 @@ interface Plan {
   maxTokensPerDay: number
   features: string[]
   isActive: boolean
+}
+
+const FEATURE_LABELS: Record<string, string> = {
+  custom_prompts: "Custom System Prompts",
+  file_upload: "File Upload",
+  export_data: "Export Chat History",
+  priority_support: "Priority Support",
+  api_access: "API Access",
+  team_management: "Team Management",
+  dedicated_support: "Dedicated Support",
+  custom_integrations: "Custom Integrations",
+  advanced_analytics: "Advanced Analytics",
+  custom_theme: "Custom Theme",
 }
 
 function SubscriptionContent() {
@@ -185,7 +198,7 @@ function SubscriptionContent() {
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2.5 text-sm text-zinc-400">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-violet-400" />
-                    {feature}
+                    {FEATURE_LABELS[feature] || feature}
                   </li>
                 ))}
               </ul>
