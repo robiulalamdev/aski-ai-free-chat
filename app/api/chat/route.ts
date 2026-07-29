@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server"
+import env from "@/config/env"
 
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.MIMO_API_KEY
-  if (!apiKey) {
+  if (!env.MIMO_API_KEY) {
     return Response.json({ error: "API key not configured" }, { status: 500 })
   }
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${env.MIMO_API_KEY}`,
     },
     body,
   })

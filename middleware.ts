@@ -1,22 +1,10 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { jwtVerify, SignJWT } from "jose"
+import env from "@/config/env"
 
-const ACCESS_SECRET = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET)
-const REFRESH_SECRET = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET)
-const JWT_ALGORITHM = process.env.JWT_ALGORITHM || "HS256"
-
-const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES_IN || "1h"
-const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d"
-
-const ACCESS_COOKIE = process.env.ACCESS_COOKIE_NAME || "freeai_access_token"
-const REFRESH_COOKIE = process.env.REFRESH_COOKIE_NAME || "freeai_refresh_token"
-const ACCESS_COOKIE_MAX_AGE = parseInt(process.env.ACCESS_COOKIE_MAX_AGE || "3600", 10)
-const REFRESH_COOKIE_MAX_AGE = parseInt(process.env.REFRESH_COOKIE_MAX_AGE || "604800", 10)
-
-const COOKIE_SECURE = process.env.COOKIE_SECURE === "true"
-const COOKIE_HTTP_ONLY = process.env.COOKIE_HTTP_ONLY !== "false"
-const COOKIE_SAME_SITE = (process.env.COOKIE_SAME_SITE || "lax") as "lax" | "strict" | "none"
+const ACCESS_SECRET = new TextEncoder().encode(env.ACCESS_TOKEN_SECRET)
+const REFRESH_SECRET = new TextEncoder().encode(env.REFRESH_TOKEN_SECRET)
 
 interface TokenPayload {
   userId: string
@@ -27,7 +15,7 @@ interface TokenPayload {
 
 async function verifyAccessToken(token: string): Promise<{ valid: boolean; payload?: TokenPayload }> {
   try {
-    const { payload } = await jwtVerify(token, ACCESS_SECRET, { algorithms: [JWT_ALGORITHM] })
+    const { payload } = await jwtVerify(token, ACCESS_SECRET, { algorithms: [env.JWT_ALGORITHM] })
     return { valid: true, payload: payload as unknown as TokenPayload }
   } catch {
     return { valid: false }
@@ -36,7 +24,7 @@ async function verifyAccessToken(token: string): Promise<{ valid: boolean; paylo
 
 async function verifyRefreshToken(token: string): Promise<{ valid: boolean; payload?: TokenPayload }> {
   try {
-    const { payload } = await jwtVerify(token, REFRESH_SECRET, { algorithms: [JWT_ALGORITHM] })
+    const { payload } = await jwtVerify(token, REFRESH_SECRET, { algorithms: [env.JWT_ALGORITHM] })
     return { valid: true, payload: payload as unknown as TokenPayload }
   } catch {
     return { valid: false }
@@ -45,25 +33,25 @@ async function verifyRefreshToken(token: string): Promise<{ valid: boolean; payl
 
 async function mintAccessToken(payload: TokenPayload): Promise<string> {
   return new SignJWT(payload as unknown as Record<string, unknown>)
-    .setProtectedHeader({ alg: JWT_ALGORITHM })
+    .setProtectedHeader({ alg: env.JWT_ALGORITHM })
     .setIssuedAt()
-    .setExpirationTime(ACCESS_TOKEN_EXPIRES)
+    .setExpirationTime(env.ACCESS_TOKEN_EXPIRES_IN)
     .sign(ACCESS_SECRET)
 }
 
 async function mintRefreshToken(payload: TokenPayload): Promise<string> {
   return new SignJWT(payload as unknown as Record<string, unknown>)
-    .setProtectedHeader({ alg: JWT_ALGORITHM })
+    .setProtectedHeader({ alg: env.JWT_ALGORITHM })
     .setIssuedAt()
-    .setExpirationTime(REFRESH_TOKEN_EXPIRES)
+    .setExpirationTime(env.REFRESH_TOKEN_EXPIRES_IN)
     .sign(REFRESH_SECRET)
 }
 
 function setCookie(response: NextResponse, name: string, value: string, maxAge: number) {
   response.cookies.set(name, value, {
-    httpOnly: COOKIE_HTTP_ONLY,
-    secure: COOKIE_SECURE,
-    sameSite: COOKIE_SAME_SITE,
+    httpOnly: env.COOKIE_HTTP_ONLY,
+    secure: env.COOKIE_SECURE,
+    sameSite: env.COOKIE_SAME_SITE,
     path: "/",
     maxAge,
   })
@@ -71,8 +59,8 @@ function setCookie(response: NextResponse, name: string, value: string, maxAge: 
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const accessToken = request.cookies.get(ACCESS_COOKIE)?.value
-  const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value
+  const accessToken = request.cookies.get(env.ACCESS_COOKIE_NAME)?.value
+  const refreshToken = request.cookies.get(env.REFRESH_COOKIE_NAME)?.value
 
   const isAuthPage = pathname === "/login" || pathname === "/signup"
   const isChatPage = pathname.startsWith("/chat")
@@ -90,8 +78,8 @@ export async function middleware(request: NextRequest) {
       const result = await verifyRefreshToken(refreshToken)
       if (result.valid && result.payload) {
         const response = NextResponse.redirect(new URL("/chat", request.url))
-        setCookie(response, ACCESS_COOKIE, await mintAccessToken(result.payload), ACCESS_COOKIE_MAX_AGE)
-        setCookie(response, REFRESH_COOKIE, await mintRefreshToken(result.payload), REFRESH_COOKIE_MAX_AGE)
+        setCookie(response, env.ACCESS_COOKIE_NAME, await mintAccessToken(result.payload), env.ACCESS_COOKIE_MAX_AGE)
+        setCookie(response, env.REFRESH_COOKIE_NAME, await mintRefreshToken(result.payload), env.REFRESH_COOKIE_MAX_AGE)
         return response
       }
     }
@@ -109,8 +97,8 @@ export async function middleware(request: NextRequest) {
       const result = await verifyRefreshToken(refreshToken)
       if (result.valid && result.payload) {
         const response = NextResponse.next()
-        setCookie(response, ACCESS_COOKIE, await mintAccessToken(result.payload), ACCESS_COOKIE_MAX_AGE)
-        setCookie(response, REFRESH_COOKIE, await mintRefreshToken(result.payload), REFRESH_COOKIE_MAX_AGE)
+        setCookie(response, env.ACCESS_COOKIE_NAME, await mintAccessToken(result.payload), env.ACCESS_COOKIE_MAX_AGE)
+        setCookie(response, env.REFRESH_COOKIE_NAME, await mintRefreshToken(result.payload), env.REFRESH_COOKIE_MAX_AGE)
         return response
       }
     }
