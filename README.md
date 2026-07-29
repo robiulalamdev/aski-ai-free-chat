@@ -1,6 +1,6 @@
 # NexaChat
 
-AI-powered chat application with subscription plans, admin dashboard, and Stripe payments.
+AI-powered chat application with subscription plans, AI tools, admin dashboard, and Stripe payments.
 
 ## Tech Stack
 
@@ -20,7 +20,10 @@ AI-powered chat application with subscription plans, admin dashboard, and Stripe
 - Export chats as Markdown, JSON, or Text
 - Regenerate AI responses
 - Subscription plans (Free / Pro / Enterprise)
-- Feature-gated access (team management, integrations, analytics, etc.)
+- Feature-gated access (tools, team management, integrations, etc.)
+- **AI Tools:**
+  - Code Generator — HTML/CSS/JS with live preview and ZIP download
+  - Resume Builder — Form-based resume creation with PDF/DOC export
 - Admin dashboard (`/dashboard`) with role-based access (Super Admin, Admin, Moderator)
 - Stripe checkout and webhook handling
 - Dark purple theme with shadcn-style animated dropdowns
@@ -79,6 +82,7 @@ cd myapp
 npm install
 npx prisma generate
 npx prisma db push
+npx tsx prisma/seed.ts   # Seed plans + admin user
 npm run dev
 ```
 
@@ -96,28 +100,37 @@ Open [http://localhost:3000](http://localhost:3000).
 myapp/
 ├── app/
 │   ├── (auth)/login, signup
-│   ├── account/          # User settings, subscription, team
-│   ├── api/              # API routes (chat, title, webhook)
-│   ├── c/[id]/           # Conversation view
-│   ├── chat/new/         # New chat
-│   ├── dashboard/        # Admin panel
-│   ├── shared/[slug]/    # Public shared chats
-│   ├── not-found.tsx     # 404 page
-│   └── layout.tsx
+│   ├── account/              # User settings, subscription, team
+│   ├── api/
+│   │   ├── chat/             # Streaming chat completions
+│   │   ├── title/            # AI title generation
+│   │   ├── tools/            # Code generator + resume builder APIs
+│   │   └── webhook/stripe/   # Stripe webhook handler
+│   ├── c/[id]/               # Conversation view
+│   ├── chat/new/             # New chat
+│   ├── dashboard/            # Admin panel
+│   ├── shared/[slug]/        # Public shared chats
+│   ├── tools/                # AI tools (index + tool pages)
+│   ├── not-found.tsx         # 404 page
+│   ├── sitemap.ts            # Dynamic sitemap
+│   ├── robots.ts             # Robots.txt
+│   └── manifest.ts           # PWA manifest
 ├── components/
-│   ├── chat/             # Chat UI (layout, messages, input, sidebar)
-│   ├── landing/          # Landing page sections
-│   ├── providers/        # Auth, AI, Theme providers
-│   └── ui/               # shadcn components (button, dropdown-menu, etc.)
-├── config/env.ts         # Centralized env vars
-├── database/models/      # Prisma schema files
+│   ├── chat/                 # Chat UI (layout, messages, input, sidebar)
+│   ├── landing/              # Landing page sections
+│   ├── providers/            # Auth, AI, Theme providers
+│   ├── tools/                # Shared tool components
+│   └── ui/                   # shadcn components
+├── config/env.ts             # Centralized env vars
+├── database/models/          # Prisma schema files
 ├── lib/
-│   ├── auth.ts           # JWT helpers
-│   ├── features.ts       # Feature constants
-│   ├── stripe.ts         # Stripe client
-│   └── prisma.ts         # Prisma client
-├── app/actions/          # Server actions (auth, conversations, share, etc.)
-└── middleware.ts          # Route protection
+│   ├── auth.ts               # JWT helpers
+│   ├── features.ts           # Feature constants + typed slugs
+│   ├── features-server.ts    # Server-side feature checking
+│   ├── stripe.ts             # Stripe client
+│   └── prisma.ts             # Prisma client
+├── app/actions/              # Server actions
+└── middleware.ts              # Route protection
 ```
 
 ## Routes
@@ -127,12 +140,23 @@ myapp/
 | `/` | Public | Landing page |
 | `/login` | Public | User login |
 | `/signup` | Public | User registration |
+| `/tools` | Public | AI tools index |
+| `/tools/code-generator` | Pro+ | Code generator tool |
+| `/tools/resume-builder` | Pro+ | Resume builder tool |
 | `/chat/new` | User | New chat |
 | `/c/[id]` | User | Existing conversation |
 | `/account/*` | User | Settings, subscription, team |
 | `/shared/[slug]` | Public | Shared conversation |
 | `/dashboard` | Admin | Admin panel |
 | `/dashboard/login` | Public | Admin login |
+
+## Plans
+
+| Plan | Price | Tokens/Day | Tools |
+|------|-------|------------|-------|
+| Free | $0 | 50,000 | None |
+| Pro | $9.99/mo | 500,000 | Code Generator, Resume Builder |
+| Enterprise | $29.99/mo | 2,000,000 | All tools + future tools |
 
 ## License
 
