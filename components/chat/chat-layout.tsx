@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { ChatHeader } from "./chat-header"
 import { ChatMessages } from "./chat-messages"
@@ -35,6 +35,7 @@ function ChatContent() {
   const [streamingText, setStreamingText] = useState("")
   const { processMessage, cancel } = useAI()
   const { user, logout } = useAuth()
+  const isSending = useRef(false)
 
   const [state, setState] = useState<{ conversations: Conversation[]; activeId: string | null }>({
     conversations: [],
@@ -44,7 +45,6 @@ function ChatContent() {
   const { conversations, activeId } = state
   const activeConversation = conversations.find((c) => c.id === activeId)
   const messages = activeConversation?.messages || []
-  const isNewChat = !activeId
 
   // Load conversations from DB on mount
   useEffect(() => {
@@ -56,11 +56,11 @@ function ChatContent() {
     })
   }, [])
 
-  // Load conversation from URL if on /c/{id}
+  // Load conversation from URL if on /c/{id} (deep link on page load)
   useEffect(() => {
     if (!initialized) return
     const parts = pathname.split("/")
-    const urlId = parts[2] // /c/{id}
+    const urlId = parts[2]
     if (urlId && parts[1] === "c" && urlId !== activeId) {
       const exists = state.conversations.find((c) => c.id === urlId)
       if (exists) {
@@ -76,7 +76,7 @@ function ChatContent() {
         })
       }
     }
-  }, [pathname, initialized, state.conversations, activeId])
+  }, [pathname, initialized]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const refresh = useCallback(async () => {
     const convs = await getUserConversations()
@@ -101,13 +101,10 @@ function ChatContent() {
   const handleDelete = useCallback(async (id: string) => {
     await deleteUserConversation(id)
     const convs = await getUserConversations()
-    setState((prev) => {
-      const wasActive = prev.activeId === id
-      return {
-        conversations: convs,
-        activeId: wasActive ? null : prev.activeId,
-      }
-    })
+    setState((prev) => ({
+      conversations: convs,
+      activeId: prev.activeId === id ? null : prev.activeId,
+    }))
     window.history.replaceState(null, "", "/chat/new")
   }, [])
 
@@ -117,66 +114,79 @@ function ChatContent() {
   }, [refresh])
 
   const handleSend = useCallback(async (content: string) => {
+    if (isSending.current) return
+    isSending.current = true
     setIsGenerating(true)
     setStreamingText("")
 
-    let currentId = state.activeId
+    try {
+      let currentId = state.activeId
 
-    // Create conversation if new chat
-    if (!currentId) {
-      const conv = await createConversation()
-      if (!conv) {
+      // Create conversation if new chat
+      if (!currentId) {
+        const conv = await createConversation()
+        if (!conv) {
+          setIsGenerating(false)
+          isSending.current = false
+          return
+        }
+        currentId = conv.id
+        // Update URL immediately without unmounting
+        window.history.replaceState(null, "", `/c/${conv.id}`)
+      }
+
+      // Add user message to DB
+      const updatedConv = await addMessageToConversation(currentId, "user", content)
+
+      // NOW set state with conversation that includes user message
+      if (updatedConv) {
+        setState((prev) => ({
+          conversations: [updatedConv, ...prev.conversations.filter((c) => c.id !== updatedConv.id)],
+          activeId: updatedConv.id,
+        }))
+      }
+
+      // Generate smart title from first message
+      const currentConv = state.conversations.find((c) => c.id === currentId)
+      if (!currentConv || currentConv.messages.length === 0) {
+        const smartTitle = generateSmartTitle(content)
+        await updateConversationTitle(currentId, smartTitle)
+      }
+
+      if (!updatedConv) {
         setIsGenerating(false)
+        isSending.current = false
         return
       }
-      currentId = conv.id
-      setState((prev) => ({
-        conversations: [conv, ...prev.conversations.filter((c) => c.id !== conv.id)],
-        activeId: conv.id,
-      }))
-      // Use browser history API to update URL without unmounting component
-      window.history.replaceState(null, "", `/c/${conv.id}`)
-    }
 
-    // Add user message to DB and get updated conversation
-    const updatedConv = await addMessageToConversation(currentId, "user", content)
-    if (updatedConv) {
-      setState((prev) => ({
-        conversations: [updatedConv, ...prev.conversations.filter((c) => c.id !== updatedConv.id)],
-        activeId: updatedConv.id,
-      }))
-    }
-
-    // Get conversation for AI - use updatedConv which has the user message
-    const convForAI = updatedConv
-    if (!convForAI) {
-      setIsGenerating(false)
-      return
-    }
-
-    let fullResponse = ""
-    try {
-      fullResponse = await processMessage(convForAI.messages, (token) => {
-        setStreamingText((prev) => prev + token)
-      })
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Sorry, an error occurred."
-      if (message.includes("Daily token limit reached")) {
-        fullResponse = "⚠️ " + message
-      } else {
-        fullResponse = "Sorry, an error occurred while generating the response."
+      // Stream AI response
+      let fullResponse = ""
+      try {
+        fullResponse = await processMessage(updatedConv.messages, (token) => {
+          setStreamingText((prev) => prev + token)
+        })
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Sorry, an error occurred."
+        if (message.includes("Daily token limit reached")) {
+          fullResponse = "⚠️ " + message
+        } else {
+          fullResponse = "Sorry, an error occurred while generating the response."
+        }
       }
-    }
 
-    setStreamingText("")
-    const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
-    if (finalConv) {
-      setState((prev) => ({
-        conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
-        activeId: finalConv.id,
-      }))
+      // Save AI response
+      setStreamingText("")
+      const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
+      if (finalConv) {
+        setState((prev) => ({
+          conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
+          activeId: finalConv.id,
+        }))
+      }
+    } finally {
+      setIsGenerating(false)
+      isSending.current = false
     }
-    setIsGenerating(false)
   }, [state.activeId, state.conversations, processMessage])
 
   const handleRegenerate = useCallback(async () => {
@@ -256,7 +266,7 @@ function ChatContent() {
 
       <div className="flex flex-1 flex-col min-w-0">
         <ChatHeader
-          title={isNewChat ? "New Chat" : (activeConversation?.title || "New Chat")}
+          title={activeConversation?.title || "New Chat"}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
           conversations={conversations}
@@ -267,7 +277,7 @@ function ChatContent() {
           messages={messages}
           isGenerating={isGenerating}
           streamingText={streamingText}
-          onRegenerate={!isNewChat && messages.length >= 2 ? handleRegenerate : undefined}
+          onRegenerate={!activeId && messages.length < 2 ? undefined : handleRegenerate}
         />
 
         <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />
