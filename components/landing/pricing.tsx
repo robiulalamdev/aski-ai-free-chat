@@ -39,7 +39,7 @@ export async function Pricing() {
   const plans = await getPlans()
 
   return (
-    <section id="pricing" className="py-20 sm:py-28 bg-[#13101c]">
+    <section id="pricing" className="py-20 sm:py-28 bg-[var(--sidebar-bg)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Simple, Transparent Pricing</h2>
@@ -54,8 +54,8 @@ export async function Pricing() {
               key={plan.slug}
               className={`relative flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg ${
                 plan.popular
-                  ? "border-violet-500/50 bg-[#231e30] shadow-violet-600/10"
-                  : "border-[#2e2840] bg-[#1e1929] hover:border-[#3a3450]"
+                  ? "border-violet-500/50 bg-[var(--surface)] shadow-violet-600/10"
+                  : "border-[var(--border-custom)] bg-[var(--background)] hover:border-violet-500/20"
               }`}
             >
               {plan.popular && (

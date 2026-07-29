@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 
 export function CTA() {
   return (
-    <section className="py-20 sm:py-28 bg-[#13101c]">
+    <section className="py-20 sm:py-28 bg-[var(--background)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-16 text-center sm:px-16 sm:py-24">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_60%,rgba(255,255,255,0.15),transparent)]" />
