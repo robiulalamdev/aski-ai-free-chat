@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Trash2, Pencil, Check, X, MessageSquare, Settings, Brain, LogOut } from "lucide-react"
+import { Plus, Trash2, Pencil, Check, X, MessageSquare, Settings, Brain, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 import type { Conversation } from "@/types/chat"
 
 function timeAgo(ts: number): string {
@@ -141,6 +142,9 @@ export function Sidebar({
             <p className="text-sm font-medium text-white truncate">{fullName}</p>
             <p className="text-[11px] text-zinc-500">{userPlan}</p>
           </div>
+          <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-zinc-500 hover:text-zinc-300" title="Profile">
+            <Link href="/chat/profile"><User className="h-4 w-4" /></Link>
+          </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300" title="Settings">
             <Settings className="h-4 w-4" />
           </Button>

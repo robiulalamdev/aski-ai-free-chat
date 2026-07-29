@@ -6,3 +6,73 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+    id           String   @id @default(cuid())
+    firstName    String
+    lastName     String
+    email        String   @unique
+    password     String
+    bio          String   @default("")
+    systemPrompt String   @default("You are FreeAI, a helpful AI assistant. Respond naturally and concisely.")
+    theme        String   @default("dark")
+    plan         String   @default("free")
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    conversations     Conversation[]
+    userSubscriptions UserSubscription[]
+}
+
+model Conversation {
+    id        String    @id @default(cuid())
+    title     String    @default("New Chat")
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    userId   String
+    user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    messages Message[]
+}
+
+model Message {
+    id        String   @id @default(cuid())
+    role      String
+    content   String
+    createdAt DateTime @default(now())
+
+    conversationId String
+    conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+    id              String   @id @default(cuid())
+    name            String
+    slug            String   @unique
+    description     String   @default("")
+    price           Float    @default(0)
+    currency        String   @default("USD")
+    maxTokensPerDay Int      @default(0)
+    features        String   @default("[]")
+    isActive        Boolean  @default(true)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    userSubscriptions UserSubscription[]
+}
+
+model UserSubscription {
+    id              String   @id @default(cuid())
+    startDate       DateTime @default(now())
+    endDate         DateTime?
+    isActive        Boolean  @default(true)
+    tokensUsedToday Int      @default(0)
+    lastResetAt     DateTime @default(now())
+
+    userId         String
+    user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    subscriptionId String
+    subscription   Subscription   @relation(fields: [subscriptionId], references: [id])
+
+    @@unique([userId, subscriptionId])
+}
