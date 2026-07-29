@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { requireFeature } from "@/lib/features-server";
+import { FEATURES } from "@/lib/features";
 import crypto from "crypto";
 
 function generateSlug(title: string): string {
@@ -20,7 +21,7 @@ export async function toggleShare(conversationId: string) {
   const user = await getCurrentUser();
   if (!user) return { error: "Not authenticated" };
 
-  const planCheck = await requireFeature("share_chat");
+  const planCheck = await requireFeature(FEATURES.SHARE_CHAT);
   if (!planCheck.allowed) return { error: planCheck.error };
 
   const conv = await prisma.conversation.findUnique({

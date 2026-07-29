@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Share2, Link2, Copy, Check, Globe, GlobeOff, Lock } from "lucide-react"
 import { toggleShare, getShareStatus } from "@/app/actions/share"
 import { hasFeatureAction } from "@/app/actions/account"
+import { FEATURES } from "@/lib/features"
 
 export function ShareButton({ conversationId }: { conversationId: string }) {
   const [isShared, setIsShared] = useState(false)
@@ -15,7 +16,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    hasFeatureAction("share_chat").then((allowed) => setHasAccess(allowed))
+    hasFeatureAction(FEATURES.SHARE_CHAT).then((allowed) => setHasAccess(allowed))
     getShareStatus(conversationId).then((status) => {
       if (status) {
         setIsShared(status.isShared)

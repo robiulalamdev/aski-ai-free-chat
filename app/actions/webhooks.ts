@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { requireFeature } from "@/lib/features-server"
+import { FEATURES } from "@/lib/features"
 import crypto from "crypto"
 
 export async function getWebhooks() {
@@ -27,7 +28,7 @@ export async function createWebhook(url: string, events: string[]) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
 
-  const planCheck = await requireFeature("custom_integrations")
+  const planCheck = await requireFeature(FEATURES.CUSTOM_INTEGRATIONS)
   if (!planCheck.allowed) return { error: planCheck.error }
 
   if (!url.startsWith("http")) return { error: "Invalid URL" }
@@ -54,7 +55,7 @@ export async function deleteWebhook(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
 
-  const planCheck = await requireFeature("custom_integrations")
+  const planCheck = await requireFeature(FEATURES.CUSTOM_INTEGRATIONS)
   if (!planCheck.allowed) return { error: planCheck.error }
 
   const webhook = await prisma.webhook.findUnique({ where: { id } })
@@ -68,7 +69,7 @@ export async function toggleWebhook(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: "Not authenticated" }
 
-  const planCheck = await requireFeature("custom_integrations")
+  const planCheck = await requireFeature(FEATURES.CUSTOM_INTEGRATIONS)
   if (!planCheck.allowed) return { error: planCheck.error }
 
   const webhook = await prisma.webhook.findUnique({ where: { id } })
