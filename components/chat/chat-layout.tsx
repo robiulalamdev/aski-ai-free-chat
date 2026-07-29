@@ -127,6 +127,7 @@ function ChatContent() {
 
     try {
       let currentId = activeIdRef.current
+      let isNewConversation = false
 
       // Create conversation if needed
       if (!currentId) {
@@ -138,7 +139,7 @@ function ChatContent() {
         }
         currentId = conv.id
         activeIdRef.current = conv.id
-        window.history.replaceState(null, "", `/c/${conv.id}`)
+        isNewConversation = true
         setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)])
       }
 
@@ -169,10 +170,15 @@ function ChatContent() {
           : "Sorry, an error occurred while generating the response."
       }
 
-      // Show AI response and save to DB
+      // AI done - NOW change URL and show response
       setStreamingText("")
       const aiMsg = makeMsg("assistant", fullResponse)
       setDisplayMessages((prev) => [...prev, aiMsg])
+
+      // Change URL only after AI response is complete
+      if (isNewConversation) {
+        window.history.replaceState(null, "", `/c/${currentId}`)
+      }
 
       const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
       if (finalConv) {
