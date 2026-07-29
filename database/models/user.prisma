@@ -13,4 +13,7 @@ model User {
 
     conversations     Conversation[]
     userSubscriptions UserSubscription[]
+    teamMembers       TeamMember[]
+    teamOwnership     TeamMember[]       @relation("TeamOwner")
+    webhooks          Webhook[]
 }

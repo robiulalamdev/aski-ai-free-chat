@@ -1,19 +1,26 @@
 "use client"
 
-import { Sparkles, Menu, PanelLeftClose } from "lucide-react"
+import { Sparkles, Menu, PanelLeftClose, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ExportChat } from "./export-chat"
+import type { Conversation } from "@/types/chat"
+import { useState } from "react"
 
 export function ChatHeader({
   title,
   onToggleSidebar,
   sidebarOpen,
   onRegenerate,
+  conversations,
 }: {
   title: string
   onToggleSidebar: () => void
   sidebarOpen: boolean
   onRegenerate?: () => void
+  conversations?: Conversation[]
 }) {
+  const [showExport, setShowExport] = useState(false)
+
   return (
     <header className="flex h-14 items-center justify-between border-b border-[#2e2840] bg-[#1e1929] px-4">
       <div className="flex items-center gap-3">
@@ -30,6 +37,24 @@ export function ChatHeader({
       </div>
 
       <div className="flex items-center gap-1.5">
+        {conversations && conversations.length > 0 && (
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowExport(!showExport)}
+              title="Export chat history"
+              className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-[#2a2438]"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            {showExport && (
+              <div className="absolute right-0 top-10 z-50 rounded-xl border border-[#2e2840] bg-[#231e30] p-3 shadow-xl">
+                <ExportChat conversations={conversations} />
+              </div>
+            )}
+          </div>
+        )}
         {onRegenerate && (
           <Button variant="ghost" size="icon" onClick={onRegenerate} title="Regenerate response" className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-[#2a2438]">
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

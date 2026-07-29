@@ -43,6 +43,16 @@ export type Subscription = Prisma.SubscriptionModel
  */
 export type UserSubscription = Prisma.UserSubscriptionModel
 /**
+ * Model TeamMember
+ * 
+ */
+export type TeamMember = Prisma.TeamMemberModel
+/**
+ * Model Webhook
+ * 
+ */
+export type Webhook = Prisma.WebhookModel
+/**
  * Model User
  * 
  */

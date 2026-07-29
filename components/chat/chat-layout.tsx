@@ -171,6 +171,7 @@ function ChatContent() {
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
           onRegenerate={messages.length >= 2 ? handleRegenerate : undefined}
+          conversations={conversations}
         />
 
         <ChatMessages messages={messages} isGenerating={isGenerating} streamingText={streamingText} />

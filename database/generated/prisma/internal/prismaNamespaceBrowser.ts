@@ -56,6 +56,8 @@ export const ModelName = {
   Message: 'Message',
   Subscription: 'Subscription',
   UserSubscription: 'UserSubscription',
+  TeamMember: 'TeamMember',
+  Webhook: 'Webhook',
   User: 'User'
 } as const
 
@@ -145,6 +147,32 @@ export const UserSubscriptionScalarFieldEnum = {
 } as const
 
 export type UserSubscriptionScalarFieldEnum = (typeof UserSubscriptionScalarFieldEnum)[keyof typeof UserSubscriptionScalarFieldEnum]
+
+
+export const TeamMemberScalarFieldEnum = {
+  id: 'id',
+  role: 'role',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  teamOwnerId: 'teamOwnerId'
+} as const
+
+export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
+
+
+export const WebhookScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  events: 'events',
+  isActive: 'isActive',
+  secret: 'secret',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type WebhookScalarFieldEnum = (typeof WebhookScalarFieldEnum)[keyof typeof WebhookScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
