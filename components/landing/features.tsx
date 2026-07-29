@@ -1,10 +1,25 @@
-import { Shield, Wifi, FileText, Code, Brain, Share2, Users, BarChart3 } from "lucide-react"
+import { Shield, Wifi, FileText, Code, Brain, Share2, Users, BarChart3, Wrench, FileCode, FileUser } from "lucide-react"
 
 const features = [
   {
     title: "AI-Powered Chat",
     description: "Powered by DeepSeek AI via OpenRouter. Fast, accurate responses with real-time streaming.",
     icon: Brain,
+  },
+  {
+    title: "AI Tools",
+    description: "Code Generator, Resume Builder, and more. Build projects and documents with AI assistance.",
+    icon: Wrench,
+  },
+  {
+    title: "Code Generator",
+    description: "Describe what you want, get working HTML/CSS/JS code with live preview. Download as ZIP.",
+    icon: FileCode,
+  },
+  {
+    title: "Resume Builder",
+    description: "Build professional resumes with AI enhancement. Export as PDF or DOC in seconds.",
+    icon: FileUser,
   },
   {
     title: "Secure Authentication",
@@ -25,21 +40,6 @@ const features = [
     title: "Conversation History",
     description: "All chats saved securely in PostgreSQL. Access any conversation from any device.",
     icon: FileText,
-  },
-  {
-    title: "Team Management",
-    description: "Invite team members, manage access, and collaborate on conversations (Pro/Enterprise).",
-    icon: Users,
-  },
-  {
-    title: "Export Chats",
-    description: "Download your conversations as Markdown, JSON, or plain text files.",
-    icon: Code,
-  },
-  {
-    title: "Usage Analytics",
-    description: "Track your daily token usage, conversation count, and plan limits.",
-    icon: BarChart3,
   },
 ]
 

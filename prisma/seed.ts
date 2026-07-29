@@ -13,7 +13,7 @@ const packages = [
     price: 0,
     currency: "USD",
     maxTokensPerDay: 50000,
-    features: JSON.stringify(["Advanced AI model", "Streaming responses", "Markdown support", "50K tokens/day"]),
+    features: JSON.stringify(["export_data", "share_chat"]),
   },
   {
     name: "Pro",
@@ -22,7 +22,7 @@ const packages = [
     price: 9.99,
     currency: "USD",
     maxTokensPerDay: 500000,
-    features: JSON.stringify(["Faster models", "500K tokens/day", "All tools", "Custom prompts", "Priority support"]),
+    features: JSON.stringify(["custom_prompts", "export_data", "share_chat", "priority_support", "advanced_analytics", "code_generator", "resume_builder"]),
   },
   {
     name: "Enterprise",
@@ -31,7 +31,7 @@ const packages = [
     price: 29.99,
     currency: "USD",
     maxTokensPerDay: 2000000,
-    features: JSON.stringify(["Unlimited models", "2M tokens/day", "API access", "Team management", "Dedicated support", "Custom integrations"]),
+    features: JSON.stringify(["custom_prompts", "export_data", "share_chat", "priority_support", "team_management", "dedicated_support", "custom_integrations", "advanced_analytics", "custom_theme", "code_generator", "resume_builder"]),
   },
 ]
 

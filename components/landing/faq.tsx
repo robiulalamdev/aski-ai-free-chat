@@ -10,6 +10,10 @@ const faqs = [
     answer: "NexaChat uses DeepSeek AI via OpenRouter. It's a powerful language model that handles coding, analysis, writing, and general questions with high accuracy.",
   },
   {
+    question: "What AI tools are available?",
+    answer: "NexaChat includes a Code Generator (create HTML/CSS/JS projects with live preview) and a Resume Builder (build professional resumes, export as PDF/DOC). Both tools are available on Pro and Enterprise plans.",
+  },
+  {
     question: "Is my data private?",
     answer: "Yes. Your conversations are stored securely in our PostgreSQL database with encrypted authentication. We never share your data with third parties.",
   },
@@ -19,7 +23,7 @@ const faqs = [
   },
   {
     question: "What's the difference between Free, Pro, and Enterprise?",
-    answer: "Free plan gives you daily token limits. Pro ($9/month) unlocks higher limits, custom prompts, share conversations, and priority support. Enterprise ($29/month) adds team management, custom integrations, and dedicated support.",
+    answer: "Free plan gives you daily token limits. Pro ($9/month) unlocks higher limits, AI tools (Code Generator, Resume Builder), custom prompts, and priority support. Enterprise ($29/month) adds team management, custom integrations, and dedicated support.",
   },
   {
     question: "Can I share my conversations?",

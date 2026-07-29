@@ -8,6 +8,8 @@ export type FeatureSlug =
   | "custom_integrations"
   | "advanced_analytics"
   | "custom_theme"
+  | "code_generator"
+  | "resume_builder"
 
 // Reusable constants - use these instead of raw strings
 export const FEATURES = {
@@ -20,6 +22,8 @@ export const FEATURES = {
   CUSTOM_INTEGRATIONS: "custom_integrations" as FeatureSlug,
   ADVANCED_ANALYTICS: "advanced_analytics" as FeatureSlug,
   CUSTOM_THEME: "custom_theme" as FeatureSlug,
+  CODE_GENERATOR: "code_generator" as FeatureSlug,
+  RESUME_BUILDER: "resume_builder" as FeatureSlug,
 } as const
 
 export interface Feature {
@@ -38,6 +42,8 @@ export const ALL_FEATURES: Feature[] = [
   { slug: FEATURES.CUSTOM_INTEGRATIONS, name: "Custom Integrations", description: "Connect with your tools" },
   { slug: FEATURES.ADVANCED_ANALYTICS, name: "Advanced Analytics", description: "Detailed usage insights" },
   { slug: FEATURES.CUSTOM_THEME, name: "Custom Theme", description: "Full UI customization" },
+  { slug: FEATURES.CODE_GENERATOR, name: "Code Generator", description: "Generate HTML/CSS/JS projects with live preview" },
+  { slug: FEATURES.RESUME_BUILDER, name: "Resume Builder", description: "Build professional resumes, export as PDF/DOC" },
 ]
 
 export const FEATURE_MAP: Record<string, string> = Object.fromEntries(

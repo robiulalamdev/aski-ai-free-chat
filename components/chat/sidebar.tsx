@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Trash2, Pencil, Check, X, MessageSquare, Brain, LogOut, User, Settings, ChevronUp } from "lucide-react"
+import { Plus, Trash2, Pencil, Check, X, MessageSquare, Brain, LogOut, User, Settings, ChevronUp, Wrench } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -159,6 +159,12 @@ export function Sidebar({
               <Link href="/account/settings">
                 <Settings className="h-4 w-4" />
                 Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/tools">
+                <Wrench className="h-4 w-4" />
+                AI Tools
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
