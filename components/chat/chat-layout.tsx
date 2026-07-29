@@ -92,49 +92,63 @@ function ChatContent() {
     // Handle /c/{id} (normal chat)
     if (parts[1] === "c" && parts[2] && !activeIdRef.current) {
       const urlId = parts[2]
-      activeIdRef.current = urlId
-      activeToolRef.current = null
-      setLoadingConversation(true)
-      getConversationById(urlId).then((conv) => {
-        if (!conv) {
-          activeIdRef.current = null
-          window.history.replaceState(null, "", "/chat/new")
-          setLoadingConversation(false)
-          return
-        }
-        activeToolRef.current = conv.toolType || null
-        setConversations((prev) => {
-          const exists = prev.find((c) => c.id === conv.id)
-          if (exists) return prev
-          return [conv, ...prev.filter((c) => c.id !== conv.id)]
-        })
-        setDisplayMessages(conv.messages)
+      // If id is "new", it's a fresh chat - don't try to load from DB
+      if (urlId === "new") {
+        activeIdRef.current = null
+        activeToolRef.current = null
         setLoadingConversation(false)
-      })
+      } else {
+        activeIdRef.current = urlId
+        activeToolRef.current = null
+        setLoadingConversation(true)
+        getConversationById(urlId).then((conv) => {
+          if (!conv) {
+            activeIdRef.current = null
+            window.history.replaceState(null, "", "/chat/new")
+            setLoadingConversation(false)
+            return
+          }
+          activeToolRef.current = conv.toolType || null
+          setConversations((prev) => {
+            const exists = prev.find((c) => c.id === conv.id)
+            if (exists) return prev
+            return [conv, ...prev.filter((c) => c.id !== conv.id)]
+          })
+          setDisplayMessages(conv.messages)
+          setLoadingConversation(false)
+        })
+      }
     }
     // Handle /t/{tool}/{id} (tool chat)
     else if (parts[1] === "t" && parts[2] && parts[3] && !activeIdRef.current) {
       const { toolType, id } = extractToolAndId(pathname)
-      activeIdRef.current = id
-      activeToolRef.current = toolType
-      setLoadingConversation(true)
-      getConversationById(id!).then((conv) => {
-        if (!conv) {
-          activeIdRef.current = null
-          activeToolRef.current = null
-          window.history.replaceState(null, "", "/chat/new")
-          setLoadingConversation(false)
-          return
-        }
-        activeToolRef.current = conv.toolType || toolType
-        setConversations((prev) => {
-          const exists = prev.find((c) => c.id === conv.id)
-          if (exists) return prev
-          return [conv, ...prev.filter((c) => c.id !== conv.id)]
-        })
-        setDisplayMessages(conv.messages)
+      // If id is "new", it's a fresh tool conversation - don't try to load from DB
+      if (id === "new") {
+        activeIdRef.current = null
+        activeToolRef.current = toolType
         setLoadingConversation(false)
-      })
+      } else {
+        activeIdRef.current = id
+        activeToolRef.current = toolType
+        setLoadingConversation(true)
+        getConversationById(id!).then((conv) => {
+          if (!conv) {
+            activeIdRef.current = null
+            activeToolRef.current = null
+            window.history.replaceState(null, "", "/chat/new")
+            setLoadingConversation(false)
+            return
+          }
+          activeToolRef.current = conv.toolType || toolType
+          setConversations((prev) => {
+            const exists = prev.find((c) => c.id === conv.id)
+            if (exists) return prev
+            return [conv, ...prev.filter((c) => c.id !== conv.id)]
+          })
+          setDisplayMessages(conv.messages)
+          setLoadingConversation(false)
+        })
+      }
     }
   }, [pathname, initialized]) // eslint-disable-line
 
