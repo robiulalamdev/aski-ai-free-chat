@@ -38,7 +38,7 @@ export function ChatMessages({
           </div>
           <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
           <p className="mt-2 text-sm text-zinc-500">
-            Ask me anything — I&apos;m powered by DeepSeek AI.
+            Ask me anything — I&apos;m powered by AI.
           </p>
         </div>
       </div>

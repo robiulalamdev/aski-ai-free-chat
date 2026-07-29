@@ -112,7 +112,7 @@ export default function SharedChatPage() {
       </div>
 
       <footer className="border-t border-[#2e2840] px-6 py-6 text-center">
-        <p className="text-xs text-zinc-600">Powered by NexaChat — AI Chat with DeepSeek</p>
+        <p className="text-xs text-zinc-600">Powered by NexaChat</p>
       </footer>
     </div>
   )

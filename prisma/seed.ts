@@ -13,7 +13,7 @@ const packages = [
     price: 0,
     currency: "USD",
     maxTokensPerDay: 50000,
-    features: JSON.stringify(["DeepSeek AI model", "Streaming responses", "Markdown support", "50K tokens/day"]),
+    features: JSON.stringify(["Advanced AI model", "Streaming responses", "Markdown support", "50K tokens/day"]),
   },
   {
     name: "Pro",

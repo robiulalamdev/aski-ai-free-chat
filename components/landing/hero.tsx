@@ -11,7 +11,7 @@ export function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300">
             <Sparkles className="h-3.5 w-3.5" />
-            Powered by DeepSeek AI
+              Powered by Advanced AI
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -22,7 +22,7 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 text-lg leading-8 text-zinc-400 sm:text-xl">
-            No servers. No tracking. No subscriptions. Chat with AI powered by DeepSeek — fast, free, and private.
+            No servers. No tracking. No subscriptions. Chat with AI — fast, free, and private.
           </p>
 
           <div className="mt-10 flex items-center justify-center gap-4">
@@ -40,7 +40,7 @@ export function Hero() {
           <div className="mt-12 flex items-center justify-center gap-8 text-sm text-zinc-500">
             <span className="flex items-center gap-1.5">
               <Brain className="h-4 w-4 text-violet-400" />
-              DeepSeek AI
+              Start Chatting
             </span>
             <span className="flex items-center gap-1.5">
               <Shield className="h-4 w-4 text-violet-400" />

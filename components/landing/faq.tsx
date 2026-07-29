@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 const faqs = [
   {
     question: "How does NexaChat work?",
-    answer: "NexaChat uses DeepSeek AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
+    answer: "NexaChat uses AI via a server-side API. Your API key is kept secure on the server and never exposed to the browser.",
   },
   {
     question: "Is my data private?",
@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     question: "What AI model is used?",
-    answer: "We use DeepSeek Chat, one of the most capable open-source AI models available.",
+    answer: "We use a powerful AI model optimized for fast and accurate responses.",
   },
   {
     question: "Does it work on mobile?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     question: "Is it really free?",
-    answer: "Yes, the app is free to use. DeepSeek offers generous free tier limits for development.",
+    answer: "Yes, the app is free to use with generous daily token limits.",
   },
 ]
 

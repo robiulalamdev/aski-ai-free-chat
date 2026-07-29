@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Send, Square, Mic } from "lucide-react"
+import { Send, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function ChatInput({
@@ -48,14 +48,9 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Ask anything..."
             rows={1}
-            className="max-h-[200px] w-full resize-none rounded-2xl border border-[#2e2840] bg-[#231e30] px-5 py-3.5 pr-20 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+            className="max-h-[200px] w-full resize-none rounded-2xl border border-[#2e2840] bg-[#231e30] px-5 py-3.5 pr-14 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
             disabled={isGenerating}
           />
-          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438]">
-              <Mic className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
 
         {isGenerating ? (

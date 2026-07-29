@@ -2,8 +2,8 @@ import { Shield, Server, Wifi, Zap, FileText, Code } from "lucide-react"
 
 const features = [
   {
-    title: "DeepSeek AI",
-    description: "Powered by DeepSeek — one of the most capable AI models available.",
+    title: "Advanced AI",
+    description: "Powered by cutting-edge AI technology — fast, accurate, and always improving.",
     icon: Zap,
   },
   {
@@ -42,7 +42,7 @@ export function Features() {
             Everything You Need
           </h2>
           <p className="mt-4 text-lg text-zinc-400">
-            A modern AI chat experience powered by DeepSeek.
+            A modern AI chat experience powered by advanced AI.
           </p>
         </div>
 

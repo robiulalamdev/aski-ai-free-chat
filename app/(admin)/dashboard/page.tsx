@@ -76,7 +76,7 @@ export default function DashboardOverview() {
           <div className="space-y-2">
             {[
               ["Version", "1.0.0"],
-              ["AI Model", "DeepSeek v3"],
+              ["AI Model", "Advanced AI"],
               ["Database", "PostgreSQL (Neon)"],
               ["Runtime", "Next.js"],
             ].map(([label, value]) => (
