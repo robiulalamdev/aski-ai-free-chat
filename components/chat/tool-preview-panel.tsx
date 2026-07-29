@@ -1,33 +1,42 @@
 "use client"
 
 import { useState, useEffect, useRef, useMemo } from "react"
-import { Eye, EyeOff, Download, FileText, Loader2, CheckCircle2, ChevronDown } from "lucide-react"
+import { Eye, EyeOff, Download, FileText, Loader2, CheckCircle2, ChevronDown, Printer, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import type { Message } from "@/types/chat"
 
-function extractAllCodeBlocks(content: string): string[] {
-  const regex = /```(?:html|css|javascript|js)?\s*\n([\s\S]*?)```/g
-  const blocks: string[] = []
-  let match
-  while ((match = regex.exec(content)) !== null) {
-    blocks.push(match[1].trim())
+function extractHtmlFromText(text: string): string {
+  const regex = /```html\s*\n([\s\S]*?)```/
+  const match = text.match(regex)
+  if (match) return match[1].trim()
+
+  const codeRegex = /```\s*\n([\s\S]*?)```/
+  const codeMatch = text.match(codeRegex)
+  if (codeMatch) {
+    const inner = codeMatch[1].trim()
+    if (inner.includes("<!DOCTYPE") || inner.includes("<html") || inner.includes("<div")) {
+      return inner
+    }
   }
-  return blocks
-}
 
-function extractLatestHtml(content: string): string {
-  const blocks = extractAllCodeBlocks(content)
-  if (blocks.length > 0) return blocks[blocks.length - 1]
-
-  if (content.includes("<!DOCTYPE html") || content.includes("<html")) {
-    const startIdx = content.indexOf("<!DOCTYPE") !== -1 ? content.indexOf("<!DOCTYPE") : content.indexOf("<html")
-    if (startIdx !== -1) return content.slice(startIdx)
+  if (text.includes("<!DOCTYPE html") || text.includes("<html")) {
+    const startIdx = text.indexOf("<!DOCTYPE") !== -1 ? text.indexOf("<!DOCTYPE") : text.indexOf("<html")
+    if (startIdx !== -1) return text.slice(startIdx)
   }
+
   return ""
 }
 
-function extractCodeBlocks(content: string): string {
-  return extractAllCodeBlocks(content).join("\n\n")
+function extractCodeBlocks(text: string): string {
+  const regex = /```(?:html|css|javascript|js)?\s*\n([\s\S]*?)```/g
+  const matches: string[] = []
+  let match
+  while ((match = regex.exec(text)) !== null) {
+    matches.push(match[1].trim())
+  }
+  if (matches.length > 0) return matches.join("\n\n")
+  return ""
 }
 
 function ResumeGeneratingUI() {
@@ -88,73 +97,105 @@ function CodeGeneratingUI() {
 }
 
 async function exportToPdf(html: string, filename: string) {
-  const html2pdf = (await import("html2pdf.js")).default
+  // Open in new window and use browser print
+  const printWindow = window.open("", "_blank")
+  if (!printWindow) {
+    alert("Please allow popups to export PDF")
+    return
+  }
 
-  const container = document.createElement("div")
-  container.innerHTML = html
-  container.style.position = "absolute"
-  container.style.left = "-9999px"
-  container.style.top = "0"
-  container.style.width = "210mm"
-  container.style.background = "white"
-  document.body.appendChild(container)
-
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  await html2pdf()
-    .set({
-      margin: 10,
-      filename: `${filename}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    })
-    .from(container)
-    .save()
-
-  document.body.removeChild(container)
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${filename}</title>
+      <script src="https://cdn.tailwindcss.com"><\/script>
+      <style>
+        @media print {
+          body { margin: 0; }
+          @page { margin: 10mm; }
+        }
+      </style>
+    </head>
+    <body>
+      ${html}
+      <script>
+        window.onload = function() {
+          setTimeout(function() {
+            window.print();
+          }, 1000);
+        };
+      <\/script>
+    </body>
+    </html>
+  `)
+  printWindow.document.close()
 }
 
 export function ToolPreviewPanel({
   toolType,
-  content,
+  messages,
+  streamingText,
   isGenerating,
   isOpen,
   onToggle,
 }: {
   toolType: string
-  content: string
+  messages: Message[]
+  streamingText?: string
   isGenerating: boolean
   isOpen: boolean
   onToggle: () => void
 }) {
   const [exporting, setExporting] = useState(false)
-  const [selectedVersion, setSelectedVersion] = useState<number>(0)
+  const [selectedVersion, setSelectedVersion] = useState(0)
   const [showVersionMenu, setShowVersionMenu] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const isResume = toolType === "resume_builder"
 
-  // Extract all versions (code blocks)
+  // Extract versions from ALL assistant messages
   const versions = useMemo(() => {
-    if (isResume) {
-      return extractAllCodeBlocks(content)
-    }
-    return []
-  }, [content, isResume])
+    const assistantMessages = messages.filter((m) => m.role === "assistant")
+    const versionList: { html: string; messageIndex: number }[] = []
+
+    assistantMessages.forEach((msg, idx) => {
+      const html = isResume ? extractHtmlFromText(msg.content) : extractCodeBlocks(msg.content)
+      if (html) {
+        versionList.push({ html, messageIndex: idx })
+      }
+    })
+
+    return versionList
+  }, [messages, isResume])
+
+  // Current streaming HTML
+  const streamingHtml = useMemo(() => {
+    if (!streamingText) return ""
+    return isResume ? extractHtmlFromText(streamingText) : extractCodeBlocks(streamingText)
+  }, [streamingText, isResume])
 
   const latestVersion = versions.length
-  const currentHtml = isResume
-    ? (versions[selectedVersion - 1] || extractLatestHtml(content))
-    : extractCodeBlocks(content)
+  const hasStreamedVersion = streamingHtml.length > 0
+
+  // Current displayed HTML
+  const currentHtml = useMemo(() => {
+    if (isGenerating && streamingHtml) return streamingHtml
+    if (versions.length > 0 && selectedVersion > 0) {
+      return versions[selectedVersion - 1]?.html || ""
+    }
+    if (versions.length > 0) {
+      return versions[versions.length - 1]?.html || ""
+    }
+    return ""
+  }, [isGenerating, streamingHtml, versions, selectedVersion])
+
   const hasContent = currentHtml.length > 0
 
-  // Auto-select latest version when new content arrives
+  // Auto-select latest when new version arrives
   useEffect(() => {
-    if (versions.length > 0 && selectedVersion === 0) {
-      setSelectedVersion(versions.length)
-    } else if (versions.length > selectedVersion) {
+    if (versions.length > 0 && (selectedVersion === 0 || selectedVersion < versions.length)) {
       setSelectedVersion(versions.length)
     }
   }, [versions.length, selectedVersion])
@@ -188,9 +229,17 @@ export function ToolPreviewPanel({
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = isResume ? "resume.html" : "code.html"
+    a.download = "resume.html"
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  const handleViewFull = () => {
+    if (!currentHtml) return
+    const win = window.open("", "_blank")
+    if (!win) return
+    win.document.write(`<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script><title>Resume</title></head><body>${currentHtml}</body></html>`)
+    win.document.close()
   }
 
   if (!isOpen) {
@@ -214,22 +263,45 @@ export function ToolPreviewPanel({
             {isResume ? "Resume Preview" : "Code Preview"}
           </span>
 
-          {/* Version selector for resume */}
-          {isResume && versions.length > 0 && (
+          {/* Version selector */}
+          {isResume && (versions.length > 0 || hasStreamedVersion) && (
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowVersionMenu(!showVersionMenu)}
                 className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-custom)] text-xs text-zinc-400 hover:text-[var(--foreground)] transition-colors"
               >
-                v{selectedVersion}
-                {selectedVersion === latestVersion && (
-                  <span className="text-[10px] px-1 py-0.5 rounded bg-green-600/20 text-green-400 ml-1">latest</span>
+                {isGenerating && hasStreamedVersion ? (
+                  <span className="flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    building...
+                  </span>
+                ) : (
+                  <>
+                    v{selectedVersion}
+                    {selectedVersion === latestVersion && latestVersion > 0 && (
+                      <span className="text-[10px] px-1 py-0.5 rounded bg-green-600/20 text-green-400 ml-1">latest</span>
+                    )}
+                  </>
                 )}
                 <ChevronDown className="h-3 w-3" />
               </button>
 
               {showVersionMenu && (
-                <div className="absolute top-full left-0 mt-1 w-40 rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl z-50 py-1">
+                <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl z-50 py-1 max-h-60 overflow-y-auto">
+                  {/* Show streaming version if generating */}
+                  {isGenerating && hasStreamedVersion && (
+                    <button
+                      onClick={() => {
+                        setShowVersionMenu(false)
+                      }}
+                      className="flex items-center w-full px-3 py-2 text-xs text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+                    >
+                      <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                      <span>Building new version...</span>
+                    </button>
+                  )}
+
+                  {/* Show saved versions (newest first) */}
                   {[...versions].reverse().map((_, idx) => {
                     const versionNum = versions.length - idx
                     return (
@@ -253,6 +325,10 @@ export function ToolPreviewPanel({
                       </button>
                     )
                   })}
+
+                  {versions.length === 0 && !isGenerating && (
+                    <div className="px-3 py-2 text-xs text-zinc-600">No versions yet</div>
+                  )}
                 </div>
               )}
             </div>
@@ -261,16 +337,27 @@ export function ToolPreviewPanel({
 
         <div className="flex items-center gap-1">
           {isResume && hasContent ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
-              onClick={handleExportPdf}
-              disabled={exporting}
-            >
-              {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
-              PDF
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
+                onClick={handleViewFull}
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                View
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
+                onClick={handleExportPdf}
+                disabled={exporting}
+              >
+                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Printer className="h-3.5 w-3.5" />}
+                PDF
+              </Button>
+            </>
           ) : hasContent ? (
             <Button
               variant="ghost"
@@ -299,7 +386,7 @@ export function ToolPreviewPanel({
         ) : hasContent ? (
           <iframe
             ref={iframeRef}
-            srcDoc={currentHtml}
+            srcDoc={`<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script></head><body>${currentHtml.includes("<body") ? "" : currentHtml}</body></html>`}
             className="w-full h-full border-0"
             title="Preview"
             sandbox="allow-scripts"
