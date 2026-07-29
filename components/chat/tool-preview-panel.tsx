@@ -1,9 +1,34 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { Eye, EyeOff, Download, FileText, FileImage } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Eye, EyeOff, Download, FileText, FileImage, Loader2, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+
+function extractHtmlFromResponse(content: string): string {
+  // Try markdown code block first
+  const htmlBlockRegex = /```html\s*\n([\s\S]*?)```/
+  const htmlMatch = content.match(htmlBlockRegex)
+  if (htmlMatch) return htmlMatch[1].trim()
+
+  // Try generic code block
+  const codeBlockRegex = /```\s*\n([\s\S]*?)```/
+  const codeMatch = content.match(codeBlockRegex)
+  if (codeMatch) {
+    const inner = codeMatch[1].trim()
+    if (inner.includes("<html") || inner.includes("<!DOCTYPE") || inner.includes("<div")) {
+      return inner
+    }
+  }
+
+  // Try to find raw HTML (doctype, html tag, or substantial HTML)
+  if (content.includes("<!DOCTYPE html") || content.includes("<html")) {
+    const startIdx = content.indexOf("<!DOCTYPE") !== -1 ? content.indexOf("<!DOCTYPE") : content.indexOf("<html")
+    if (startIdx !== -1) return content.slice(startIdx)
+  }
+
+  return ""
+}
 
 function extractCodeBlocks(content: string): string {
   const codeBlockRegex = /```(?:html|css|javascript|js)?\s*\n([\s\S]*?)```/g
@@ -12,45 +37,87 @@ function extractCodeBlocks(content: string): string {
   while ((match = codeBlockRegex.exec(content)) !== null) {
     matches.push(match[1].trim())
   }
-  if (matches.length > 0) {
-    return matches.join("\n\n")
-  }
-  if (content.includes("<") && content.includes(">")) {
-    return content
-  }
+  if (matches.length > 0) return matches.join("\n\n")
   return ""
 }
 
-function extractResumeHtml(content: string): string {
-  const htmlMatch = content.match(/```html\s*\n([\s\S]*?)```/)
-  if (htmlMatch) return htmlMatch[1]
+function ResumeGeneratingUI() {
+  const [step, setStep] = useState(0)
+  const steps = [
+    "Analyzing your information...",
+    "Building resume structure...",
+    "Designing layout...",
+    "Adding professional styling...",
+    "Finalizing your resume...",
+  ]
 
-  const codeMatch = content.match(/```\s*\n([\s\S]*?)```/)
-  if (codeMatch) return codeMatch[1]
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev))
+    }, 1200)
+    return () => clearInterval(timer)
+  }, [steps.length])
 
-  if (content.includes("<html") || content.includes("<div") || content.includes("<section")) {
-    return content
-  }
+  return (
+    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-[var(--background)] to-[var(--surface)]">
+      <div className="relative mb-6">
+        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center animate-pulse">
+          <FileText className="h-8 w-8 text-white" />
+        </div>
+        <Loader2 className="absolute -bottom-1 -right-1 h-5 w-5 text-violet-400 animate-spin" />
+      </div>
+      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Building Your Resume</h3>
+      <div className="space-y-2 mt-4">
+        {steps.map((s, i) => (
+          <div key={i} className={cn("flex items-center gap-2 text-sm transition-all duration-300", i <= step ? "text-[var(--foreground)]" : "text-zinc-600")}>
+            {i < step ? (
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            ) : i === step ? (
+              <Loader2 className="h-4 w-4 text-violet-400 animate-spin" />
+            ) : (
+              <div className="h-4 w-4 rounded-full border border-zinc-700" />
+            )}
+            <span>{s}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-  return ""
+function CodeGeneratingUI() {
+  return (
+    <div className="flex flex-col items-center justify-center h-full">
+      <div className="relative mb-4">
+        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center animate-pulse">
+          <Loader2 className="h-6 w-6 text-white animate-spin" />
+        </div>
+      </div>
+      <p className="text-sm text-zinc-400">Generating code...</p>
+    </div>
+  )
 }
 
 async function exportToPdf(html: string, filename: string) {
   const html2pdf = (await import("html2pdf.js")).default
+
   const container = document.createElement("div")
   container.innerHTML = html
-  container.style.position = "fixed"
+  container.style.position = "absolute"
   container.style.left = "-9999px"
   container.style.top = "0"
   container.style.width = "210mm"
+  container.style.background = "white"
   document.body.appendChild(container)
+
+  await new Promise((resolve) => setTimeout(resolve, 500))
 
   await html2pdf()
     .set({
-      margin: 0,
+      margin: 10,
       filename: `${filename}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     })
     .from(container)
@@ -68,10 +135,9 @@ async function exportToDoc(html: string, filename: string) {
 
   const paragraphs: InstanceType<typeof docx.Paragraph>[] = []
 
-  const processElement = (el: Element, indent = 0) => {
+  const processElement = (el: Element) => {
     const tag = el.tagName?.toLowerCase()
     const text = el.textContent?.trim() || ""
-
     if (!text) return
 
     if (tag === "h1") {
@@ -92,44 +158,32 @@ async function exportToDoc(html: string, filename: string) {
         children: [new docx.TextRun({ text, bold: true, size: 22, font: "Calibri" })],
         spacing: { before: 100, after: 50 },
       }))
-    } else if (tag === "p" || tag === "li" || tag === "span") {
-      if (el.children.length > 0) {
-        const runs: InstanceType<typeof docx.TextRun>[] = []
-        el.childNodes.forEach((child) => {
-          if (child.nodeType === 3) {
-            const t = child.textContent?.trim()
-            if (t) runs.push(new docx.TextRun({ text: t, size: 20, font: "Calibri" }))
-          } else if (child.nodeType === 1) {
-            const childEl = child as Element
-            const t = childEl.textContent?.trim()
-            if (t) {
-              runs.push(new docx.TextRun({
-                text: t,
-                bold: childEl.tagName === "STRONG" || childEl.tagName === "B",
-                italics: childEl.tagName === "EM" || childEl.tagName === "I",
-                size: 20,
-                font: "Calibri",
-              }))
-            }
+    } else if (tag === "p" || tag === "li") {
+      const runs: InstanceType<typeof docx.TextRun>[] = []
+      el.childNodes.forEach((child) => {
+        if (child.nodeType === 3) {
+          const t = child.textContent?.trim()
+          if (t) runs.push(new docx.TextRun({ text: t, size: 20, font: "Calibri" }))
+        } else if (child.nodeType === 1) {
+          const childEl = child as Element
+          const t = childEl.textContent?.trim()
+          if (t) {
+            runs.push(new docx.TextRun({
+              text: t,
+              bold: childEl.tagName === "STRONG" || childEl.tagName === "B",
+              size: 20,
+              font: "Calibri",
+            }))
           }
-        })
-        if (runs.length > 0) {
-          paragraphs.push(new docx.Paragraph({
-            children: runs,
-            spacing: { after: 80 },
-          }))
         }
-      } else if (text) {
-        paragraphs.push(new docx.Paragraph({
-          children: [new docx.TextRun({ text, size: 20, font: "Calibri" })],
-          spacing: { after: 80 },
-        }))
+      })
+      if (runs.length > 0) {
+        paragraphs.push(new docx.Paragraph({ children: runs, spacing: { after: 80 } }))
       }
     }
   }
 
-  const allElements = tempDiv.querySelectorAll("h1, h2, h3, h4, p, li, span, div, section")
-  allElements.forEach((el) => processElement(el))
+  tempDiv.querySelectorAll("h1, h2, h3, h4, p, li").forEach(processElement)
 
   if (paragraphs.length === 0) {
     paragraphs.push(new docx.Paragraph({
@@ -148,11 +202,13 @@ async function exportToDoc(html: string, filename: string) {
 export function ToolPreviewPanel({
   toolType,
   content,
+  isGenerating,
   isOpen,
   onToggle,
 }: {
   toolType: string
   content: string
+  isGenerating: boolean
   isOpen: boolean
   onToggle: () => void
 }) {
@@ -160,13 +216,23 @@ export function ToolPreviewPanel({
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const isResume = toolType === "resume_builder"
-  const code = isResume ? extractResumeHtml(content) : extractCodeBlocks(content)
+  const html = isResume ? extractHtmlFromResponse(content) : extractCodeBlocks(content)
+  const hasContent = html.length > 0
+
+  // Debug: log extracted HTML
+  useEffect(() => {
+    if (isResume && content) {
+      console.log("[Resume Preview] Content length:", content.length)
+      console.log("[Resume Preview] Extracted HTML length:", html.length)
+      console.log("[Resume Preview] HTML preview:", html.slice(0, 200))
+    }
+  }, [content, html, isResume])
 
   const handleExportPdf = async () => {
-    if (!code) return
+    if (!html) return
     setExporting(true)
     try {
-      await exportToPdf(code, "resume")
+      await exportToPdf(html, "resume")
     } catch (err) {
       console.error("PDF export failed:", err)
     } finally {
@@ -175,10 +241,10 @@ export function ToolPreviewPanel({
   }
 
   const handleExportDoc = async () => {
-    if (!code) return
+    if (!html) return
     setExporting(true)
     try {
-      await exportToDoc(code, "resume")
+      await exportToDoc(html, "resume")
     } catch (err) {
       console.error("DOC export failed:", err)
     } finally {
@@ -187,8 +253,8 @@ export function ToolPreviewPanel({
   }
 
   const handleDownloadHtml = () => {
-    if (!code) return
-    const blob = new Blob([code], { type: "text/html" })
+    if (!html) return
+    const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
@@ -210,14 +276,14 @@ export function ToolPreviewPanel({
   }
 
   return (
-    <div className={cn("flex flex-col border-l border-[var(--border-custom)] bg-[var(--background)]", isResume ? "w-1/2" : "w-1/2")}>
-      {/* Header with actions */}
+    <div className={cn("flex flex-col border-l border-[var(--border-custom)] bg-[var(--background)]", "w-1/2")}>
+      {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-custom)]">
         <span className="text-sm font-medium text-[var(--foreground)]">
           {isResume ? "Resume Preview" : "Code Preview"}
         </span>
         <div className="flex items-center gap-1">
-          {isResume && code ? (
+          {isResume && hasContent ? (
             <>
               <Button
                 variant="ghost"
@@ -226,7 +292,7 @@ export function ToolPreviewPanel({
                 onClick={handleExportPdf}
                 disabled={exporting}
               >
-                <FileImage className="h-3.5 w-3.5" />
+                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileImage className="h-3.5 w-3.5" />}
                 PDF
               </Button>
               <Button
@@ -236,11 +302,11 @@ export function ToolPreviewPanel({
                 onClick={handleExportDoc}
                 disabled={exporting}
               >
-                <FileText className="h-3.5 w-3.5" />
+                {exporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
                 DOC
               </Button>
             </>
-          ) : (
+          ) : hasContent ? (
             <Button
               variant="ghost"
               size="icon"
@@ -249,7 +315,7 @@ export function ToolPreviewPanel({
             >
               <Download className="h-3.5 w-3.5" />
             </Button>
-          )}
+          ) : null}
           <Button
             variant="ghost"
             size="icon"
@@ -261,19 +327,21 @@ export function ToolPreviewPanel({
         </div>
       </div>
 
-      {/* Preview area */}
+      {/* Preview content */}
       <div className="flex-1 overflow-auto bg-white">
-        {code ? (
+        {isGenerating && !hasContent ? (
+          isResume ? <ResumeGeneratingUI /> : <CodeGeneratingUI />
+        ) : hasContent ? (
           <iframe
             ref={iframeRef}
-            srcDoc={code}
+            srcDoc={html}
             className="w-full h-full border-0"
             title="Preview"
             sandbox="allow-scripts"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-sm text-zinc-500">
-            {isResume ? "Start describing your experience to build your resume..." : "Start chatting to see preview..."}
+            {isResume ? "Describe your experience to build your resume..." : "Describe what you want to build..."}
           </div>
         )}
       </div>

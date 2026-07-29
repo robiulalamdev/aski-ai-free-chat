@@ -407,7 +407,8 @@ function ChatContent() {
           {isToolChat && (
             <ToolPreviewPanel
               toolType={activeToolRef.current!}
-              content={latestAiMessage?.content || ""}
+              content={isGenerating ? streamingText || latestAiMessage?.content || "" : latestAiMessage?.content || ""}
+              isGenerating={isGenerating}
               isOpen={previewOpen}
               onToggle={() => setPreviewOpen(!previewOpen)}
             />
