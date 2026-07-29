@@ -15,12 +15,16 @@ model Subscription {
 }
 
 model UserSubscription {
-    id              String    @id @default(cuid())
-    startDate       DateTime  @default(now())
-    endDate         DateTime?
-    isActive        Boolean   @default(true)
-    tokensUsedToday Int       @default(0)
-    lastResetAt     DateTime  @default(now())
+    id                    String    @id @default(cuid())
+    startDate             DateTime  @default(now())
+    endDate               DateTime?
+    isActive              Boolean   @default(true)
+    tokensUsedToday       Int       @default(0)
+    lastResetAt           DateTime  @default(now())
+    stripeCustomerId      String?
+    stripeSubscriptionId  String?
+    stripeSessionId       String?
+    stripeCurrentPeriodEnd DateTime?
 
     userId         String
     user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)

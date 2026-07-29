@@ -53,17 +53,39 @@ export async function getAccountAction() {
     },
   })
 
-  return user
+  if (!user) return null
+
+  const userSub = await prisma.userSubscription.findFirst({
+    where: { userId: payload.userId, isActive: true },
+    orderBy: { startDate: "desc" },
+  })
+
+  return {
+    ...user,
+    tokensUsedToday: userSub?.tokensUsedToday || 0,
+  }
 }
 
 export async function getSubscriptionAction() {
-  const payload = await getCurrentUser()
-  if (!payload) return null
+  try {
+    const plans = await prisma.subscription.findMany({
+      where: { isActive: true },
+      orderBy: { price: "asc" },
+    })
 
-  const sub = await prisma.userSubscription.findFirst({
-    where: { userId: payload.userId, isActive: true },
-    include: { subscription: true },
-  })
-
-  return sub
+    return plans.map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      price: p.price,
+      maxTokensPerDay: p.maxTokensPerDay,
+      features: (() => {
+        try { return JSON.parse(p.features) } catch { return [] }
+      })(),
+      isActive: p.isActive,
+    }))
+  } catch {
+    return []
+  }
 }

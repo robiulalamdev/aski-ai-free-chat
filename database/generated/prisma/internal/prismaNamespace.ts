@@ -966,6 +966,10 @@ export const UserSubscriptionScalarFieldEnum = {
   isActive: 'isActive',
   tokensUsedToday: 'tokensUsedToday',
   lastResetAt: 'lastResetAt',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripeSessionId: 'stripeSessionId',
+  stripeCurrentPeriodEnd: 'stripeCurrentPeriodEnd',
   userId: 'userId',
   subscriptionId: 'subscriptionId'
 } as const

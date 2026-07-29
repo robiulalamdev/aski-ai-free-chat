@@ -27,6 +27,12 @@ const env = {
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@nexachat.com",
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "Admin@123",
 
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY!,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET!,
+  STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY!,
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+  SITE_URL: process.env.SITE_URL || "http://localhost:3000",
+
   MIMO_API_KEY: process.env.MIMO_API_KEY!,
   DATABASE_URL: process.env.DATABASE_URL!,
 }
