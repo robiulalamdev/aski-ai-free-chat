@@ -7,7 +7,7 @@ const ChatLayout = dynamic(() => import("@/components/chat/chat-layout").then((m
   ssr: false,
 })
 
-export default function ChatPage() {
+export default function NewChatPage() {
   useEffect(() => {
     document.title = "NexaChat"
   }, [])

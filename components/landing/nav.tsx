@@ -41,7 +41,7 @@ export function Nav() {
           </Link>
           {user ? (
             <div className="flex items-center gap-3">
-              <Link href="/c" className="text-sm text-zinc-300 hover:text-white transition-colors">
+              <Link href="/chat/new" className="text-sm text-zinc-300 hover:text-white transition-colors">
                 {user.firstName}
               </Link>
               <Button onClick={handleLogout} variant="ghost" size="sm" className="text-zinc-400 hover:text-red-400 gap-1.5">
@@ -79,7 +79,7 @@ export function Nav() {
           </Link>
           {user ? (
             <>
-              <Link href="/c" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[#2a2438] hover:text-white">
+              <Link href="/chat/new" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[#2a2438] hover:text-white">
                 Go to Chat
               </Link>
               <button onClick={() => { handleLogout(); setOpen(false) }} className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 hover:bg-[#2a2438]">

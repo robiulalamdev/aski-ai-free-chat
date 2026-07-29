@@ -41,7 +41,7 @@ export async function registerAction(formData: {
   const refreshToken = await createRefreshToken(payload)
   await setAuthCookies(accessToken, refreshToken)
 
-  redirect("/chat")
+  redirect("/chat/new")
 }
 
 export async function loginAction(formData: {
@@ -69,7 +69,7 @@ export async function loginAction(formData: {
   const refreshToken = await createRefreshToken(payload)
   await setAuthCookies(accessToken, refreshToken)
 
-  redirect("/chat")
+  redirect("/chat/new")
 }
 
 export async function logoutAction() {

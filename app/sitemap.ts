@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: "https://freeaichat.app/chat",
+      url: "https://freeaichat.app/chat/new",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,

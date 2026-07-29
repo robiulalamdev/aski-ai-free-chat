@@ -24,7 +24,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <div className="flex w-72 flex-col border-r border-[var(--border-custom)] bg-[var(--sidebar-bg)]">
         <div className="flex items-center gap-3 border-b border-[var(--border-custom)] px-5 py-4">
           <Link
-            href="/c"
+            href="/chat/new"
             className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />

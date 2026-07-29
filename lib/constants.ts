@@ -9,7 +9,7 @@ export const PRICING_PLANS = [
     description: "For casual users",
     features: ["Local AI model", "Basic tools", "1 conversation"],
     cta: "Start Chat",
-    href: "/chat",
+    href: "/chat/new",
   },
   {
     name: "Pro",

@@ -37,6 +37,8 @@ function ChatContent() {
   const { processMessage, cancel } = useAI()
   const { user, logout } = useAuth()
 
+  const isNewChat = pathname === "/chat/new"
+
   const [state, setState] = useState<{ conversations: Conversation[]; activeId: string | null }>({
     conversations: [],
     activeId: null,
@@ -50,29 +52,22 @@ function ChatContent() {
   useEffect(() => {
     getUserConversations().then((convs) => {
       if (convs.length > 0) {
-        setState({ conversations: convs, activeId: convs[0].id })
+        setState({ conversations: convs, activeId: null })
       }
       setInitialized(true)
     })
   }, [])
 
-  // Sync URL with active conversation
+  // Load conversation from URL if on /chat/{id}
   useEffect(() => {
-    if (activeId && pathname !== `/c/${activeId}`) {
-      router.replace(`/c/${activeId}`, { scroll: false })
-    }
-  }, [activeId, pathname, router])
-
-  // Load specific conversation if URL has ID
-  useEffect(() => {
+    if (!initialized) return
     const parts = pathname.split("/")
-    const urlId = parts[2] // /c/{id}
-    if (urlId && urlId !== activeId && state.conversations.length > 0) {
+    const urlId = parts[2] // /chat/{id}
+    if (urlId && urlId !== "new" && urlId !== activeId) {
       const exists = state.conversations.find((c) => c.id === urlId)
       if (exists) {
         setState((prev) => ({ ...prev, activeId: urlId }))
       } else {
-        // Load from DB
         getConversationById(urlId).then((conv) => {
           if (conv) {
             setState((prev) => ({
@@ -83,7 +78,7 @@ function ChatContent() {
         })
       }
     }
-  }, [pathname, state.conversations])
+  }, [pathname, initialized, state.conversations, activeId])
 
   const refresh = useCallback(async () => {
     const convs = await getUserConversations()
@@ -93,31 +88,30 @@ function ChatContent() {
     }))
   }, [])
 
-  const handleNew = useCallback(async () => {
-    const conv = await createConversation()
-    if (conv) {
-      setState((prev) => ({
-        conversations: [conv, ...prev.conversations.filter((c) => c.id !== conv.id)],
-        activeId: conv.id,
-      }))
-      router.push("/c", { scroll: false })
-    }
+  const handleNew = useCallback(() => {
+    setState((prev) => ({ ...prev, activeId: null }))
+    router.push("/chat/new", { scroll: false })
+    if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [router])
 
   const handleSelect = useCallback((id: string) => {
     setState((prev) => ({ ...prev, activeId: id }))
-    router.push(`/c/${id}`, { scroll: false })
+    router.push(`/chat/${id}`, { scroll: false })
     if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [router])
 
   const handleDelete = useCallback(async (id: string) => {
     await deleteUserConversation(id)
     const convs = await getUserConversations()
-    setState((prev) => ({
-      conversations: convs,
-      activeId: prev.activeId === id ? (convs.length > 0 ? convs[0].id : null) : prev.activeId,
-    }))
-  }, [])
+    setState((prev) => {
+      const wasActive = prev.activeId === id
+      return {
+        conversations: convs,
+        activeId: wasActive ? null : prev.activeId,
+      }
+    })
+    router.push("/chat/new", { scroll: false })
+  }, [router])
 
   const handleRename = useCallback(async (id: string, title: string) => {
     await updateConversationTitle(id, title)
@@ -125,15 +119,30 @@ function ChatContent() {
   }, [refresh])
 
   const handleSend = useCallback(async (content: string) => {
-    const currentId = state.activeId
-    if (!currentId) return
     setIsGenerating(true)
     setStreamingText("")
+
+    let currentId = state.activeId
+
+    // Create conversation if new chat
+    if (!currentId) {
+      const conv = await createConversation()
+      if (!conv) {
+        setIsGenerating(false)
+        return
+      }
+      currentId = conv.id
+      setState((prev) => ({
+        conversations: [conv, ...prev.conversations.filter((c) => c.id !== conv.id)],
+        activeId: conv.id,
+      }))
+      router.replace(`/chat/${conv.id}`, { scroll: false })
+    }
 
     // Add user message to DB
     await addMessageToConversation(currentId, "user", content)
 
-    // Reload conversations to get updated messages
+    // Reload conversations
     const convs = await getUserConversations()
     const updatedActive = convs.find((c) => c.id === currentId)
     const isFirstMessage = !updatedActive || updatedActive.messages.length <= 1
@@ -172,7 +181,7 @@ function ChatContent() {
     await addMessageToConversation(currentId, "assistant", fullResponse)
     await refresh()
     setIsGenerating(false)
-  }, [state.activeId, refresh, processMessage])
+  }, [state.activeId, refresh, processMessage, router])
 
   const handleRegenerate = useCallback(async () => {
     const currentId = state.activeId
@@ -239,10 +248,10 @@ function ChatContent() {
 
       <div className="flex flex-1 flex-col min-w-0">
         <ChatHeader
-          title={activeConversation?.title || "New Chat"}
+          title={isNewChat ? "New Chat" : (activeConversation?.title || "New Chat")}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
-          onRegenerate={messages.length >= 2 ? handleRegenerate : undefined}
+          onRegenerate={!isNewChat && messages.length >= 2 ? handleRegenerate : undefined}
           conversations={conversations}
           activeConversationId={activeId}
         />

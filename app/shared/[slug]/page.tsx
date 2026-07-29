@@ -54,7 +54,7 @@ export default function SharedChatPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-2">Chat Not Found</h1>
           <p className="text-zinc-500 text-sm">This conversation doesn&apos;t exist or is no longer shared.</p>
-          <a href="/c" className="mt-4 inline-block rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-2.5 text-sm font-medium text-white hover:brightness-110 transition-all">
+          <a href="/chat/new" className="mt-4 inline-block rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-2.5 text-sm font-medium text-white hover:brightness-110 transition-all">
             Try NexaChat
           </a>
         </div>
@@ -70,7 +70,7 @@ export default function SharedChatPage() {
             <h1 className="text-lg font-semibold text-white">{conv.title}</h1>
             <p className="text-xs text-zinc-500">Shared by {conv.author}</p>
           </div>
-          <a href="/c" className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:brightness-110 transition-all">
+          <a href="/chat/new" className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:brightness-110 transition-all">
             Try NexaChat
           </a>
         </div>

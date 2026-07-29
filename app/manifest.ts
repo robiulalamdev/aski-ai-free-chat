@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "NexaChat",
     short_name: "NexaChat",
     description: "AI chat that runs entirely in your browser",
-    start_url: "/chat",
+    start_url: "/chat/new",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: "#7c3aed",
