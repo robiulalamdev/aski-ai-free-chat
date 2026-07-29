@@ -2,27 +2,21 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Menu, X, Brain, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { getCurrentUserAction, logoutAction } from "@/app/actions/auth"
 
 export function Nav() {
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<{ firstName: string } | null>(null)
-  const router = useRouter()
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => { if (data?.user) setUser(data.user) })
-      .catch(() => {})
+    getCurrentUserAction().then((u) => { if (u) setUser(u) }).catch(() => {})
   }, [])
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" })
-    setUser(null)
-    router.push("/")
+    await logoutAction()
   }
 
   return (

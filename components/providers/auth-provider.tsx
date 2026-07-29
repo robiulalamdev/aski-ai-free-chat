@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import { useRouter } from "next/navigation"
+import { logoutAction, getCurrentUserAction } from "@/app/actions/auth"
 
 type User = {
   id: string
@@ -23,17 +23,11 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me")
-      if (res.ok) {
-        const data = await res.json()
-        setUser(data.user)
-      } else {
-        setUser(null)
-      }
+      const userData = await getCurrentUserAction()
+      setUser(userData)
     } catch {
       setUser(null)
     } finally {
@@ -42,10 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" })
     setUser(null)
-    router.push("/login")
-  }, [router])
+    await logoutAction()
+  }, [])
 
   useEffect(() => {
     refreshUser()
