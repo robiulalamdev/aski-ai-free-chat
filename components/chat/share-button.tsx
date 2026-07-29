@@ -27,10 +27,25 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
 
   const handleToggle = async () => {
     setError(null)
+
+    // Re-check feature access before every action
+    const allowed = await hasFeatureAction(FEATURES.SHARE_CHAT)
+    if (!allowed) {
+      setHasAccess(false)
+      setError("This feature requires a paid plan. Please upgrade to access share.")
+      setLoading(false)
+      setShowDropdown(false)
+      return
+    }
+
     setLoading(true)
     const result = await toggleShare(conversationId)
     if (result?.error) {
       setError(result.error)
+      // If server says no access, update UI
+      if (result.error.includes("upgrade") || result.error.includes("paid plan")) {
+        setHasAccess(false)
+      }
     } else if (result?.success) {
       setIsShared(result.shared)
       setShareSlug(result.slug || null)

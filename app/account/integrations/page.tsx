@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Plus, Trash2, ToggleLeft, ToggleRight, X, Webhook, Copy, Check } from "lucide-react"
+import { Loader2, Plus, Trash2, ToggleLeft, ToggleRight, X, Webhook, Copy, Check, Lock } from "lucide-react"
 import { getWebhooks, createWebhook, deleteWebhook, toggleWebhook } from "@/app/actions/webhooks"
+import { hasFeatureAction } from "@/app/actions/account"
+import { FEATURES } from "@/lib/features"
 
 interface WebhookItem {
   id: string
@@ -32,6 +34,7 @@ export default function IntegrationsPage() {
   const [success, setSuccess] = useState("")
   const [newSecret, setNewSecret] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null)
 
   const load = async () => {
     const data = await getWebhooks()
@@ -39,7 +42,10 @@ export default function IntegrationsPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    hasFeatureAction(FEATURES.CUSTOM_INTEGRATIONS).then((allowed) => setHasAccess(allowed))
+    load()
+  }, [])
 
   const toggleEvent = (slug: string) => {
     setSelectedEvents((prev) => prev.includes(slug) ? prev.filter((e) => e !== slug) : [...prev, slug])
@@ -78,6 +84,26 @@ export default function IntegrationsPage() {
     navigator.clipboard.writeText(secret)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (hasAccess === null) {
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-violet-500" /></div>
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
+        <Lock className="mx-auto h-12 w-12 text-violet-400 mb-4" />
+        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Premium Feature</h2>
+        <p className="text-sm text-zinc-500 mb-6">Custom Integrations requires a paid plan. Upgrade to connect webhooks and integrations.</p>
+        <a
+          href="/account/subscription"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all"
+        >
+          Upgrade Plan
+        </a>
+      </div>
+    )
   }
 
   if (loading) {

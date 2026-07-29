@@ -251,12 +251,16 @@ function ChatContent() {
           title={isNewChat ? "New Chat" : (activeConversation?.title || "New Chat")}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
-          onRegenerate={!isNewChat && messages.length >= 2 ? handleRegenerate : undefined}
           conversations={conversations}
           activeConversationId={activeId}
         />
 
-        <ChatMessages messages={messages} isGenerating={isGenerating} streamingText={streamingText} />
+        <ChatMessages
+          messages={messages}
+          isGenerating={isGenerating}
+          streamingText={streamingText}
+          onRegenerate={!isNewChat && messages.length >= 2 ? handleRegenerate : undefined}
+        />
 
         <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />
       </div>

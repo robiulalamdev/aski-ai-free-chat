@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { Bot, Loader2, CheckCheck } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { Bot, Loader2, CheckCheck, RefreshCw, Copy, Check } from "lucide-react"
 import { MarkdownRenderer } from "./markdown-renderer"
 import type { Message } from "@/types/chat"
 
@@ -14,14 +14,60 @@ function formatTime(ts: number): string {
   return `${hour12}:${m} ${ampm}`
 }
 
+function AssistantMessage({
+  message,
+  isLast,
+  onRegenerate,
+}: {
+  message: Message
+  isLast: boolean
+  onRegenerate?: () => void
+}) {
+  const [copied, setCopied] = useState(false)
+
+  const copyMessage = () => {
+    navigator.clipboard.writeText(message.content)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="flex gap-3 justify-start group">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-600/20">
+        <Bot className="h-5 w-5 text-white" />
+      </div>
+      <div className="flex flex-col items-start max-w-[75%]">
+        <div className="rounded-2xl rounded-bl-md bg-[#231e30] px-4 py-3">
+          <div className="text-sm leading-relaxed">
+            <MarkdownRenderer content={message.content} />
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-[10px] text-zinc-600">{formatTime(message.createdAt)}</span>
+          <button onClick={copyMessage} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438] transition-colors" title="Copy message">
+            {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
+          </button>
+          {isLast && onRegenerate && (
+            <button onClick={onRegenerate} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[#2a2438] transition-colors" title="Regenerate response">
+              <RefreshCw className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ChatMessages({
   messages,
   isGenerating,
   streamingText,
+  onRegenerate,
 }: {
   messages: Message[]
   isGenerating: boolean
   streamingText?: string
+  onRegenerate?: () => void
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -45,47 +91,37 @@ export function ChatMessages({
     )
   }
 
+  const lastAssistantIdx = [...messages].reverse().findIndex((m) => m.role === "assistant")
+  const lastAssistantId = lastAssistantIdx !== -1 ? messages[messages.length - 1 - lastAssistantIdx].id : null
+
   return (
     <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6 w-full">
-      {messages.map((message) => (
-        <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-          {message.role === "assistant" && (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-600/20">
-              <Bot className="h-5 w-5 text-white" />
-            </div>
-          )}
-
-          <div className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"} max-w-[75%]`}>
-            <div
-              className={`rounded-2xl px-4 py-3 ${
-                message.role === "user"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-br-md"
-                  : "bg-[#231e30] text-zinc-100 rounded-bl-md"
-              }`}
-            >
-              {message.role === "user" ? (
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
-              ) : (
-                <div className="text-sm leading-relaxed">
-                  <MarkdownRenderer content={message.content} />
+      {messages.map((message) => {
+        if (message.role === "user") {
+          return (
+            <div key={message.id} className="flex gap-3 justify-end">
+              <div className="flex flex-col items-end max-w-[75%]">
+                <div className="rounded-2xl rounded-br-md bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-white">{message.content}</p>
                 </div>
-              )}
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <span className="text-[10px] text-zinc-600">{formatTime(message.createdAt)}</span>
+                  <CheckCheck className="h-3.5 w-3.5 text-violet-400" />
+                </div>
+              </div>
             </div>
-            <div className={`flex items-center gap-1.5 mt-1.5 ${message.role === "user" ? "flex-row-reverse" : ""}`}>
-              <span className="text-[10px] text-zinc-600">{formatTime(message.createdAt)}</span>
-              {message.role === "user" && (
-                <CheckCheck className="h-3.5 w-3.5 text-violet-400" />
-              )}
-            </div>
-          </div>
+          )
+        }
 
-          {message.role === "user" && (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2a2438] border border-[#2e2840]">
-              <span className="text-xs font-semibold text-zinc-300">N</span>
-            </div>
-          )}
-        </div>
-      ))}
+        return (
+          <AssistantMessage
+            key={message.id}
+            message={message}
+            isLast={message.id === lastAssistantId}
+            onRegenerate={message.id === lastAssistantId ? onRegenerate : undefined}
+          />
+        )
+      })}
 
       {isGenerating && streamingText && (
         <div className="flex gap-3 justify-start">

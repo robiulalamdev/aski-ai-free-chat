@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Users, Plus, Trash2, Shield, X } from "lucide-react"
+import { Loader2, Users, Plus, Trash2, Shield, X, Lock } from "lucide-react"
 import { getTeamMembers, inviteTeamMember, removeTeamMember, updateTeamMemberRole } from "@/app/actions/team"
+import { hasFeatureAction } from "@/app/actions/account"
+import { FEATURES } from "@/lib/features"
 
 interface TeamMember {
   id: string
@@ -20,6 +22,7 @@ export default function TeamPage() {
   const [inviting, setInviting] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null)
 
   const load = async () => {
     const data = await getTeamMembers()
@@ -27,7 +30,10 @@ export default function TeamPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    hasFeatureAction(FEATURES.TEAM_MANAGEMENT).then((allowed) => setHasAccess(allowed))
+    load()
+  }, [])
 
   const handleInvite = async () => {
     if (!email.trim()) return
@@ -49,6 +55,26 @@ export default function TeamPage() {
   const handleRoleChange = async (id: string, role: string) => {
     await updateTeamMemberRole(id, role)
     await load()
+  }
+
+  if (hasAccess === null) {
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-violet-500" /></div>
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
+        <Lock className="mx-auto h-12 w-12 text-violet-400 mb-4" />
+        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Premium Feature</h2>
+        <p className="text-sm text-zinc-500 mb-6">Team Management requires a paid plan. Upgrade to invite and manage team members.</p>
+        <a
+          href="/account/subscription"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all"
+        >
+          Upgrade Plan
+        </a>
+      </div>
+    )
   }
 
   if (loading) {
