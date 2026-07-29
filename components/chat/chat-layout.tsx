@@ -8,7 +8,7 @@ import { ChatInput } from "./chat-input"
 import { Sidebar } from "./sidebar"
 import { AIProvider, useAI } from "@/components/providers/ai-provider"
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider"
-import type { Conversation } from "@/types/chat"
+import type { Conversation, Message } from "@/types/chat"
 import {
   createConversation,
   getUserConversations,
@@ -27,6 +27,10 @@ function generateSmartTitle(firstMessage: string): string {
   return title
 }
 
+function makeMsg(role: "user" | "assistant", content: string): Message {
+  return { id: crypto.randomUUID(), role, content, createdAt: Date.now() }
+}
+
 function ChatContent() {
   const pathname = usePathname()
   const [initialized, setInitialized] = useState(false)
@@ -35,177 +39,148 @@ function ChatContent() {
   const [streamingText, setStreamingText] = useState("")
   const { processMessage, cancel } = useAI()
   const { user, logout } = useAuth()
-  const isSending = useRef(false)
+  const activeIdRef = useRef<string | null>(null)
+  const [displayMessages, setDisplayMessages] = useState<Message[]>([])
 
-  const [state, setState] = useState<{ conversations: Conversation[]; activeId: string | null }>({
-    conversations: [],
-    activeId: null,
-  })
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const activeConversation = conversations.find((c) => c.id === activeIdRef.current)
 
-  const { conversations, activeId } = state
-  const activeConversation = conversations.find((c) => c.id === activeId)
-  const messages = activeConversation?.messages || []
-
-  // Load conversations from DB on mount
   useEffect(() => {
     getUserConversations().then((convs) => {
-      if (convs.length > 0) {
-        setState({ conversations: convs, activeId: null })
-      }
+      setConversations(convs)
       setInitialized(true)
     })
   }, [])
 
-  // Load conversation from URL if on /c/{id} (deep link on page load)
   useEffect(() => {
     if (!initialized) return
     const parts = pathname.split("/")
     const urlId = parts[2]
-    if (urlId && parts[1] === "c" && urlId !== activeId) {
-      const exists = state.conversations.find((c) => c.id === urlId)
+    if (urlId && parts[1] === "c") {
+      activeIdRef.current = urlId
+      const exists = conversations.find((c) => c.id === urlId)
       if (exists) {
-        setState((prev) => ({ ...prev, activeId: urlId }))
+        setDisplayMessages(exists.messages)
       } else {
         getConversationById(urlId).then((conv) => {
           if (conv) {
-            setState((prev) => ({
-              conversations: [conv, ...prev.conversations.filter((c) => c.id !== conv.id)],
-              activeId: conv.id,
-            }))
+            setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)])
+            setDisplayMessages(conv.messages)
+            activeIdRef.current = conv.id
           }
         })
       }
     }
-  }, [pathname, initialized]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pathname, initialized]) // eslint-disable-line
 
-  const refresh = useCallback(async () => {
+  const syncConversations = useCallback(async () => {
     const convs = await getUserConversations()
-    setState((prev) => ({
-      conversations: convs.length > 0 ? convs : prev.conversations,
-      activeId: prev.activeId,
-    }))
+    setConversations(convs)
   }, [])
 
   const handleNew = useCallback(() => {
-    setState((prev) => ({ ...prev, activeId: null }))
+    activeIdRef.current = null
+    setDisplayMessages([])
     window.history.replaceState(null, "", "/chat/new")
     if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [])
 
   const handleSelect = useCallback((id: string) => {
-    setState((prev) => ({ ...prev, activeId: id }))
+    activeIdRef.current = id
+    const conv = conversations.find((c) => c.id === id)
+    setDisplayMessages(conv?.messages || [])
     window.history.replaceState(null, "", `/c/${id}`)
     if (window.innerWidth < 1024) setSidebarOpen(false)
-  }, [])
+  }, [conversations])
 
   const handleDelete = useCallback(async (id: string) => {
     await deleteUserConversation(id)
-    const convs = await getUserConversations()
-    setState((prev) => ({
-      conversations: convs,
-      activeId: prev.activeId === id ? null : prev.activeId,
-    }))
-    window.history.replaceState(null, "", "/chat/new")
-  }, [])
+    if (activeIdRef.current === id) {
+      activeIdRef.current = null
+      setDisplayMessages([])
+      window.history.replaceState(null, "", "/chat/new")
+    }
+    await syncConversations()
+  }, [syncConversations])
 
   const handleRename = useCallback(async (id: string, title: string) => {
     await updateConversationTitle(id, title)
-    await refresh()
-  }, [refresh])
+    await syncConversations()
+  }, [syncConversations])
 
   const handleSend = useCallback(async (content: string) => {
-    if (isSending.current) return
-    isSending.current = true
+    // 1. Show user message instantly
+    const userMsg = makeMsg("user", content)
+    setDisplayMessages((prev) => [...prev, userMsg])
     setIsGenerating(true)
     setStreamingText("")
 
     try {
-      let currentId = state.activeId
+      let currentId = activeIdRef.current
 
-      // Create conversation if new chat
+      // 2. Create conversation if needed
       if (!currentId) {
         const conv = await createConversation()
         if (!conv) {
           setIsGenerating(false)
-          isSending.current = false
           return
         }
         currentId = conv.id
-        // Update URL immediately without unmounting
+        activeIdRef.current = conv.id
         window.history.replaceState(null, "", `/c/${conv.id}`)
+
+        // Add to sidebar immediately
+        setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)])
       }
 
-      // Add user message to DB
-      const updatedConv = await addMessageToConversation(currentId, "user", content)
+      // 3. Save user message to DB in background
+      addMessageToConversation(currentId, "user", content).then(() => syncConversations())
 
-      // NOW set state with conversation that includes user message
-      if (updatedConv) {
-        setState((prev) => ({
-          conversations: [updatedConv, ...prev.conversations.filter((c) => c.id !== updatedConv.id)],
-          activeId: updatedConv.id,
-        }))
-      }
-
-      // Generate smart title from first message
-      const currentConv = state.conversations.find((c) => c.id === currentId)
-      if (!currentConv || currentConv.messages.length === 0) {
+      // 4. Generate smart title
+      if (displayMessages.length === 0) {
         const smartTitle = generateSmartTitle(content)
-        await updateConversationTitle(currentId, smartTitle)
+        updateConversationTitle(currentId, smartTitle).then(() => syncConversations())
       }
 
-      if (!updatedConv) {
-        setIsGenerating(false)
-        isSending.current = false
-        return
-      }
-
-      // Stream AI response
+      // 5. Stream AI response
+      const messagesForAI = [...displayMessages, userMsg]
       let fullResponse = ""
       try {
-        fullResponse = await processMessage(updatedConv.messages, (token) => {
+        fullResponse = await processMessage(messagesForAI, (token) => {
           setStreamingText((prev) => prev + token)
         })
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Sorry, an error occurred."
-        if (message.includes("Daily token limit reached")) {
-          fullResponse = "⚠️ " + message
-        } else {
-          fullResponse = "Sorry, an error occurred while generating the response."
-        }
+        fullResponse = message.includes("Daily token limit reached")
+          ? "⚠️ " + message
+          : "Sorry, an error occurred while generating the response."
       }
 
-      // Save AI response
+      // 6. Show AI response and save to DB
       setStreamingText("")
-      const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
-      if (finalConv) {
-        setState((prev) => ({
-          conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
-          activeId: finalConv.id,
-        }))
-      }
+      const aiMsg = makeMsg("assistant", fullResponse)
+      setDisplayMessages((prev) => [...prev, aiMsg])
+
+      addMessageToConversation(currentId, "assistant", fullResponse).then(() => syncConversations())
     } finally {
       setIsGenerating(false)
-      isSending.current = false
     }
-  }, [state.activeId, state.conversations, processMessage])
+  }, [displayMessages, processMessage, syncConversations])
 
   const handleRegenerate = useCallback(async () => {
-    const currentId = state.activeId
-    if (!currentId) return
+    if (displayMessages.length < 2) return
 
-    const conv = state.conversations.find((c) => c.id === currentId)
-    if (!conv || conv.messages.length < 2) return
-
-    const lastAssistantIdx = [...conv.messages].reverse().findIndex((m) => m.role === "assistant")
+    const lastAssistantIdx = [...displayMessages].reverse().findIndex((m) => m.role === "assistant")
     if (lastAssistantIdx === -1) return
+
+    const msgsForAI = displayMessages.slice(0, -(lastAssistantIdx + 1))
 
     setIsGenerating(true)
     setStreamingText("")
-    const msgsWithoutLast = conv.messages.slice(0, -(lastAssistantIdx + 1))
 
     let fullResponse = ""
     try {
-      fullResponse = await processMessage(msgsWithoutLast, (token) => {
+      fullResponse = await processMessage(msgsForAI, (token) => {
         setStreamingText((prev) => prev + token)
       })
     } catch (err) {
@@ -213,34 +188,25 @@ function ChatContent() {
     }
 
     setStreamingText("")
-    const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
-    if (finalConv) {
-      setState((prev) => ({
-        conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
-        activeId: finalConv.id,
-      }))
+    const aiMsg = makeMsg("assistant", fullResponse)
+    setDisplayMessages((prev) => [...prev.slice(0, -lastAssistantIdx - 1), aiMsg])
+
+    if (activeIdRef.current) {
+      addMessageToConversation(activeIdRef.current, "assistant", fullResponse).then(() => syncConversations())
     }
     setIsGenerating(false)
-  }, [state.activeId, state.conversations, processMessage])
+  }, [displayMessages, processMessage, syncConversations])
 
   const handleStop = useCallback(() => {
     cancel()
-    if (streamingText) {
-      const currentId = state.activeId
-      if (currentId) {
-        addMessageToConversation(currentId, "assistant", streamingText).then((finalConv) => {
-          if (finalConv) {
-            setState((prev) => ({
-              conversations: [finalConv, ...prev.conversations.filter((c) => c.id !== finalConv.id)],
-              activeId: finalConv.id,
-            }))
-          }
-        })
-      }
-      setStreamingText("")
+    if (streamingText && activeIdRef.current) {
+      const aiMsg = makeMsg("assistant", streamingText)
+      setDisplayMessages((prev) => [...prev, aiMsg])
+      addMessageToConversation(activeIdRef.current!, "assistant", streamingText).then(() => syncConversations())
     }
+    setStreamingText("")
     setIsGenerating(false)
-  }, [cancel, streamingText, state.activeId])
+  }, [cancel, streamingText, syncConversations])
 
   if (!initialized) {
     return (
@@ -254,7 +220,7 @@ function ChatContent() {
     <div className="flex h-screen bg-[#1e1929]">
       <Sidebar
         conversations={conversations}
-        activeId={activeId}
+        activeId={activeIdRef.current}
         onNew={handleNew}
         onSelect={handleSelect}
         onDelete={handleDelete}
@@ -270,14 +236,14 @@ function ChatContent() {
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
           conversations={conversations}
-          activeConversationId={activeId}
+          activeConversationId={activeIdRef.current}
         />
 
         <ChatMessages
-          messages={messages}
+          messages={displayMessages}
           isGenerating={isGenerating}
           streamingText={streamingText}
-          onRegenerate={!activeId && messages.length < 2 ? undefined : handleRegenerate}
+          onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
         />
 
         <ChatInput onSend={handleSend} isGenerating={isGenerating} onStop={handleStop} />

@@ -72,6 +72,10 @@ export function ChatMessages({
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    console.log("[ChatMessages] RENDER msgs:", messages.length, "generating:", isGenerating, "stream:", streamingText ? streamingText.substring(0, 30) : "empty")
+  })
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, streamingText])
 
