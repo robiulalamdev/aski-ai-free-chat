@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 
 export function Nav() {
   const [open, setOpen] = useState(false)
-  const [user, setUser] = useState<{ name: string } | null>(null)
+  const [user, setUser] = useState<{ firstName: string } | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function Nav() {
           {user ? (
             <div className="flex items-center gap-3">
               <Link href="/chat" className="text-sm text-zinc-300 hover:text-white transition-colors">
-                {user.name}
+                {user.firstName}
               </Link>
               <Button onClick={handleLogout} variant="ghost" size="sm" className="text-zinc-400 hover:text-red-400 gap-1.5">
                 <LogOut className="h-3.5 w-3.5" />

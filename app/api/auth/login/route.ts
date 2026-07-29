@@ -21,10 +21,17 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Invalid email or password" }, { status: 401 })
     }
 
-    const token = await createToken({ userId: user.id, email: user.email, name: user.name })
+    const token = await createToken({
+      userId: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    })
     await setSessionCookie(token)
 
-    return Response.json({ user: { id: user.id, name: user.name, email: user.email, plan: user.plan } })
+    return Response.json({
+      user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, plan: user.plan },
+    })
   } catch (err) {
     console.error("Login error:", err)
     return Response.json({ error: "Internal server error" }, { status: 500 })

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 
 type User = {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   plan: string
 }

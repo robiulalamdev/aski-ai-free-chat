@@ -33,15 +33,15 @@ export function Sidebar({
   onDelete: (id: string) => void
   onRename: (id: string, title: string) => void
   open: boolean
-  user?: { name: string; email: string; plan: string } | null
+  user?: { firstName: string; lastName: string; email: string; plan: string } | null
   onLogout?: () => void
 }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
-  const userName = user?.name || "User"
-  const userInitial = userName.charAt(0).toUpperCase()
+  const fullName = user ? `${user.firstName} ${user.lastName}` : "User"
+  const userInitial = user ? user.firstName.charAt(0).toUpperCase() : "U"
   const userPlan = user?.plan === "pro" ? "Pro Plan" : "Free Plan"
 
   return (
@@ -138,7 +138,7 @@ export function Sidebar({
             {userInitial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">{userName}</p>
+            <p className="text-sm font-medium text-white truncate">{fullName}</p>
             <p className="text-[11px] text-zinc-500">{userPlan}</p>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300" title="Settings">
