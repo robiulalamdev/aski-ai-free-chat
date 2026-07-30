@@ -39,24 +39,24 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold text-white">
+            <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold text-[var(--foreground)]">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
                 <Brain className="h-3.5 w-3.5 text-white" />
               </div>
               NexaChat
             </Link>
-            <p className="mt-3 text-sm text-zinc-500 max-w-xs">
+            <p className="mt-3 text-sm text-[var(--muted)] max-w-xs">
               AI-powered chat assistant. Fast, free, and secure.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="text-sm font-medium text-white">Product</h4>
+            <h4 className="text-sm font-medium text-[var(--foreground)]">Product</h4>
             <ul className="mt-3 space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
+                  <Link href={link.href} className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -66,22 +66,22 @@ export function Footer() {
 
           {/* Developer */}
           <div>
-            <h4 className="text-sm font-medium text-white">Developer</h4>
+            <h4 className="text-sm font-medium text-[var(--foreground)]">Developer</h4>
             <ul className="mt-3 space-y-2">
               <li>
-                <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
+                <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
                   Portfolio
                 </Link>
               </li>
               <li>
-                <span className="text-sm text-zinc-500">Robiul Alam</span>
+                <span className="text-sm text-[var(--muted)]">Robiul Alam</span>
               </li>
             </ul>
           </div>
 
           {/* Social */}
           <div>
-            <h4 className="text-sm font-medium text-white">Connect</h4>
+            <h4 className="text-sm font-medium text-[var(--foreground)]">Connect</h4>
             <div className="mt-3 flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
@@ -89,7 +89,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--surface)] text-zinc-500 hover:bg-[var(--surface-light)] hover:text-white transition-all"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-all"
                   title={social.name}
                 >
                   {social.icon}
@@ -100,10 +100,10 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-[var(--border-custom)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-600">
+          <p className="text-xs text-[var(--muted)]">
             &copy; {new Date().getFullYear()} NexaChat. All rights reserved.
           </p>
-          <p className="text-xs text-zinc-600">
+          <p className="text-xs text-[var(--muted)]">
             Built by{" "}
             <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 transition-colors">
               Robiul Alam

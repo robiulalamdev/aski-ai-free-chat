@@ -109,12 +109,12 @@ export async function middleware(request: NextRequest) {
   if (isAuthPage) {
     if (accessToken) {
       const { valid } = await verify(accessToken, ACCESS_SECRET)
-      if (valid) return NextResponse.redirect(new URL("/c", request.url))
+      if (valid) return NextResponse.redirect(new URL("/chat/new", request.url))
     }
     if (refreshToken) {
       const result = await verify(refreshToken, REFRESH_SECRET)
       if (result.valid && result.payload) {
-        const response = NextResponse.redirect(new URL("/c", request.url))
+        const response = NextResponse.redirect(new URL("/chat/new", request.url))
         setCookie(response, env.ACCESS_COOKIE_NAME, await mint(result.payload as unknown as Record<string, unknown>, ACCESS_SECRET, env.ACCESS_TOKEN_EXPIRES_IN), env.ACCESS_COOKIE_MAX_AGE)
         setCookie(response, env.REFRESH_COOKIE_NAME, await mint(result.payload as unknown as Record<string, unknown>, REFRESH_SECRET, env.REFRESH_TOKEN_EXPIRES_IN), env.REFRESH_COOKIE_MAX_AGE)
         return response

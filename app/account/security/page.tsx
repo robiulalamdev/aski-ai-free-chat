@@ -61,7 +61,7 @@ export default function SecurityPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[var(--foreground)]">Security</h1>
-        <p className="mt-1 text-sm text-zinc-500">Manage your password and security settings</p>
+        <p className="mt-1 text-sm text-[var(--muted)]">Manage your password and security settings</p>
       </div>
 
       {success && (
@@ -80,25 +80,25 @@ export default function SecurityPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-[var(--foreground)]">Password</h3>
-              <p className="text-xs text-zinc-500">Last changed: never</p>
+              <p className="text-xs text-[var(--muted)]">Last changed: never</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">Current Password</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Current Password</label>
               <div className="relative">
                 <input
                   type={showCurrent ? "text" : "password"}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                   placeholder="Enter current password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
                 >
                   {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -106,19 +106,19 @@ export default function SecurityPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">New Password</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">New Password</label>
               <div className="relative">
                 <input
                   type={showNew ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                   placeholder="Enter new password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNew(!showNew)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
                 >
                   {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -127,10 +127,10 @@ export default function SecurityPage() {
                 <div className="mt-3 space-y-1.5">
                   {passwordChecks.map((check) => (
                     <div key={check.label} className="flex items-center gap-2 text-xs">
-                      <div className={`flex h-4 w-4 items-center justify-center rounded-full ${check.valid ? "bg-green-500/20 text-green-400" : "bg-zinc-500/20 text-zinc-500"}`}>
+                      <div className={`flex h-4 w-4 items-center justify-center rounded-full ${check.valid ? "bg-green-500/20 text-green-400" : "bg-zinc-500/20 text-[var(--muted)]"}`}>
                         {check.valid && <Check className="h-3 w-3" />}
                       </div>
-                      <span className={check.valid ? "text-green-400" : "text-zinc-500"}>{check.label}</span>
+                      <span className={check.valid ? "text-green-400" : "text-[var(--muted)]"}>{check.label}</span>
                     </div>
                   ))}
                 </div>
@@ -138,19 +138,19 @@ export default function SecurityPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">Confirm New Password</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Confirm New Password</label>
               <div className="relative">
                 <input
                   type={showConfirm ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 pr-11 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                   placeholder="Confirm new password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
                 >
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -180,14 +180,14 @@ export default function SecurityPage() {
             <div className="flex items-center justify-between py-3 border-b border-[var(--border-custom)]">
               <div>
                 <p className="text-sm text-[var(--foreground)]">Access Token</p>
-                <p className="text-xs text-zinc-500">Expires in 1 hour</p>
+                <p className="text-xs text-[var(--muted)]">Expires in 1 hour</p>
               </div>
               <span className="rounded-lg bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400">Active</span>
             </div>
             <div className="flex items-center justify-between py-3">
               <div>
                 <p className="text-sm text-[var(--foreground)]">Refresh Token</p>
-                <p className="text-xs text-zinc-500">Expires in 7 days</p>
+                <p className="text-xs text-[var(--muted)]">Expires in 7 days</p>
               </div>
               <span className="rounded-lg bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400">Active</span>
             </div>
@@ -197,7 +197,7 @@ export default function SecurityPage() {
         {/* Danger Zone */}
         <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
           <h3 className="mb-1 text-sm font-semibold text-red-400">Danger Zone</h3>
-          <p className="mb-4 text-xs text-zinc-500">Permanently delete your account and all data</p>
+          <p className="mb-4 text-xs text-[var(--muted)]">Permanently delete your account and all data</p>
           <button className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/20 transition-colors">
             Delete Account
           </button>

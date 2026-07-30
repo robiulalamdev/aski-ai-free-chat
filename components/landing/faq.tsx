@@ -46,8 +46,8 @@ export function FAQ() {
     <section id="faq" className="py-20 sm:py-28 bg-[var(--background)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Frequently Asked Questions</h2>
-          <p className="mt-4 text-lg text-zinc-400">
+          <h2 className="text-3xl font-bold tracking-tight text-[var(--foreground)] sm:text-4xl">Frequently Asked Questions</h2>
+          <p className="mt-4 text-lg text-[var(--muted)]">
             Got questions? We&apos;ve got answers.
           </p>
         </div>
@@ -62,7 +62,7 @@ export function FAQ() {
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="flex w-full items-center justify-between px-6 py-4 text-left"
               >
-                <span className="text-sm font-medium text-white sm:text-base">{faq.question}</span>
+                <span className="text-sm font-medium text-[var(--foreground)] sm:text-base">{faq.question}</span>
                 <ChevronDown
                   className={cn(
                     "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200",
@@ -71,7 +71,7 @@ export function FAQ() {
                 />
               </button>
               <div className={cn("overflow-hidden transition-all duration-300", openIndex === index ? "max-h-96" : "max-h-0")}>
-                <p className="px-6 pb-4 text-sm leading-relaxed text-zinc-400">{faq.answer}</p>
+                <p className="px-6 pb-4 text-sm leading-relaxed text-[var(--muted)]">{faq.answer}</p>
               </div>
             </div>
           ))}

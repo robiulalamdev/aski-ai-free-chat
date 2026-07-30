@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { ArrowRight, Sparkles, Shield, Zap, MessageSquare } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { ArrowRight, Sparkles, Shield, Zap, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -14,28 +14,38 @@ export function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-sm">
             <Sparkles className="h-3.5 w-3.5" />
-            Powered by DeepSeek AI
+            Powered by AI
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-4xl font-bold tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
             Chat With AI
             <span className="block bg-gradient-to-r from-violet-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
               Fast, Free & Secure
             </span>
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-zinc-400 sm:text-xl max-w-2xl mx-auto">
-            Ask questions, write code, analyze data, and get instant answers. Your conversations are saved securely in the cloud.
+          <p className="mt-6 text-lg leading-8 text-[var(--muted)] sm:text-xl max-w-2xl mx-auto">
+            Ask questions, write code, analyze data, and get instant answers.
+            Your conversations are saved securely in the cloud.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild size="lg" className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/25 px-8 h-12">
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/25 px-8 h-12"
+            >
               <Link href="/signup">
                 Get Started Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-[var(--border-custom)] bg-transparent text-zinc-300 hover:bg-[var(--surface)] hover:text-white h-12">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-[var(--border-custom)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] h-12"
+            >
               <Link href="#features">Learn More</Link>
             </Button>
           </div>
@@ -63,5 +73,5 @@ export function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }

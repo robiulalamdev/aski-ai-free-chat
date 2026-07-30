@@ -48,7 +48,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Ask anything..."
             rows={1}
-            className="max-h-[200px] w-full resize-none rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] px-5 py-3.5 pr-14 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+            className="max-h-[200px] w-full resize-none rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] px-5 py-3.5 pr-14 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
             disabled={isGenerating}
           />
         </div>

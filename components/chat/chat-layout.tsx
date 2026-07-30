@@ -382,8 +382,8 @@ function ChatContent() {
                       <path d="M12 12 2.1 9.3" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
-                  <p className="mt-2 text-sm text-zinc-500">Ask me anything — I&apos;m powered by AI.</p>
+                  <h3 className="text-xl font-semibold text-[var(--foreground)]">How can I help you today?</h3>
+                  <p className="mt-2 text-sm text-[var(--muted)]">Ask me anything — I&apos;m powered by AI.</p>
                   {isToolChat && (
                     <p className="mt-1 text-xs text-violet-400">
                       {activeToolRef.current === "code_generator" ? "Describe what you want to build" : "Tell me about your experience"}

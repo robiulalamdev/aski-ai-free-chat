@@ -69,7 +69,7 @@ export default function AnalyticsPage() {
       <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
         <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Token Usage Today</h3>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-zinc-400">{data.tokensUsedToday.toLocaleString()} / {data.tokensLimit.toLocaleString()}</span>
+          <span className="text-sm text-[var(--muted)]">{data.tokensUsedToday.toLocaleString()} / {data.tokensLimit.toLocaleString()}</span>
           <span className="rounded-lg bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-400">{data.plan} Plan</span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-zinc-800">

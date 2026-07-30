@@ -28,17 +28,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#1e1929] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-semibold text-white">
+          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-semibold text-[var(--foreground)]">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
               <Brain className="h-5 w-5 text-white" />
             </div>
             NexaChat
           </Link>
-          <h1 className="mt-6 text-2xl font-bold text-white">Welcome back</h1>
-          <p className="mt-2 text-sm text-zinc-400">Sign in to continue chatting</p>
+          <h1 className="mt-6 text-2xl font-bold text-[var(--foreground)]">Welcome back</h1>
+          <p className="mt-2 text-sm text-[var(--muted)]">Sign in to continue chatting</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -49,23 +49,23 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-300">Email</label>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Email</label>
             <input
               type="email"
               name="email"
               required
-              className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-300">Password</label>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Password</label>
             <input
               type="password"
               name="password"
               required
-              className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
               placeholder="Your password"
             />
           </div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-[var(--muted)]">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="font-medium text-violet-400 hover:text-violet-300">
             Sign up

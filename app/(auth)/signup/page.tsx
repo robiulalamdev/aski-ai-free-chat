@@ -30,17 +30,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#1e1929] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-semibold text-white">
+          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-semibold text-[var(--foreground)]">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
               <Brain className="h-5 w-5 text-white" />
             </div>
             NexaChat
           </Link>
-          <h1 className="mt-6 text-2xl font-bold text-white">Create an account</h1>
-          <p className="mt-2 text-sm text-zinc-400">Start chatting with AI for free</p>
+          <h1 className="mt-6 text-2xl font-bold text-[var(--foreground)]">Create an account</h1>
+          <p className="mt-2 text-sm text-[var(--muted)]">Start chatting with AI for free</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -52,46 +52,46 @@ export default function SignupPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-300">First Name</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">First Name</label>
               <input
                 type="text"
                 name="firstName"
                 required
-                className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 placeholder="First"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-300">Last Name</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Last Name</label>
               <input
                 type="text"
                 name="lastName"
                 required
-                className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 placeholder="Last"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-300">Email</label>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Email</label>
             <input
               type="email"
               name="email"
               required
-              className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-300">Password</label>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Password</label>
             <input
               type="password"
               name="password"
               required
               minLength={6}
-              className="w-full rounded-xl border border-[#2e2840] bg-[#231e30] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
               placeholder="At least 6 characters"
             />
           </div>
@@ -105,7 +105,7 @@ export default function SignupPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-[var(--muted)]">
           Already have an account?{" "}
           <Link href="/login" className="font-medium text-violet-400 hover:text-violet-300">
             Sign in

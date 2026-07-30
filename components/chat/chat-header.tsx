@@ -4,6 +4,7 @@ import { Sparkles, Menu, PanelLeftClose, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ExportChat } from "./export-chat"
 import { ShareButton } from "./share-button"
+import { ThemeToggle } from "@/components/providers/theme-toggle"
 import type { Conversation } from "@/types/chat"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -27,19 +28,20 @@ export function ChatHeader({
   return (
     <header className="flex h-14 items-center justify-between border-b border-[var(--border-custom)] bg-[var(--background)] px-4">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-[var(--surface-light)] lg:hidden">
+        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="h-8 w-8 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)] lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="hidden lg:flex h-8 w-8 text-zinc-400 hover:text-white hover:bg-[var(--surface-light)]">
+        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="hidden lg:flex h-8 w-8 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)]">
           {sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-violet-500" />
-          <span className="text-sm font-semibold text-white">NexaChat</span>
+          <span className="text-sm font-semibold text-[var(--foreground)]">NexaChat</span>
         </div>
       </div>
 
       <div className="flex items-center gap-1.5">
+        <ThemeToggle />
         {activeConversationId && (
           <ShareButton conversationId={activeConversationId} />
         )}
@@ -50,7 +52,7 @@ export function ChatHeader({
                 variant="ghost"
                 size="icon"
                 title="Export chat history"
-                className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-[var(--surface-light)]"
+                className="h-8 w-8 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)]"
               >
                 <Download className="h-4 w-4" />
               </Button>

@@ -93,7 +93,7 @@ export function ExportChat({ conversations }: { conversations: Conversation[] })
     <div className="flex flex-col gap-1 p-1">
       <button
         onClick={() => handleExport("markdown")}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as Markdown"
       >
         {exported === "markdown" ? <Check className="h-4 w-4 text-green-400" /> : <FileText className="h-4 w-4" />}
@@ -101,7 +101,7 @@ export function ExportChat({ conversations }: { conversations: Conversation[] })
       </button>
       <button
         onClick={() => handleExport("json")}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as JSON"
       >
         {exported === "json" ? <Check className="h-4 w-4 text-green-400" /> : <FileJson className="h-4 w-4" />}
@@ -109,7 +109,7 @@ export function ExportChat({ conversations }: { conversations: Conversation[] })
       </button>
       <button
         onClick={() => handleExport("text")}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-colors"
         title="Export as Text"
       >
         {exported === "text" ? <Check className="h-4 w-4 text-green-400" /> : <Download className="h-4 w-4" />}

@@ -42,8 +42,8 @@ export async function Pricing() {
     <section id="pricing" className="py-20 sm:py-28 bg-[var(--sidebar-bg)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Simple, Transparent Pricing</h2>
-          <p className="mt-4 text-lg text-zinc-400">
+          <h2 className="text-3xl font-bold tracking-tight text-[var(--foreground)] sm:text-4xl">Simple, Transparent Pricing</h2>
+          <p className="mt-4 text-lg text-[var(--muted)]">
             Start free, upgrade when you need more.
           </p>
         </div>
@@ -63,12 +63,12 @@ export async function Pricing() {
                   Most Popular
                 </div>
               )}
-              <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
+              <h3 className="text-xl font-semibold text-[var(--foreground)]">{plan.name}</h3>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">{plan.price}</span>
-                {plan.period && <span className="text-sm text-zinc-500">{plan.period}</span>}
+                <span className="text-4xl font-bold text-[var(--foreground)]">{plan.price}</span>
+                <span className="text-sm text-[var(--muted)]">{plan.period}</span>
               </div>
-              <p className="mt-2 text-sm text-zinc-400">{plan.description}</p>
+              <p className="mt-2 text-sm text-[var(--muted)]">{plan.description}</p>
 
               <div className="mt-4 flex items-center gap-2 rounded-xl bg-violet-500/10 px-3 py-2">
                 <Zap className="h-4 w-4 text-violet-400" />
@@ -77,13 +77,13 @@ export async function Pricing() {
 
               <ul className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature: string) => (
-                  <li key={feature} className="flex items-center gap-2 text-sm text-zinc-300">
+                  <li key={feature} className="flex items-center gap-2 text-sm text-[var(--foreground)]">
                     <Check className="h-4 w-4 text-violet-400" />
                     {feature}
                   </li>
                 ))}
               </ul>
-              <Button asChild variant={plan.popular ? "default" : "outline"} className={`mt-6 w-full ${plan.popular ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700" : "border-[#2e2840] bg-transparent text-zinc-300 hover:bg-[#2a2438]"}`}>
+              <Button asChild variant={plan.popular ? "default" : "outline"} className={`mt-6 w-full ${plan.popular ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700" : ""}`}>
                 <Link href="/signup">{plan.price === "Free" ? "Start Chat" : "Upgrade"}</Link>
               </Button>
             </div>

@@ -26,9 +26,9 @@ function ResumeStatusMessage({ content }: { content: string }) {
       <FileText className="h-4 w-4 text-violet-400 mt-0.5 shrink-0" />
       <div>
         {textOnly ? (
-          <p className="text-sm text-zinc-300">{textOnly}</p>
+          <p className="text-sm text-[var(--foreground)]">{textOnly}</p>
         ) : (
-          <p className="text-sm text-zinc-400 italic">Resume updated</p>
+          <p className="text-sm text-[var(--muted)] italic">Resume updated</p>
         )}
       </div>
     </div>
@@ -87,11 +87,11 @@ function AssistantMessage({
             </button>
           )}
 
-          <button onClick={copyMessage} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[var(--surface-light)] transition-colors" title="Copy message">
+          <button onClick={copyMessage} className="rounded p-1 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors" title="Copy message">
             {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
           </button>
           {isLast && onRegenerate && (
-            <button onClick={onRegenerate} className="rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-[var(--surface-light)] transition-colors" title="Regenerate response">
+            <button onClick={onRegenerate} className="rounded p-1 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)] transition-colors" title="Regenerate response">
               <RefreshCw className="h-3 w-3" />
             </button>
           )}
@@ -128,8 +128,8 @@ export function ChatMessages({
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 mb-4">
             <Bot className="h-8 w-8 text-white" />
           </div>
-          <h3 className="text-xl font-semibold text-white">How can I help you today?</h3>
-          <p className="mt-2 text-sm text-zinc-500">
+          <h3 className="text-xl font-semibold text-[var(--foreground)]">How can I help you today?</h3>
+          <p className="mt-2 text-sm text-[var(--muted)]">
             {isResume ? "Tell me about your experience to build your resume" : "Ask me anything — I&apos;m powered by AI."}
           </p>
         </div>
@@ -190,7 +190,7 @@ export function ChatMessages({
             <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
               <div className="text-sm leading-relaxed">
                 {isResume ? (
-                  <div className="flex items-center gap-2 text-zinc-400">
+                  <div className="flex items-center gap-2 text-[var(--muted)]">
                     <FileText className="h-4 w-4 text-violet-400" />
                     <span>Updating your resume...</span>
                     <span className="inline-block h-3 w-1 animate-pulse bg-violet-500 rounded-sm" />
@@ -214,7 +214,7 @@ export function ChatMessages({
           </div>
           <div className="rounded-2xl rounded-bl-md bg-[var(--surface)] px-4 py-3">
             {isResume ? (
-              <div className="flex items-center gap-2 text-zinc-400 text-sm">
+              <div className="flex items-center gap-2 text-[var(--muted)] text-sm">
                 <FileText className="h-4 w-4 text-violet-400" />
                 <span>Building your resume...</span>
               </div>

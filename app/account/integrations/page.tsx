@@ -95,7 +95,7 @@ export default function IntegrationsPage() {
       <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
         <Lock className="mx-auto h-12 w-12 text-violet-400 mb-4" />
         <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Premium Feature</h2>
-        <p className="text-sm text-zinc-500 mb-6">Custom Integrations requires a paid plan. Upgrade to connect webhooks and integrations.</p>
+        <p className="text-sm text-[var(--muted)] mb-6">Custom Integrations requires a paid plan. Upgrade to connect webhooks and integrations.</p>
         <a
           href="/account/subscription"
           className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all"
@@ -115,7 +115,7 @@ export default function IntegrationsPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--foreground)]">Custom Integrations</h1>
-          <p className="mt-1 text-sm text-zinc-500">Manage webhooks and integrations</p>
+          <p className="mt-1 text-sm text-[var(--muted)]">Manage webhooks and integrations</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
@@ -134,8 +134,8 @@ export default function IntegrationsPage() {
         <div className="mb-6 rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
           <p className="text-sm font-medium text-violet-400 mb-2">Webhook Secret (save this now, it won&apos;t be shown again):</p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 rounded-lg bg-[var(--input-bg)] px-3 py-2 text-xs text-zinc-300 break-all">{newSecret}</code>
-            <button onClick={() => copySecret(newSecret)} className="text-zinc-400 hover:text-violet-400">
+            <code className="flex-1 rounded-lg bg-[var(--input-bg)] px-3 py-2 text-xs text-[var(--foreground)] break-all">{newSecret}</code>
+            <button onClick={() => copySecret(newSecret)} className="text-[var(--muted)] hover:text-violet-400">
               {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
             </button>
           </div>
@@ -148,12 +148,12 @@ export default function IntegrationsPage() {
           <div className="w-full max-w-lg rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold text-[var(--foreground)]">Add Webhook</h2>
-              <button onClick={() => setShowCreate(false)} className="text-zinc-400 hover:text-[var(--foreground)]"><X className="h-5 w-5" /></button>
+              <button onClick={() => setShowCreate(false)} className="text-[var(--muted)] hover:text-[var(--foreground)]"><X className="h-5 w-5" /></button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-zinc-400">Endpoint URL</label>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">Endpoint URL</label>
                 <input
                   type="url"
                   value={url}
@@ -164,7 +164,7 @@ export default function IntegrationsPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-zinc-400">Events</label>
+                <label className="mb-2 block text-sm font-medium text-[var(--muted)]">Events</label>
                 <div className="space-y-2 rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] p-4">
                   {AVAILABLE_EVENTS.map((event) => {
                     const isSelected = selectedEvents.includes(event.slug)
@@ -183,7 +183,7 @@ export default function IntegrationsPage() {
             </div>
 
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowCreate(false)} className="rounded-xl border border-[var(--border-custom)] px-4 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)]">Cancel</button>
+              <button onClick={() => setShowCreate(false)} className="rounded-xl border border-[var(--border-custom)] px-4 py-2.5 text-sm text-[var(--muted)] hover:bg-[var(--surface-light)]">Cancel</button>
               <button onClick={handleCreate} disabled={creating || !url.trim() || selectedEvents.length === 0} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50">
                 {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                 Create
@@ -197,20 +197,20 @@ export default function IntegrationsPage() {
       <div className="space-y-3">
         {webhooks.length === 0 ? (
           <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
-            <Webhook className="mx-auto h-12 w-12 text-zinc-600 mb-4" />
-            <p className="text-sm text-zinc-500">No webhooks configured yet.</p>
+            <Webhook className="mx-auto h-12 w-12 text-[var(--muted)] mb-4" />
+            <p className="text-sm text-[var(--muted)]">No webhooks configured yet.</p>
           </div>
         ) : (
           webhooks.map((wh) => (
             <div key={wh.id} className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <button onClick={() => handleToggle(wh.id)} className="text-zinc-400 hover:text-violet-400">
+                  <button onClick={() => handleToggle(wh.id)} className="text-[var(--muted)] hover:text-violet-400">
                     {wh.isActive ? <ToggleRight className="h-5 w-5 text-green-400" /> : <ToggleLeft className="h-5 w-5" />}
                   </button>
                   <code className="text-sm text-[var(--foreground)] break-all">{wh.url}</code>
                 </div>
-                <button onClick={() => handleDelete(wh.id)} className="text-zinc-400 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => handleDelete(wh.id)} className="text-[var(--muted)] hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {wh.events.map((e) => (

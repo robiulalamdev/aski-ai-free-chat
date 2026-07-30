@@ -91,7 +91,7 @@ function CodeGeneratingUI() {
           <Loader2 className="h-6 w-6 text-white animate-spin" />
         </div>
       </div>
-      <p className="text-sm text-zinc-400">Generating code...</p>
+      <p className="text-sm text-[var(--muted)]">Generating code...</p>
     </div>
   )
 }
@@ -252,7 +252,7 @@ export function ToolPreviewPanel({
     return (
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 px-3 py-2 m-2 rounded-lg bg-[var(--surface)] border border-[var(--border-custom)] text-sm text-zinc-400 hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 px-3 py-2 m-2 rounded-lg bg-[var(--surface)] border border-[var(--border-custom)] text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
       >
         <Eye className="h-4 w-4" />
         Show Preview
@@ -277,7 +277,7 @@ export function ToolPreviewPanel({
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowVersionMenu(!showVersionMenu)}
-                className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-custom)] text-xs text-zinc-400 hover:text-[var(--foreground)] transition-colors"
+                className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-custom)] text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
               >
                 {isGenerating && hasStreamedVersion ? (
                   <span className="flex items-center gap-1">
@@ -298,7 +298,7 @@ export function ToolPreviewPanel({
               {showVersionMenu && (
                 <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-[var(--border-custom)] bg-[var(--surface)] shadow-xl z-50 py-1 max-h-60 overflow-y-auto">
                   {isGenerating && hasStreamedVersion && (
-                    <div className="flex items-center w-full px-3 py-2 text-xs text-zinc-400">
+                    <div className="flex items-center w-full px-3 py-2 text-xs text-[var(--muted)]">
                       <Loader2 className="h-3 w-3 animate-spin mr-2" />
                       <span>Building new version...</span>
                     </div>
@@ -317,7 +317,7 @@ export function ToolPreviewPanel({
                           "flex items-center w-full px-3 py-2 text-xs transition-colors",
                           selectedVersion === versionNum
                             ? "bg-violet-600/10 text-violet-400"
-                            : "text-zinc-400 hover:bg-[var(--surface-light)] hover:text-[var(--foreground)]"
+                            : "text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)]"
                         )}
                       >
                         <span>Version {versionNum}</span>
@@ -343,7 +343,7 @@ export function ToolPreviewPanel({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
+                className="h-7 text-xs text-[var(--muted)] hover:text-[var(--foreground)] gap-1"
                 onClick={handleViewFull}
               >
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -352,7 +352,7 @@ export function ToolPreviewPanel({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs text-zinc-400 hover:text-[var(--foreground)] gap-1"
+                className="h-7 text-xs text-[var(--muted)] hover:text-[var(--foreground)] gap-1"
                 onClick={handleExportPdf}
               >
                 <FileText className="h-3.5 w-3.5" />
@@ -364,7 +364,7 @@ export function ToolPreviewPanel({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-zinc-400 hover:text-[var(--foreground)]"
+              className="h-7 w-7 text-[var(--muted)] hover:text-[var(--foreground)]"
               onClick={handleDownloadHtml}
             >
               <Download className="h-3.5 w-3.5" />
@@ -373,7 +373,7 @@ export function ToolPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-zinc-400 hover:text-[var(--foreground)]"
+            className="h-7 w-7 text-[var(--muted)] hover:text-[var(--foreground)]"
             onClick={onToggle}
           >
             <EyeOff className="h-3.5 w-3.5" />

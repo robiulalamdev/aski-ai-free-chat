@@ -80,12 +80,12 @@ export function Sidebar({
       </div>
 
       <div className="px-4 pb-2">
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Conversations</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">Conversations</span>
       </div>
 
       <div className="flex-1 overflow-y-auto px-2 space-y-0.5">
         {normalChats.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-zinc-600">No conversations yet</p>
+          <p className="px-3 py-4 text-center text-xs text-[var(--muted)]">No conversations yet</p>
         )}
 
         {normalChats.map((conv) => (
@@ -95,7 +95,7 @@ export function Sidebar({
               "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors cursor-pointer",
               conv.id === activeId
                 ? "bg-[var(--surface-light)] text-[var(--foreground)]"
-                : "text-zinc-400 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
+                : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
             )}
           >
             <MessageSquare className="h-4 w-4 shrink-0 opacity-50" />
@@ -115,10 +115,10 @@ export function Sidebar({
                     if (e.key === "Escape") setEditingId(null)
                   }}
                 />
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-[var(--foreground)]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
                   <Check className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:text-[var(--foreground)]" onClick={() => setEditingId(null)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => setEditingId(null)}>
                   <X className="h-3 w-3" />
                 </Button>
               </div>
@@ -130,8 +130,8 @@ export function Sidebar({
 
             {editingId !== conv.id && (
               <div className="hidden items-center gap-0.5 group-hover:flex">
-                <span className="text-[10px] text-zinc-600 mr-1">{timeAgo(conv.updatedAt)}</span>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-600 hover:text-zinc-300" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
+                <span className="text-[10px] text-[var(--muted)] mr-1">{timeAgo(conv.updatedAt)}</span>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
                   <Pencil className="h-3 w-3" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-600 hover:text-red-400" onClick={() => onDelete(conv.id)}>
@@ -146,7 +146,7 @@ export function Sidebar({
         {toolChats.length > 0 && (
           <>
             <div className="pt-3 pb-1 px-1">
-              <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Tool Chats</span>
+              <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">Tool Chats</span>
             </div>
             {toolChats.map((conv) => {
               const toolDef = TOOL_ITEMS.find((t) => t.id === conv.toolType)
@@ -158,7 +158,7 @@ export function Sidebar({
                     "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors cursor-pointer",
                     conv.id === activeId
                       ? "bg-[var(--surface-light)] text-[var(--foreground)]"
-                      : "text-zinc-400 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
+                      : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0 opacity-50" />
@@ -166,8 +166,8 @@ export function Sidebar({
                     {conv.title || "New Chat"}
                   </button>
                   <div className="hidden items-center gap-0.5 group-hover:flex">
-                    <span className="text-[10px] text-zinc-600 mr-1">{timeAgo(conv.updatedAt)}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-600 hover:text-red-400" onClick={() => onDelete(conv.id)}>
+                    <span className="text-[10px] text-[var(--muted)] mr-1">{timeAgo(conv.updatedAt)}</span>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-red-400" onClick={() => onDelete(conv.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
@@ -180,7 +180,7 @@ export function Sidebar({
 
       {/* AI Tools Section */}
       <div className="border-t border-[var(--border-custom)] px-3 py-3">
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 px-1">AI Tools</span>
+        <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] px-1">AI Tools</span>
         <div className="mt-2 space-y-1">
           {TOOL_ITEMS.map((tool) => {
             const Icon = tool.icon
@@ -195,7 +195,7 @@ export function Sidebar({
                     window.location.href = "/account/subscription"
                   }
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-400 hover:bg-[var(--surface)] hover:text-[var(--foreground)] transition-colors"
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)] transition-colors"
               >
                 <div className={cn("flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br", tool.color)}>
                   <Icon className="h-3.5 w-3.5 text-white" />
@@ -220,9 +220,9 @@ export function Sidebar({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--foreground)] truncate">{fullName}</p>
-                <p className="text-[11px] text-zinc-500">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
+                <p className="text-[11px] text-[var(--muted)]">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
               </div>
-              <ChevronUp className="h-4 w-4 text-zinc-500" />
+              <ChevronUp className="h-4 w-4 text-[var(--muted)]" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[calc(100%-1rem)]">

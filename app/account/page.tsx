@@ -52,7 +52,7 @@ export default function AccountPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[var(--foreground)]">Account</h1>
-        <p className="mt-1 text-sm text-zinc-500">Manage your account information</p>
+        <p className="mt-1 text-sm text-[var(--muted)]">Manage your account information</p>
       </div>
 
       {success && (
@@ -71,47 +71,47 @@ export default function AccountPage() {
             </div>
             <div>
               <p className="text-lg font-semibold text-[var(--foreground)]">{firstName} {lastName}</p>
-              <p className="text-sm text-zinc-500">{email}</p>
+              <p className="text-sm text-[var(--muted)]">{email}</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-zinc-400">First Name</label>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">First Name</label>
                 <input
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-zinc-400">Last Name</label>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Last Name</label>
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 />
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">Email</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Email</label>
               <input
                 type="email"
                 value={email}
                 disabled
-                className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-zinc-500 cursor-not-allowed"
+                className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--muted)] cursor-not-allowed"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-400">Bio</label>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Bio</label>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={3}
-                className="w-full resize-none rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
+                className="w-full resize-none rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
                 placeholder="Tell us about yourself..."
               />
             </div>
@@ -124,7 +124,7 @@ export default function AccountPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="rounded-lg bg-violet-500/10 px-3 py-1.5 text-sm font-medium text-violet-400 capitalize">{plan}</span>
-              <span className="text-sm text-zinc-500">50,000 tokens/day</span>
+              <span className="text-sm text-[var(--muted)]">50,000 tokens/day</span>
             </div>
             <button className="rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-400 hover:bg-violet-500/20 transition-colors">
               Upgrade

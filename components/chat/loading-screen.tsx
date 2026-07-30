@@ -4,7 +4,7 @@ import { Brain, Sparkles } from "lucide-react"
 
 export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1e1929]">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--background)]">
       <div className="flex flex-col items-center gap-8">
         <div className="relative">
           <div className="absolute inset-0 animate-ping rounded-full bg-violet-600/20" />
@@ -14,8 +14,8 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         </div>
 
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white">NexaChat</h2>
-          <p className="mt-2 text-sm text-zinc-500 flex items-center gap-1.5 justify-center">
+          <h2 className="text-2xl font-bold text-[var(--foreground)]">NexaChat</h2>
+          <p className="mt-2 text-sm text-[var(--muted)] flex items-center gap-1.5 justify-center">
             <Sparkles className="h-3.5 w-3.5 text-violet-400" />
             Powered by AI
           </p>

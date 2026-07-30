@@ -68,7 +68,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-500 cursor-not-allowed opacity-60"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-[var(--muted)] cursor-not-allowed opacity-60"
             title="Upgrade to share conversations"
           >
             <Lock className="h-3 w-3" />
@@ -79,7 +79,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium text-[var(--foreground)]">Share Conversation</h4>
-              <button onClick={() => setOpen(false)} className="text-zinc-500 hover:text-[var(--foreground)]">
+              <button onClick={() => setOpen(false)} className="text-[var(--muted)] hover:text-[var(--foreground)]">
                 <X className="h-3 w-3" />
               </button>
             </div>
@@ -88,7 +88,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
                 <Lock className="h-4 w-4 text-violet-400 shrink-0" />
                 <span className="text-xs text-violet-400">Premium Feature</span>
               </div>
-              <p className="text-xs text-zinc-500">Share conversations with anyone via a public link. Upgrade your plan to access this feature.</p>
+              <p className="text-xs text-[var(--muted)]">Share conversations with anyone via a public link. Upgrade your plan to access this feature.</p>
               <a
                 href="/account/subscription"
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-3 py-2 text-xs font-medium text-white hover:brightness-110 transition-all"
@@ -106,7 +106,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border-custom)] px-3 py-1.5 text-xs font-medium text-[var(--muted)] hover:bg-[var(--surface-light)] transition-colors"
           title="Share conversation"
         >
           {isShared ? <Globe className="h-3 w-3 text-green-400" /> : <Share2 className="h-3 w-3" />}
@@ -155,7 +155,7 @@ export function ShareButton({ conversationId }: { conversationId: string }) {
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs text-zinc-500">Anyone with the link can view this conversation.</p>
+              <p className="text-xs text-[var(--muted)]">Anyone with the link can view this conversation.</p>
               <button
                 onClick={handleToggle}
                 disabled={loading}
