@@ -34,29 +34,29 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--border-custom)] bg-[var(--sidebar-bg)]">
+    <footer className="border-t border-[#e2e5f1] dark:border-[#2a2540] bg-white dark:bg-[#14111e]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold text-[var(--foreground)]">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
-                <Brain className="h-3.5 w-3.5 text-white" />
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/20">
+                <Brain className="h-4 w-4 text-white" />
               </div>
-              NexaChat
+              <span className="text-base font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
             </Link>
-            <p className="mt-3 text-sm text-[var(--muted)] max-w-xs">
+            <p className="mt-3 text-sm text-[#6b7280] max-w-xs">
               AI-powered chat assistant. Fast, free, and secure.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="text-sm font-medium text-[var(--foreground)]">Product</h4>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Product</h4>
             <ul className="mt-3 space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
+                  <Link href={link.href} className="text-sm text-[#6b7280] hover:text-[#7c5cfc] transition-colors duration-200">
                     {link.label}
                   </Link>
                 </li>
@@ -66,22 +66,22 @@ export function Footer() {
 
           {/* Developer */}
           <div>
-            <h4 className="text-sm font-medium text-[var(--foreground)]">Developer</h4>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Developer</h4>
             <ul className="mt-3 space-y-2">
               <li>
-                <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
+                <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-sm text-[#6b7280] hover:text-[#7c5cfc] transition-colors duration-200">
                   Portfolio
                 </Link>
               </li>
               <li>
-                <span className="text-sm text-[var(--muted)]">Robiul Alam</span>
+                <span className="text-sm text-[#6b7280]">Robiul Alam</span>
               </li>
             </ul>
           </div>
 
           {/* Social */}
           <div>
-            <h4 className="text-sm font-medium text-[var(--foreground)]">Connect</h4>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Connect</h4>
             <div className="mt-3 flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
@@ -89,7 +89,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--muted)] hover:bg-[var(--surface-light)] hover:text-[var(--foreground)] transition-all"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f3f9] text-[#6b7280] hover:bg-[#f0ebff] hover:text-[#7c5cfc] dark:bg-[#231f35] dark:hover:bg-[#7c5cfc]/10 transition-all duration-200"
                   title={social.name}
                 >
                   {social.icon}
@@ -99,13 +99,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-[var(--border-custom)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[var(--muted)]">
+        <div className="mt-10 border-t border-[#e2e5f1] dark:border-[#2a2540] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-[#9ca3af]">
             &copy; {new Date().getFullYear()} NexaChat. All rights reserved.
           </p>
-          <p className="text-xs text-[var(--muted)]">
+          <p className="text-xs text-[#9ca3af]">
             Built by{" "}
-            <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 transition-colors">
+            <Link href="https://robiulalamdev.vercel.app" target="_blank" rel="noopener noreferrer" className="text-[#7c5cfc] hover:text-[#6d4ce6] transition-colors duration-200">
               Robiul Alam
             </Link>
           </p>

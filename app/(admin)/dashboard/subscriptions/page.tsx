@@ -110,7 +110,7 @@ export default function SubscriptionsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-[#7c5cfc]" />
       </div>
     )
   }
@@ -119,12 +119,12 @@ export default function SubscriptionsPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Subscriptions</h1>
-          <p className="mt-1 text-sm text-zinc-500">{subs.length} plans</p>
+          <h1 className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Subscriptions</h1>
+          <p className="mt-1 text-sm text-[#6b7280]">{subs.length} plans</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/20 transition-all duration-300 hover:shadow-xl hover:shadow-[#7c5cfc]/30 hover:brightness-110 active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           Add Plan
@@ -136,46 +136,44 @@ export default function SubscriptionsPage() {
         {subs.map((sub) => (
           <div
             key={sub.id}
-            className={`rounded-2xl border p-6 transition-all ${
-              sub.isActive
-                ? "border-[var(--border-custom)] bg-[var(--surface)]"
-                : "border-red-500/20 bg-red-500/5 opacity-60"
+            className={`glass-card rounded-2xl p-6 transition-all duration-300 ${
+              !sub.isActive ? "opacity-60" : ""
             }`}
           >
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="text-lg font-bold text-[var(--foreground)]">{sub.name}</h3>
-                <p className="text-xs text-zinc-500">{sub.slug}</p>
+                <h3 className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">{sub.name}</h3>
+                <p className="text-xs text-[#9ca3af]">{sub.slug}</p>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => handleToggle(sub.id)} className="text-zinc-400 hover:text-violet-400 transition-colors">
-                  {sub.isActive ? <ToggleRight className="h-5 w-5 text-green-400" /> : <ToggleLeft className="h-5 w-5" />}
+                <button onClick={() => handleToggle(sub.id)} className="text-[#9ca3af] hover:text-[#7c5cfc] transition-colors">
+                  {sub.isActive ? <ToggleRight className="h-5 w-5 text-[#10b981]" /> : <ToggleLeft className="h-5 w-5" />}
                 </button>
-                <button onClick={() => openEdit(sub)} className="text-zinc-400 hover:text-violet-400 transition-colors">
+                <button onClick={() => openEdit(sub)} className="text-[#9ca3af] hover:text-[#7c5cfc] transition-colors">
                   <Pencil className="h-4 w-4" />
                 </button>
-                <button onClick={() => handleDelete(sub.id)} className="text-zinc-400 hover:text-red-400 transition-colors">
+                <button onClick={() => handleDelete(sub.id)} className="text-[#9ca3af] hover:text-red-500 transition-colors">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            <p className="mb-4 text-sm text-zinc-400">{sub.description}</p>
+            <p className="mb-4 text-sm text-[#6b7280]">{sub.description}</p>
 
             <div className="mb-4">
-              <span className="text-3xl font-bold text-[var(--foreground)]">${sub.price}</span>
-              <span className="text-sm text-zinc-500">/month</span>
+              <span className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">${sub.price}</span>
+              <span className="text-sm text-[#9ca3af]">/month</span>
             </div>
 
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-violet-500/10 px-3 py-2">
-              <Zap className="h-4 w-4 text-violet-400" />
-              <span className="text-sm font-medium text-violet-400">{sub.maxTokensPerDay.toLocaleString()} tokens/day</span>
+            <div className="mb-4 flex items-center gap-2 rounded-xl bg-[#7c5cfc]/10 px-3 py-2">
+              <Zap className="h-4 w-4 text-[#7c5cfc]" />
+              <span className="text-sm font-semibold text-[#7c5cfc]">{sub.maxTokensPerDay.toLocaleString()} tokens/day</span>
             </div>
 
             <div className="space-y-1.5">
               {getFeaturesArray(sub.features).map((f) => (
-                <div key={f} className="flex items-center gap-2 text-xs text-zinc-400">
-                  <Check className="h-3 w-3 shrink-0 text-violet-400" />
+                <div key={f} className="flex items-center gap-2 text-xs text-[#6b7280]">
+                  <Check className="h-3 w-3 shrink-0 text-[#7c5cfc]" />
                   {getFeatureLabel(f)}
                 </div>
               ))}
@@ -187,93 +185,93 @@ export default function SubscriptionsPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-lg rounded-2xl border border-[#e2e5f1] dark:border-[#2a2540] bg-white dark:bg-[#1a1726] p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[var(--foreground)]">
+              <h2 className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">
                 {editingId ? "Edit Plan" : "Create Plan"}
               </h2>
-              <button onClick={() => setShowModal(false)} className="text-zinc-400 hover:text-[var(--foreground)]">
+              <button onClick={() => setShowModal(false)} className="text-[#9ca3af] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0] transition-colors">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {error && (
-              <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
+              <div className="mb-4 rounded-xl border border-red-500/20 bg-red-50 dark:bg-red-500/10 px-4 py-3 text-sm text-red-500 dark:text-red-400">{error}</div>
             )}
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-zinc-400">Name</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[#6b7280]">Name</label>
                   <input
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
+                    className="w-full rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] px-4 py-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0] outline-none transition-all duration-200 focus:border-[#7c5cfc]/50 focus:ring-2 focus:ring-[#7c5cfc]/20"
                     placeholder="Pro"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-zinc-400">Slug</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[#6b7280]">Slug</label>
                   <input
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })}
-                    className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
+                    className="w-full rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] px-4 py-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0] outline-none transition-all duration-200 focus:border-[#7c5cfc]/50 focus:ring-2 focus:ring-[#7c5cfc]/20"
                     placeholder="pro"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-zinc-400">Description</label>
+                <label className="mb-1.5 block text-sm font-medium text-[#6b7280]">Description</label>
                 <input
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
+                  className="w-full rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] px-4 py-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0] outline-none transition-all duration-200 focus:border-[#7c5cfc]/50 focus:ring-2 focus:ring-[#7c5cfc]/20"
                   placeholder="For power users"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-zinc-400">Price ($)</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[#6b7280]">Price ($)</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
+                    className="w-full rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] px-4 py-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0] outline-none transition-all duration-200 focus:border-[#7c5cfc]/50 focus:ring-2 focus:ring-[#7c5cfc]/20"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-zinc-400">Max Tokens/Day</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[#6b7280]">Max Tokens/Day</label>
                   <input
                     type="number"
                     min="1000"
                     step="1000"
                     value={form.maxTokensPerDay}
                     onChange={(e) => setForm({ ...form, maxTokensPerDay: parseInt(e.target.value) || 0 })}
-                    className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
+                    className="w-full rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] px-4 py-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0] outline-none transition-all duration-200 focus:border-[#7c5cfc]/50 focus:ring-2 focus:ring-[#7c5cfc]/20"
                   />
                 </div>
               </div>
 
               {/* Features Checkboxes */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-zinc-400">Features</label>
-                <div className="space-y-2 rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] p-4">
+                <label className="mb-2 block text-sm font-medium text-[#6b7280]">Features</label>
+                <div className="space-y-2 rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] bg-[#f8f9fc] dark:bg-[#231f35] p-4">
                   {ALL_FEATURES.map((feature) => {
                     const isSelected = form.selectedFeatures.includes(feature.slug)
                     return (
                       <label
                         key={feature.slug}
-                        className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-[var(--surface)]"
+                        className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white dark:hover:bg-[#1a1726]"
                       >
                         <div
                           className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
                             isSelected
-                              ? "border-violet-500 bg-violet-600"
-                              : "border-zinc-600 bg-transparent"
+                              ? "border-[#7c5cfc] bg-[#7c5cfc]"
+                              : "border-[#d1d5db] dark:border-[#4b5563] bg-transparent"
                           }`}
                         >
                           {isSelected && <Check className="h-3 w-3 text-white" />}
@@ -284,26 +282,26 @@ export default function SubscriptionsPage() {
                           onChange={() => toggleFeature(feature.slug)}
                           className="sr-only"
                         />
-                        <span className="text-sm text-[var(--foreground)]">{feature.name}</span>
+                        <span className="text-sm text-[#1a1a2e] dark:text-[#e8e4f0]">{feature.name}</span>
                       </label>
                     )
                   })}
                 </div>
-                <p className="mt-1.5 text-xs text-zinc-500">{form.selectedFeatures.length} features selected</p>
+                <p className="mt-1.5 text-xs text-[#9ca3af]">{form.selectedFeatures.length} features selected</p>
               </div>
             </div>
 
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-xl border border-[var(--border-custom)] px-4 py-2.5 text-sm font-medium text-zinc-400 hover:bg-[var(--surface-light)] transition-colors"
+                className="rounded-xl border border-[#e2e5f1] dark:border-[#2a2540] px-4 py-2.5 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] dark:hover:bg-[#231f35] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/20 transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                 {editingId ? "Update" : "Create"}

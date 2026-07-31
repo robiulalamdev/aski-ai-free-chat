@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import Link from "next/link"
-import { Brain, Loader2 } from "lucide-react"
+import { Brain, Loader2, Mail, Lock, ArrowRight } from "lucide-react"
 import { loginAction } from "@/app/actions/auth"
 
 export default function LoginPage() {
@@ -28,63 +28,91 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center bg-[#f8f9fc] dark:bg-[#0f0d18] px-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#7c5cfc]/5 blur-3xl" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#7c5cfc]/5 blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo */}
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-semibold text-[var(--foreground)]">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
-              <Brain className="h-5 w-5 text-white" />
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
+              <Brain className="h-6 w-6 text-white" />
             </div>
-            NexaChat
+            <span className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
           </Link>
-          <h1 className="mt-6 text-2xl font-bold text-[var(--foreground)]">Welcome back</h1>
-          <p className="mt-2 text-sm text-[var(--muted)]">Sign in to continue chatting</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-              {error}
+        {/* Card */}
+        <div className="glass-card rounded-3xl p-8">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Welcome back</h1>
+            <p className="mt-2 text-[#6b7280]">Sign in to continue chatting</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#9ca3af]" />
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  className="w-full rounded-xl border border-[#e2e5f1] bg-[#f1f3f9]/50 backdrop-blur-sm pl-12 pr-4 py-3.5 text-sm text-[#1a1a2e] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#7c5cfc]/50 focus:border-[#7c5cfc]/50 transition-all duration-200 dark:border-[#2a2540] dark:bg-[#231f35]/50 dark:text-[#e8e4f0] dark:placeholder:text-[#6b7280]"
+                  placeholder="you@example.com"
+                />
+              </div>
             </div>
-          )}
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Email</label>
-            <input
-              type="email"
-              name="email"
-              required
-              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
-              placeholder="you@example.com"
-            />
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#9ca3af]" />
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  className="w-full rounded-xl border border-[#e2e5f1] bg-[#f1f3f9]/50 backdrop-blur-sm pl-12 pr-4 py-3.5 text-sm text-[#1a1a2e] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#7c5cfc]/50 focus:border-[#7c5cfc]/50 transition-all duration-200 dark:border-[#2a2540] dark:bg-[#231f35]/50 dark:text-[#e8e4f0] dark:placeholder:text-[#6b7280]"
+                  placeholder="Your password"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-4 py-3.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+            >
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-[#6b7280]">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="font-medium text-[#7c5cfc] hover:text-[#6d4ce6] transition-colors">
+                Sign up
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">Password</label>
-            <input
-              type="password"
-              name="password"
-              required
-              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30"
-              placeholder="Your password"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
-          >
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign In"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-[var(--muted)]">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-violet-400 hover:text-violet-300">
-            Sign up
-          </Link>
-        </p>
+        </div>
       </div>
     </div>
   )

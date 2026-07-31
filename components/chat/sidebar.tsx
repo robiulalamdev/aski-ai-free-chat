@@ -11,8 +11,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { FEATURES } from "@/lib/features"
 
 const TOOL_ITEMS = [
-  { id: FEATURES.CODE_GENERATOR, label: "Code Generator", icon: Code, color: "from-emerald-600 to-teal-600" },
-  { id: FEATURES.RESUME_BUILDER, label: "Resume Builder", icon: FileText, color: "from-orange-600 to-amber-600" },
+  { id: FEATURES.CODE_GENERATOR, label: "Code Generator", icon: Code, color: "from-emerald-500 to-teal-500", bg: "#dcfce7" },
+  { id: FEATURES.RESUME_BUILDER, label: "Resume Builder", icon: FileText, color: "from-orange-500 to-amber-500", bg: "#ffedd5" },
 ]
 
 function timeAgo(ts: number): string {
@@ -58,44 +58,48 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        "flex h-full flex-col bg-[var(--sidebar-bg)] transition-all duration-300 border-r border-[var(--border-custom)]",
+        "flex h-full flex-col bg-white dark:bg-[#14111e] transition-all duration-300 border-r border-[#e2e5f1] dark:border-[#2a2540]",
         open ? "w-72" : "w-0 overflow-hidden"
       )}
     >
-      <div className="flex items-center gap-2.5 px-5 pt-5 pb-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
-          <Brain className="h-4 w-4 text-white" />
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-5 pt-5 pb-2">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
+          <Brain className="h-5 w-5 text-white" />
         </div>
-        <span className="text-base font-semibold text-[var(--foreground)]">NexaChat</span>
+        <span className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
       </div>
 
+      {/* New Chat Button */}
       <div className="px-3 py-3">
         <button
           onClick={onNew}
-          className="flex w-full items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:shadow-violet-600/30 hover:brightness-110 active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110 active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           New Chat
         </button>
       </div>
 
+      {/* Conversations Header */}
       <div className="px-4 pb-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">Conversations</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9ca3af]">Conversations</span>
       </div>
 
+      {/* Conversations List */}
       <div className="flex-1 overflow-y-auto px-2 space-y-0.5">
         {normalChats.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-[var(--muted)]">No conversations yet</p>
+          <p className="px-3 py-4 text-center text-xs text-[#9ca3af]">No conversations yet</p>
         )}
 
         {normalChats.map((conv) => (
           <div
             key={conv.id}
             className={cn(
-              "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors cursor-pointer",
+              "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
               conv.id === activeId
-                ? "bg-[var(--surface-light)] text-[var(--foreground)]"
-                : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
+                ? "bg-[#f0ebff] text-[#7c5cfc] dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]"
+                : "text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0]"
             )}
           >
             <MessageSquare className="h-4 w-4 shrink-0 opacity-50" />
@@ -105,7 +109,7 @@ export function Sidebar({
                 <Input
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="h-7 text-xs bg-[var(--background)] border-[var(--border-custom)] text-[var(--foreground)]"
+                  className="h-7 text-xs bg-white/50 dark:bg-[#231f35]/50 border-[#e2e5f1] dark:border-[#2a2540] text-[#1a1a2e] dark:text-[#e8e4f0]"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -115,10 +119,10 @@ export function Sidebar({
                     if (e.key === "Escape") setEditingId(null)
                   }}
                 />
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-[#7c5cfc]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
                   <Check className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => setEditingId(null)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-red-500" onClick={() => setEditingId(null)}>
                   <X className="h-3 w-3" />
                 </Button>
               </div>
@@ -130,11 +134,11 @@ export function Sidebar({
 
             {editingId !== conv.id && (
               <div className="hidden items-center gap-0.5 group-hover:flex">
-                <span className="text-[10px] text-[var(--muted)] mr-1">{timeAgo(conv.updatedAt)}</span>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-[var(--foreground)]" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
+                <span className="text-[10px] text-[#9ca3af] mr-1">{timeAgo(conv.updatedAt)}</span>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-[#7c5cfc]" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
                   <Pencil className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-600 hover:text-red-400" onClick={() => onDelete(conv.id)}>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-red-500" onClick={() => onDelete(conv.id)}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
@@ -146,7 +150,7 @@ export function Sidebar({
         {toolChats.length > 0 && (
           <>
             <div className="pt-3 pb-1 px-1">
-              <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">Tool Chats</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9ca3af]">Tool Chats</span>
             </div>
             {toolChats.map((conv) => {
               const toolDef = TOOL_ITEMS.find((t) => t.id === conv.toolType)
@@ -155,10 +159,10 @@ export function Sidebar({
                 <div
                   key={conv.id}
                   className={cn(
-                    "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors cursor-pointer",
+                    "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
                     conv.id === activeId
-                      ? "bg-[var(--surface-light)] text-[var(--foreground)]"
-                      : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
+                      ? "bg-[#f0ebff] text-[#7c5cfc] dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]"
+                      : "text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0]"
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0 opacity-50" />
@@ -166,8 +170,8 @@ export function Sidebar({
                     {conv.title || "New Chat"}
                   </button>
                   <div className="hidden items-center gap-0.5 group-hover:flex">
-                    <span className="text-[10px] text-[var(--muted)] mr-1">{timeAgo(conv.updatedAt)}</span>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[var(--muted)] hover:text-red-400" onClick={() => onDelete(conv.id)}>
+                    <span className="text-[10px] text-[#9ca3af] mr-1">{timeAgo(conv.updatedAt)}</span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-red-500" onClick={() => onDelete(conv.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
@@ -179,8 +183,8 @@ export function Sidebar({
       </div>
 
       {/* AI Tools Section */}
-      <div className="border-t border-[var(--border-custom)] px-3 py-3">
-        <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] px-1">AI Tools</span>
+      <div className="border-t border-[#e2e5f1] dark:border-[#2a2540] px-3 py-3">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9ca3af] px-1">AI Tools</span>
         <div className="mt-2 space-y-1">
           {TOOL_ITEMS.map((tool) => {
             const Icon = tool.icon
@@ -195,14 +199,14 @@ export function Sidebar({
                     window.location.href = "/account/subscription"
                   }
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--foreground)] transition-colors"
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200"
               >
-                <div className={cn("flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br", tool.color)}>
+                <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br", tool.color)}>
                   <Icon className="h-3.5 w-3.5 text-white" />
                 </div>
                 <span>{tool.label}</span>
                 {!hasAccess && (
-                  <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-violet-600/20 text-violet-400">Pro</span>
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[#f0ebff] text-[#7c5cfc] font-medium dark:bg-[#7c5cfc]/10">Pro</span>
                 )}
               </button>
             )
@@ -211,35 +215,35 @@ export function Sidebar({
       </div>
 
       {/* User Menu */}
-      <div className="border-t border-[var(--border-custom)] p-2">
+      <div className="border-t border-[#e2e5f1] dark:border-[#2a2540] p-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--surface)]">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-semibold text-white">
+            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 hover:bg-[#f1f3f9] dark:hover:bg-[#231f35]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] text-sm font-semibold text-white shadow-md shadow-[#7c5cfc]/20">
                 {userInitial}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[var(--foreground)] truncate">{fullName}</p>
-                <p className="text-[11px] text-[var(--muted)]">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
+                <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0] truncate">{fullName}</p>
+                <p className="text-[11px] text-[#9ca3af]">{user?.plan === "pro" ? "Pro Plan" : "Free Plan"}</p>
               </div>
-              <ChevronUp className="h-4 w-4 text-[var(--muted)]" />
+              <ChevronUp className="h-4 w-4 text-[#9ca3af]" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[calc(100%-1rem)]">
+          <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[calc(100%-1rem)] glass-card">
             <DropdownMenuItem asChild>
-              <Link href="/account">
+              <Link href="/account" className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0]">
                 <User className="h-4 w-4" />
                 Account
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/account/settings">
+              <Link href="/account/settings" className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0]">
                 <Settings className="h-4 w-4" />
                 Settings
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onLogout?.()} className="text-red-400 focus:text-red-400 focus:bg-red-500/10">
+            <DropdownMenuItem onClick={() => onLogout?.()} className="text-red-500 focus:text-red-500 focus:bg-red-50 dark:focus:bg-red-900/20">
               <LogOut className="h-4 w-4" />
               Logout
             </DropdownMenuItem>

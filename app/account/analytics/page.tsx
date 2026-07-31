@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, BarChart3, MessageSquare, Users, Zap, Calendar } from "lucide-react"
+import { Loader2, BarChart3, MessageSquare, Zap, Calendar, TrendingUp, Activity } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { getAnalytics } from "@/app/actions/analytics"
 
 interface AnalyticsData {
@@ -28,67 +29,78 @@ export default function AnalyticsPage() {
   }, [])
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-violet-500" /></div>
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-[#7c5cfc]" /></div>
   }
 
   if (!data) {
-    return <div className="text-center py-20 text-zinc-500">Failed to load analytics</div>
+    return <div className="text-center py-20 text-[#6b7280]">Failed to load analytics</div>
   }
 
   const maxDaily = Math.max(...data.dailyUsage.map((d) => d.count), 1)
 
   return (
     <div>
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Advanced Analytics</h1>
-        <p className="mt-1 text-sm text-zinc-500">Usage statistics and insights</p>
+        <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Advanced Analytics</h1>
+        <p className="mt-2 text-[#6b7280]">Usage statistics and insights</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4">
         {[
-          { label: "Total Conversations", value: data.totalConversations, icon: MessageSquare, color: "from-violet-600 to-indigo-600" },
-          { label: "Total Messages", value: data.totalMessages, icon: BarChart3, color: "from-purple-600 to-pink-600" },
-          { label: "This Week", value: data.messagesThisWeek, icon: Calendar, color: "from-indigo-600 to-blue-600" },
-          { label: "This Month", value: data.messagesThisMonth, icon: Zap, color: "from-emerald-600 to-teal-600" },
+          { label: "Total Conversations", value: data.totalConversations, icon: MessageSquare, color: "#7c5cfc", bg: "#f0ebff" },
+          { label: "Total Messages", value: data.totalMessages, icon: BarChart3, color: "#8b5cf6", bg: "#f3e8ff" },
+          { label: "This Week", value: data.messagesThisWeek, icon: Calendar, color: "#6366f1", bg: "#e0e7ff" },
+          { label: "This Month", value: data.messagesThisMonth, icon: Zap, color: "#22c55e", bg: "#dcfce7" },
         ].map((stat) => {
           const Icon = stat.icon
           return (
-            <div key={stat.label} className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-5">
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br ${stat.color} mb-3`}>
-                <Icon className="h-4 w-4 text-white" />
+            <div key={stat.label} className="glass-card rounded-2xl p-5 hover-glow">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl mb-3" style={{ backgroundColor: stat.bg }}>
+                <Icon className="h-5 w-5" style={{ color: stat.color }} />
               </div>
-              <p className="text-2xl font-bold text-[var(--foreground)]">{stat.value.toLocaleString()}</p>
-              <p className="text-xs text-zinc-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">{stat.value.toLocaleString()}</p>
+              <p className="text-xs text-[#6b7280] mt-1">{stat.label}</p>
             </div>
           )
         })}
       </div>
 
       {/* Token Usage */}
-      <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-        <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Token Usage Today</h3>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-[var(--muted)]">{data.tokensUsedToday.toLocaleString()} / {data.tokensLimit.toLocaleString()}</span>
-          <span className="rounded-lg bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-400">{data.plan} Plan</span>
+      <div className="glass-card rounded-2xl p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <Activity className="h-5 w-5 text-[#7c5cfc]" />
+          </div>
+          <h3 className="text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Token Usage Today</h3>
         </div>
-        <div className="h-3 overflow-hidden rounded-full bg-zinc-800">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-[#6b7280]">{data.tokensUsedToday.toLocaleString()} / {data.tokensLimit.toLocaleString()}</span>
+          <span className="rounded-lg bg-[#f0ebff] px-3 py-1 text-xs font-medium text-[#7c5cfc]">{data.plan} Plan</span>
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-[#f1f3f9] dark:bg-[#231f35]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 transition-all"
+            className="h-full rounded-full bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] transition-all"
             style={{ width: `${Math.min((data.tokensUsedToday / data.tokensLimit) * 100, 100)}%` }}
           />
         </div>
       </div>
 
       {/* Daily Usage Chart */}
-      <div className="mb-8 rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-        <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Daily Messages (Last 7 Days)</h3>
+      <div className="glass-card rounded-2xl p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <TrendingUp className="h-5 w-5 text-[#7c5cfc]" />
+          </div>
+          <h3 className="text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Daily Messages (Last 7 Days)</h3>
+        </div>
         <div className="flex items-end gap-2 h-40">
           {data.dailyUsage.map((day) => (
             <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-[10px] text-zinc-500">{day.count}</span>
-              <div className="w-full rounded-t-lg bg-gradient-to-t from-violet-600 to-indigo-600 transition-all" style={{ height: `${(day.count / maxDaily) * 100}%`, minHeight: day.count > 0 ? "4px" : "0" }} />
-              <span className="text-[10px] text-zinc-500">{day.date}</span>
+              <span className="text-[10px] text-[#6b7280]">{day.count}</span>
+              <div className="w-full rounded-t-lg bg-gradient-to-t from-[#7c5cfc] to-[#6d4ce6] transition-all" style={{ height: `${(day.count / maxDaily) * 100}%`, minHeight: day.count > 0 ? "4px" : "0" }} />
+              <span className="text-[10px] text-[#6b7280]">{day.date}</span>
             </div>
           ))}
         </div>
@@ -96,40 +108,40 @@ export default function AnalyticsPage() {
 
       {/* Message Split */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 mb-8">
-        <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Message Breakdown</h3>
-          <div className="space-y-3">
+        <div className="glass-card rounded-2xl p-6">
+          <h3 className="mb-4 text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Message Breakdown</h3>
+          <div className="space-y-4">
             <div>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-zinc-400">Your messages</span>
-                <span className="text-[var(--foreground)] font-medium">{data.userMessages}</span>
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-[#6b7280]">Your messages</span>
+                <span className="text-[#1a1a2e] dark:text-[#e8e4f0] font-medium">{data.userMessages}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
-                <div className="h-full rounded-full bg-violet-600" style={{ width: `${data.totalMessages > 0 ? (data.userMessages / data.totalMessages) * 100 : 0}%` }} />
+              <div className="h-2.5 overflow-hidden rounded-full bg-[#f1f3f9] dark:bg-[#231f35]">
+                <div className="h-full rounded-full bg-[#7c5cfc]" style={{ width: `${data.totalMessages > 0 ? (data.userMessages / data.totalMessages) * 100 : 0}%` }} />
               </div>
             </div>
             <div>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-zinc-400">Aria responses</span>
-                <span className="text-[var(--foreground)] font-medium">{data.assistantMessages}</span>
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-[#6b7280]">AI responses</span>
+                <span className="text-[#1a1a2e] dark:text-[#e8e4f0] font-medium">{data.assistantMessages}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
-                <div className="h-full rounded-full bg-indigo-600" style={{ width: `${data.totalMessages > 0 ? (data.assistantMessages / data.totalMessages) * 100 : 0}%` }} />
+              <div className="h-2.5 overflow-hidden rounded-full bg-[#f1f3f9] dark:bg-[#231f35]">
+                <div className="h-full rounded-full bg-[#6d4ce6]" style={{ width: `${data.totalMessages > 0 ? (data.assistantMessages / data.totalMessages) * 100 : 0}%` }} />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-          <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Top Conversations</h3>
+        <div className="glass-card rounded-2xl p-6">
+          <h3 className="mb-4 text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Top Conversations</h3>
           <div className="space-y-2">
             {data.topConversations.length === 0 ? (
-              <p className="text-sm text-zinc-500">No conversations yet</p>
+              <p className="text-sm text-[#6b7280]">No conversations yet</p>
             ) : (
               data.topConversations.map((c, i) => (
-                <div key={i} className="flex items-center justify-between rounded-xl bg-[var(--input-bg)] px-4 py-2.5">
-                  <span className="text-sm text-[var(--foreground)] truncate max-w-[70%]">{c.title}</span>
-                  <span className="text-xs text-zinc-500">{c.messageCount} msgs</span>
+                <div key={i} className="flex items-center justify-between rounded-xl bg-[#f1f3f9]/50 backdrop-blur-sm px-4 py-3 dark:bg-[#231f35]/50">
+                  <span className="text-sm text-[#1a1a2e] dark:text-[#e8e4f0] truncate max-w-[70%]">{c.title}</span>
+                  <span className="text-xs text-[#6b7280]">{c.messageCount} msgs</span>
                 </div>
               ))
             )}
@@ -138,11 +150,11 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Account Info */}
-      <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6">
-        <h3 className="mb-4 text-sm font-semibold text-[var(--foreground)]">Account</h3>
+      <div className="glass-card rounded-2xl p-6">
+        <h3 className="mb-4 text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Account</h3>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-zinc-500">Member since</span>
-          <span className="text-[var(--foreground)]">{new Date(data.memberSince).toLocaleDateString()}</span>
+          <span className="text-[#6b7280]">Member since</span>
+          <span className="text-[#1a1a2e] dark:text-[#e8e4f0]">{new Date(data.memberSince).toLocaleDateString()}</span>
         </div>
       </div>
     </div>

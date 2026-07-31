@@ -337,8 +337,8 @@ function ChatContent() {
 
   if (!initialized || loadingConversation) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[var(--background)]">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+      <div className="flex h-screen items-center justify-center bg-[#f8f9fc] dark:bg-[#0f0d18]">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#7c5cfc] border-t-transparent" />
       </div>
     )
   }
@@ -347,7 +347,7 @@ function ChatContent() {
   const latestAiMessage = [...displayMessages].reverse().find((m) => m.role === "assistant")
 
   return (
-    <div className="flex h-screen bg-[var(--background)]">
+    <div className="flex h-screen bg-[#f8f9fc] dark:bg-[#0f0d18]">
       <Sidebar
         conversations={conversations}
         activeId={activeIdRef.current}
@@ -376,16 +376,16 @@ function ChatContent() {
             {isNewChat && displayMessages.length === 0 && !isGenerating ? (
               <div className="flex flex-1 items-center justify-center">
                 <div className="text-center">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 mb-4">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] mb-4 shadow-lg shadow-[#7c5cfc]/25">
                     <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
                       <path d="M12 12 2.1 9.3" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--foreground)]">How can I help you today?</h3>
-                  <p className="mt-2 text-sm text-[var(--muted)]">Ask me anything — I&apos;m powered by AI.</p>
+                  <h3 className="text-xl font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">How can I help you today?</h3>
+                  <p className="mt-2 text-sm text-[#6b7280]">Ask me anything — I&apos;m powered by AI.</p>
                   {isToolChat && (
-                    <p className="mt-1 text-xs text-violet-400">
+                    <p className="mt-1 text-xs text-[#7c5cfc]">
                       {activeToolRef.current === "code_generator" ? "Describe what you want to build" : "Tell me about your experience"}
                     </p>
                   )}

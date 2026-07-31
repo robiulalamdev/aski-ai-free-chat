@@ -3,15 +3,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
-        secondary: "border-transparent bg-zinc-200 text-zinc-900 hover:bg-zinc-200/80 dark:bg-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-700/80",
-        destructive: "border-transparent bg-red-500 text-white hover:bg-red-500/80 dark:bg-red-900 dark:text-red-50 dark:hover:bg-red-900/80",
-        outline: "text-[var(--foreground)]",
-        premium: "border-transparent bg-gradient-to-r from-violet-600 to-indigo-600 text-white",
+        default: "border-transparent bg-primary text-primary-foreground shadow-sm",
+        secondary: "border-transparent bg-secondary text-secondary-foreground",
+        destructive: "border-transparent bg-destructive text-destructive-foreground shadow-sm",
+        outline: "text-foreground",
+        premium: "border-transparent bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] text-white shadow-sm shadow-[#7c5cfc]/20",
+        success: "border-transparent bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+        glass: "glass border-border/50 text-foreground",
       },
     },
     defaultVariants: {

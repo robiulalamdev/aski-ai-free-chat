@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Users, Plus, Trash2, Shield, X, Lock } from "lucide-react"
+import { Loader2, Users, Plus, Trash2, X, Lock, UserPlus, Mail } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { getTeamMembers, inviteTeamMember, removeTeamMember, updateTeamMemberRole } from "@/app/actions/team"
 import { hasFeatureAction } from "@/app/actions/account"
 import { FEATURES } from "@/lib/features"
@@ -58,18 +59,20 @@ export default function TeamPage() {
   }
 
   if (hasAccess === null) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-violet-500" /></div>
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-[#7c5cfc]" /></div>
   }
 
   if (!hasAccess) {
     return (
-      <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
-        <Lock className="mx-auto h-12 w-12 text-violet-400 mb-4" />
-        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Premium Feature</h2>
-        <p className="text-sm text-zinc-500 mb-6">Team Management requires a paid plan. Upgrade to invite and manage team members.</p>
+      <div className="glass-card rounded-2xl p-12 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebff] mx-auto mb-4">
+          <Lock className="h-8 w-8 text-[#7c5cfc]" />
+        </div>
+        <h2 className="text-xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0] mb-2">Premium Feature</h2>
+        <p className="text-sm text-[#6b7280] mb-6">Team Management requires a paid plan. Upgrade to invite and manage team members.</p>
         <a
           href="/account/subscription"
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-6 py-3 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110"
         >
           Upgrade Plan
         </a>
@@ -78,47 +81,68 @@ export default function TeamPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-violet-500" /></div>
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-[#7c5cfc]" /></div>
   }
 
   return (
     <div>
+      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Team Management</h1>
-          <p className="mt-1 text-sm text-zinc-500">Invite and manage team members</p>
+          <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Team Management</h1>
+          <p className="mt-2 text-[#6b7280]">Invite and manage team members</p>
         </div>
         <button
           onClick={() => setShowInvite(true)}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all hover:brightness-110 active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110 active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           Invite Member
         </button>
       </div>
 
-      {success && <div className="mb-6 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">{success}</div>}
-      {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>}
+      {success && (
+        <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400">
+          {success}
+        </div>
+      )}
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+          {error}
+        </div>
+      )}
 
       {/* Invite Modal */}
       {showInvite && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-6 shadow-2xl">
+          <div className="glass-card w-full max-w-md rounded-2xl p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[var(--foreground)]">Invite Member</h2>
-              <button onClick={() => setShowInvite(false)} className="text-zinc-400 hover:text-[var(--foreground)]"><X className="h-5 w-5" /></button>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+                  <UserPlus className="h-5 w-5 text-[#7c5cfc]" />
+                </div>
+                <h2 className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Invite Member</h2>
+              </div>
+              <button onClick={() => setShowInvite(false)} className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0] transition-colors">
+                <X className="h-5 w-5" />
+              </button>
             </div>
-            <p className="mb-4 text-sm text-zinc-500">Enter the email of the user you want to invite. They must already have a NexaChat account.</p>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@example.com"
-              className="w-full rounded-xl border border-[var(--border-custom)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] outline-none focus:border-violet-500/50"
-            />
+            <p className="mb-4 text-sm text-[#6b7280]">Enter the email of the user you want to invite. They must already have a NexaChat account.</p>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#9ca3af]" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="user@example.com"
+                className="w-full rounded-xl border border-[#e2e5f1] bg-[#f1f3f9]/50 backdrop-blur-sm pl-12 pr-4 py-3.5 text-sm text-[#1a1a2e] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#7c5cfc]/50 focus:border-[#7c5cfc]/50 transition-all duration-200 dark:border-[#2a2540] dark:bg-[#231f35]/50 dark:text-[#e8e4f0]"
+              />
+            </div>
             <div className="mt-4 flex justify-end gap-3">
-              <button onClick={() => setShowInvite(false)} className="rounded-xl border border-[var(--border-custom)] px-4 py-2.5 text-sm text-zinc-400 hover:bg-[var(--surface-light)]">Cancel</button>
-              <button onClick={handleInvite} disabled={inviting || !email.trim()} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50">
+              <button onClick={() => setShowInvite(false)} className="rounded-xl border border-[#e2e5f1] px-4 py-2.5 text-sm text-[#6b7280] hover:bg-[#f1f3f9] transition-colors dark:border-[#2a2540] dark:hover:bg-[#231f35]">
+                Cancel
+              </button>
+              <button onClick={handleInvite} disabled={inviting || !email.trim()} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 disabled:opacity-50 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110">
                 {inviting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                 Invite
               </button>
@@ -130,32 +154,34 @@ export default function TeamPage() {
       {/* Members List */}
       <div className="space-y-3">
         {members.length === 0 ? (
-          <div className="rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-12 text-center">
-            <Users className="mx-auto h-12 w-12 text-zinc-600 mb-4" />
-            <p className="text-sm text-zinc-500">No team members yet. Invite someone to get started.</p>
+          <div className="glass-card rounded-2xl p-12 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f3f9] mx-auto mb-4 dark:bg-[#231f35]">
+              <Users className="h-8 w-8 text-[#9ca3af]" />
+            </div>
+            <p className="text-sm text-[#6b7280]">No team members yet. Invite someone to get started.</p>
           </div>
         ) : (
           members.map((member) => (
-            <div key={member.id} className="flex items-center justify-between rounded-2xl border border-[var(--border-custom)] bg-[var(--surface)] p-4">
+            <div key={member.id} className="glass-card flex items-center justify-between rounded-2xl p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-bold text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] text-sm font-bold text-white">
                   {member.user.firstName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[var(--foreground)]">{member.user.firstName} {member.user.lastName}</p>
-                  <p className="text-xs text-zinc-500">{member.user.email}</p>
+                  <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">{member.user.firstName} {member.user.lastName}</p>
+                  <p className="text-xs text-[#6b7280]">{member.user.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <select
                   value={member.role}
                   onChange={(e) => handleRoleChange(member.id, e.target.value)}
-                  className="rounded-lg border border-[var(--border-custom)] bg-[var(--input-bg)] px-3 py-1.5 text-xs text-[var(--foreground)] outline-none"
+                  className="rounded-lg border border-[#e2e5f1] bg-white/50 backdrop-blur-sm px-3 py-1.5 text-xs text-[#1a1a2e] outline-none focus:ring-2 focus:ring-[#7c5cfc]/50 dark:border-[#2a2540] dark:bg-[#231f35]/50 dark:text-[#e8e4f0]"
                 >
                   <option value="member">Member</option>
                   <option value="admin">Admin</option>
                 </select>
-                <button onClick={() => handleRemove(member.id)} className="text-zinc-400 hover:text-red-400 transition-colors">
+                <button onClick={() => handleRemove(member.id)} className="text-[#9ca3af] hover:text-red-500 transition-colors">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
