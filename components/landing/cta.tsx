@@ -28,7 +28,7 @@ export function CTA() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Button asChild size="lg" className="bg-white text-[#7c5cfc] hover:bg-white/90 shadow-xl shadow-black/10 px-8 h-12 rounded-xl transition-all duration-300 hover:shadow-2xl hover:brightness-110 active:scale-[0.98]">
-              <Link href="/signup">
+              <Link href="/chat/new">
                 Sign Up Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

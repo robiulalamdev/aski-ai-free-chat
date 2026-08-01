@@ -42,7 +42,7 @@ export function Hero() {
               size="lg"
               className="bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] hover:from-[#6d4ce6] hover:to-[#5d3cd6] text-white shadow-xl shadow-[#7c5cfc]/25 px-8 h-12 rounded-xl transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110 active:scale-[0.98]"
             >
-              <Link href="/signup">
+              <Link href="/chat/new">
                 Get Started Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
