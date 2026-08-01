@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, Brain, LogOut, ArrowRight } from "lucide-react"
+import { Menu, X, Brain, LogOut, ArrowRight, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getCurrentUserAction, logoutAction } from "@/app/actions/auth"
@@ -28,38 +28,47 @@ export function Nav() {
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
       scrolled
-        ? "border-b border-[#e2e5f1]/50 dark:border-[#2a2540]/50 bg-white/80 dark:bg-[#0f0d18]/80 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/20"
+        ? "bg-white/70 dark:bg-[#0a0814]/80 backdrop-blur-xl border-b border-[rgba(124,92,252,0.12)] shadow-[0_8px_32px_rgba(124,92,252,0.06)]"
         : "bg-transparent"
     )}>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[rgba(124,92,252,0.25)] transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(124,92,252,0.4)] group-hover:brightness-110">
             <Brain className="h-5 w-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
+          <span className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
         </Link>
 
         {/* Desktop Nav */}
         <div className="hidden items-center gap-1 md:flex">
-          <Link href="#features" className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[#f1f3f9]/80 dark:hover:text-[#e8e4f0] dark:hover:bg-[#231f35]/80 transition-all duration-200">
+          <Link href="#features" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
             Features
           </Link>
-          <Link href="#pricing" className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[#f1f3f9]/80 dark:hover:text-[#e8e4f0] dark:hover:bg-[#231f35]/80 transition-all duration-200">
+          <Link href="#pricing" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
             Pricing
           </Link>
-          <Link href="#faq" className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[#f1f3f9]/80 dark:hover:text-[#e8e4f0] dark:hover:bg-[#231f35]/80 transition-all duration-200">
+          <Link href="#faq" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
             FAQ
+          </Link>
+          <Link href="#" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
+            Blog
+          </Link>
+          <Link href="#" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
+            Docs
           </Link>
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2.5 md:flex">
           <ThemeToggle />
           {user ? (
             <>
               <Button asChild variant="ghost" className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0] font-medium">
-                <Link href="/chat/new">{user.firstName}</Link>
+                <Link href="/chat/new">
+                  <MessageSquare className="h-4 w-4 mr-1.5" />
+                  {user.firstName}
+                </Link>
               </Button>
               <Button onClick={handleLogout} variant="ghost" size="icon" className="text-[#6b7280] hover:text-red-500 dark:hover:text-red-400">
                 <LogOut className="h-4 w-4" />
@@ -67,13 +76,19 @@ export function Nav() {
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0] font-medium">
-                <Link href="/login">Sign In</Link>
+              {/* Chat icon button */}
+              <Button asChild variant="outline" size="icon" className="h-9 w-9 rounded-xl border-[rgba(124,92,252,0.2)] bg-white/50 dark:bg-[#1a1726]/50 backdrop-blur-sm text-[#6b7280] hover:text-[#7c5cfc] hover:border-[rgba(124,92,252,0.4)] hover:bg-[rgba(124,92,252,0.05)] dark:text-[#8b8698] dark:hover:text-[#8b6fff] dark:hover:border-[rgba(139,111,255,0.3)] transition-all duration-200">
+                <Link href="/chat/new">
+                  <MessageSquare className="h-4 w-4" />
+                </Link>
               </Button>
-              <Button asChild className="bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] hover:from-[#6d4ce6] hover:to-[#5d3cd6] text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110 px-5">
+              <Button asChild variant="ghost" className="text-[#6b7280] hover:text-[#1a1a2e] dark:hover:text-[#e8e4f0] font-medium">
+                <Link href="/login">Log in</Link>
+              </Button>
+              <Button asChild className="bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] hover:from-[#6d4ce6] hover:to-[#5d3cd6] text-white shadow-lg shadow-[rgba(124,92,252,0.25)] transition-all duration-300 hover:shadow-[0_0_24px_rgba(124,92,252,0.4)] hover:brightness-110 px-5 h-9 rounded-xl">
                 <Link href="/signup">
-                  Get Started
-                  <ArrowRight className="h-4 w-4" />
+                  Get Started Free
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </Link>
               </Button>
             </>
@@ -91,20 +106,26 @@ export function Nav() {
 
       {/* Mobile Menu */}
       <div className={cn("md:hidden transition-all duration-300", open ? "block" : "hidden")}>
-        <div className="space-y-1 border-t border-[#e2e5f1]/50 dark:border-[#2a2540]/50 bg-white/95 dark:bg-[#0f0d18]/95 backdrop-blur-xl px-4 pb-4 pt-3">
-          <Link href="#features" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200">
+        <div className="bg-white/95 dark:bg-[#0a0814]/95 backdrop-blur-xl border-t border-[rgba(124,92,252,0.12)] px-4 pb-4 pt-3 space-y-1">
+          <Link href="#features" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
             Features
           </Link>
-          <Link href="#pricing" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200">
+          <Link href="#pricing" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
             Pricing
           </Link>
-          <Link href="#faq" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200">
+          <Link href="#faq" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
             FAQ
           </Link>
-          <div className="my-2 border-t border-[#e2e5f1]/50 dark:border-[#2a2540]/50" />
+          <Link href="#" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
+            Blog
+          </Link>
+          <Link href="#" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
+            Docs
+          </Link>
+          <div className="my-2 border-t border-[rgba(124,92,252,0.12)]" />
           {user ? (
             <>
-              <Link href="/chat/new" onClick={() => setOpen(false)} className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200">
+              <Link href="/chat/new" onClick={() => setOpen(false)} className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
                 Go to Chat
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -115,13 +136,13 @@ export function Nav() {
             </>
           ) : (
             <>
-              <Link href="/login" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0] transition-all duration-200">
-                Sign In
+              <Link href="/login" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
+                Log in
               </Link>
-              <Button asChild className="w-full bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] text-white shadow-lg shadow-[#7c5cfc]/25 mt-2">
+              <Button asChild className="w-full bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] hover:from-[#6d4ce6] hover:to-[#5d3cd6] text-white shadow-lg shadow-[rgba(124,92,252,0.25)] mt-2 rounded-xl">
                 <Link href="/signup" onClick={() => setOpen(false)}>
-                  Get Started
-                  <ArrowRight className="h-4 w-4" />
+                  Get Started Free
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </Link>
               </Button>
             </>

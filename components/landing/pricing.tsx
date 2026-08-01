@@ -24,9 +24,9 @@ const PLAN_ICONS: Record<string, typeof Shield> = {
 }
 
 const PLAN_COLORS: Record<string, { color: string; bg: string }> = {
-  free: { color: "#7c5cfc", bg: "#f0ebff" },
-  pro: { color: "#22c55e", bg: "#dcfce7" },
-  enterprise: { color: "#3b82f6", bg: "#dbeafe" },
+  free: { color: "#8b6fff", bg: "rgba(139, 111, 255, 0.1)" },
+  pro: { color: "#22c55e", bg: "rgba(34, 197, 94, 0.1)" },
+  enterprise: { color: "#3b82f6", bg: "rgba(59, 130, 246, 0.1)" },
 }
 
 async function getPlans() {
@@ -54,35 +54,40 @@ export async function Pricing() {
   const plans = await getPlans()
 
   return (
-    <section id="pricing" className="py-20 sm:py-28 bg-white dark:bg-[#14111e]">
+    <section id="pricing" className="py-20 sm:py-28 bg-transparent">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-[#1a1a2e] dark:text-[#e8e4f0] sm:text-4xl">Simple, Transparent Pricing</h2>
-          <p className="mt-4 text-lg text-[#6b7280]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--badge-bg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+            Pricing
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Simple, Transparent Pricing
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
             Start free, upgrade when you need more.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 lg:grid-cols-3">
+        <div className="mt-16 grid gap-6 lg:grid-cols-3">
           {plans.map((plan) => {
             const Icon = PLAN_ICONS[plan.slug] || Shield
             const colors = PLAN_COLORS[plan.slug] || PLAN_COLORS.free
-            
+
             return (
               <div
                 key={plan.slug}
                 className={`relative flex flex-col glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${
                   plan.popular
-                    ? "border-[#7c5cfc]/30 shadow-lg shadow-[#7c5cfc]/10"
+                    ? "border-[var(--primary)]/25 shadow-lg shadow-[var(--glow-purple)]"
                     : "hover-glow"
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-[#7c5cfc]/25">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-brand px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-[var(--glow-purple)]">
                     Most Popular
                   </div>
                 )}
-                
+
                 {/* Plan Icon */}
                 <div
                   className="flex h-12 w-12 items-center justify-center rounded-2xl mb-4"
@@ -90,35 +95,35 @@ export async function Pricing() {
                 >
                   <Icon className="h-6 w-6" style={{ color: colors.color }} />
                 </div>
-                
-                <h3 className="text-xl font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">{plan.name}</h3>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">{plan.price}</span>
-                  <span className="text-sm text-[#6b7280]">{plan.period}</span>
-                </div>
-                <p className="mt-2 text-sm text-[#6b7280]">{plan.description}</p>
 
-                <div className="mt-4 flex items-center gap-2 rounded-xl bg-[#f0ebff]/50 dark:bg-[#7c5cfc]/10 px-3 py-2">
-                  <Zap className="h-4 w-4 text-[#7c5cfc]" />
-                  <span className="text-sm font-medium text-[#7c5cfc]">{plan.tokensPerDay} tokens/day</span>
+                <h3 className="text-xl font-semibold text-foreground">{plan.name}</h3>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-sm text-muted-foreground">{plan.period}</span>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
+
+                <div className="mt-4 flex items-center gap-2 rounded-xl bg-[var(--badge-bg)] px-3 py-2">
+                  <Zap className="h-4 w-4 text-[var(--primary)]" />
+                  <span className="text-sm font-medium text-[var(--primary)]">{plan.tokensPerDay} tokens/day</span>
                 </div>
 
                 <ul className="mt-6 flex-1 space-y-3">
                   {plan.features.map((feature: string) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm text-[#1a1a2e] dark:text-[#e8e4f0]">
-                      <Check className="h-4 w-4 text-[#22c55e] shrink-0" />
+                    <li key={feature} className="flex items-center gap-2 text-sm text-foreground">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                       {feature}
                     </li>
                   ))}
                 </ul>
-                
-                <Button 
-                  asChild 
-                  variant={plan.popular ? "default" : "outline"} 
+
+                <Button
+                  asChild
+                  variant={plan.popular ? "default" : "outline"}
                   className={`mt-6 w-full rounded-xl ${
-                    plan.popular 
-                      ? "bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] text-white shadow-lg shadow-[#7c5cfc]/25 hover:shadow-[#7c5cfc]/40 hover:brightness-110" 
-                      : "border-[#e2e5f1] bg-white/50 backdrop-blur-sm text-[#1a1a2e] hover:bg-[#f1f3f9] dark:border-[#2a2540] dark:bg-[#1a1726]/50 dark:text-[#e8e4f0] dark:hover:bg-[#231f35]"
+                    plan.popular
+                      ? "bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] hover:from-[#6d4ce6] hover:to-[#5d3cd6] text-white shadow-lg shadow-[rgba(124,92,252,0.25)] hover:shadow-[0_0_24px_rgba(124,92,252,0.4)] hover:brightness-110"
+                      : "glass-card border-[var(--glass-border)] text-foreground hover:bg-[var(--badge-bg)]"
                   }`}
                 >
                   <Link href="/signup">{plan.price === "Free" ? "Start Chat" : "Upgrade"}</Link>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, HelpCircle } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const faqs = [
@@ -43,11 +43,16 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-20 sm:py-28 bg-[#f8f9fc] dark:bg-[#0f0d18]">
+    <section id="faq" className="py-20 sm:py-28 bg-transparent">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-[#1a1a2e] dark:text-[#e8e4f0] sm:text-4xl">Frequently Asked Questions</h2>
-          <p className="mt-4 text-lg text-[#6b7280]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--badge-bg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+            FAQ
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Frequently Asked Questions
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
             Got questions? We&apos;ve got answers.
           </p>
         </div>
@@ -56,22 +61,22 @@ export function FAQ() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="glass-card rounded-2xl transition-all duration-200"
+              className="glass-card rounded-2xl overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="flex w-full items-center justify-between px-6 py-4 text-left"
               >
-                <span className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0] sm:text-base">{faq.question}</span>
+                <span className="text-sm font-medium text-foreground sm:text-base">{faq.question}</span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-[#9ca3af] transition-transform duration-200",
+                    "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
                     openIndex === index && "rotate-180"
                   )}
                 />
               </button>
               <div className={cn("overflow-hidden transition-all duration-300", openIndex === index ? "max-h-96" : "max-h-0")}>
-                <p className="px-6 pb-4 text-sm leading-relaxed text-[#6b7280]">{faq.answer}</p>
+                <p className="px-6 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
               </div>
             </div>
           ))}
