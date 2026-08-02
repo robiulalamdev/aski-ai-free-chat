@@ -29,16 +29,12 @@ const productLinks = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
-  { label: "Blog", href: "#" },
-  { label: "Docs", href: "#" },
 ]
 
 const companyLinks = [
   { label: "About Us", href: "#" },
-  { label: "Careers", href: "#" },
   { label: "Privacy Policy", href: "#" },
   { label: "Terms of Service", href: "#" },
-  { label: "Contact", href: "#" },
 ]
 
 export function Footer() {
