@@ -94,11 +94,11 @@ export default function IntegrationsPage() {
   if (!hasAccess) {
     return (
       <div className="glass-card rounded-2xl p-12 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebff] mx-auto mb-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebff] mx-auto mb-4 dark:bg-[#7c5cfc]/10">
           <Lock className="h-8 w-8 text-[#7c5cfc]" />
         </div>
         <h2 className="text-xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0] mb-2">Premium Feature</h2>
-        <p className="text-sm text-[#6b7280] mb-6">Custom Integrations requires a paid plan. Upgrade to connect webhooks and integrations.</p>
+        <p className="text-sm text-[#6b7280] dark:text-[#8b8698] mb-6">Custom Integrations requires a paid plan. Upgrade to connect webhooks and integrations.</p>
         <a
           href="/account/subscription"
           className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-6 py-3 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110"
@@ -119,7 +119,7 @@ export default function IntegrationsPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Custom Integrations</h1>
-          <p className="mt-2 text-[#6b7280]">Manage webhooks and integrations</p>
+          <p className="mt-2 text-[#6b7280] dark:text-[#8b8698]">Manage webhooks and integrations</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
@@ -143,11 +143,11 @@ export default function IntegrationsPage() {
 
       {/* New Secret Alert */}
       {newSecret && (
-        <div className="mb-6 rounded-xl border border-[#7c5cfc]/20 bg-[#f0ebff] p-4 dark:bg-[#7c5cfc]/10">
+        <div className="mb-6 rounded-xl border border-[#7c5cfc]/20 bg-[#f0ebff] p-4 dark:border-[#8b6fff]/20 dark:bg-[#7c5cfc]/10">
           <p className="text-sm font-medium text-[#7c5cfc] mb-2">Webhook Secret (save this now, it won&apos;t be shown again):</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 rounded-lg bg-white/50 backdrop-blur-sm px-3 py-2 text-xs text-[#1a1a2e] break-all dark:bg-[#231f35]/50 dark:text-[#e8e4f0]">{newSecret}</code>
-            <button onClick={() => copySecret(newSecret)} className="text-[#6b7280] hover:text-[#7c5cfc] transition-colors">
+            <button onClick={() => copySecret(newSecret)} className="text-[#6b7280] hover:text-[#7c5cfc] transition-colors dark:text-[#8b8698] dark:hover:text-[#8b6fff]">
               {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
             </button>
           </div>
@@ -160,7 +160,7 @@ export default function IntegrationsPage() {
           <div className="glass-card w-full max-w-lg rounded-2xl p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
                   <Link2 className="h-5 w-5 text-[#7c5cfc]" />
                 </div>
                 <h2 className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Add Webhook</h2>
@@ -224,14 +224,14 @@ export default function IntegrationsPage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f3f9] mx-auto mb-4 dark:bg-[#231f35]">
               <Webhook className="h-8 w-8 text-[#9ca3af]" />
             </div>
-            <p className="text-sm text-[#6b7280]">No webhooks configured yet.</p>
+            <p className="text-sm text-[#6b7280] dark:text-[#8b8698]">No webhooks configured yet.</p>
           </div>
         ) : (
           webhooks.map((wh) => (
             <div key={wh.id} className="glass-card rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <button onClick={() => handleToggle(wh.id)} className="text-[#6b7280] hover:text-[#7c5cfc] transition-colors">
+                  <button onClick={() => handleToggle(wh.id)} className="text-[#6b7280] hover:text-[#7c5cfc] transition-colors dark:text-[#8b8698] dark:hover:text-[#8b6fff]">
                     {wh.isActive ? <ToggleRight className="h-6 w-6 text-emerald-500" /> : <ToggleLeft className="h-6 w-6" />}
                   </button>
                   <code className="text-sm text-[#1a1a2e] dark:text-[#e8e4f0] break-all">{wh.url}</code>

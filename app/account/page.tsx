@@ -55,7 +55,7 @@ export default function AccountPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Account</h1>
-        <p className="mt-2 text-[#6b7280]">Manage your account information</p>
+        <p className="mt-2 text-[#6b7280] dark:text-[#8b8698]">Manage your account information</p>
       </div>
 
       {/* Messages */}
@@ -79,7 +79,7 @@ export default function AccountPage() {
             </div>
             <div>
               <p className="text-lg font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">{firstName} {lastName}</p>
-              <p className="text-sm text-[#6b7280]">{email}</p>
+              <p className="text-sm text-[#6b7280] dark:text-[#8b8698]">{email}</p>
             </div>
           </div>
 
@@ -118,7 +118,7 @@ export default function AccountPage() {
                   type="email"
                   value={email}
                   disabled
-                  className="w-full rounded-xl border border-[#e2e5f1] bg-[#f1f3f9]/30 pl-12 pr-4 py-3.5 text-sm text-[#6b7280] cursor-not-allowed dark:border-[#2a2540] dark:bg-[#231f35]/30"
+                  className="w-full rounded-xl border border-[#e2e5f1] bg-[#f1f3f9]/30 pl-12 pr-4 py-3.5 text-sm text-[#6b7280] cursor-not-allowed dark:border-[#2a2540] dark:bg-[#231f35]/30 dark:text-[#8b8698]"
                 />
               </div>
             </div>
@@ -141,15 +141,15 @@ export default function AccountPage() {
         {/* Plan Card */}
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
               <Sparkles className="h-5 w-5 text-[#7c5cfc]" />
             </div>
             <h3 className="text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Current Plan</h3>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="rounded-lg bg-[#f0ebff] px-3 py-1.5 text-sm font-medium text-[#7c5cfc] capitalize">{plan}</span>
-              <span className="text-sm text-[#6b7280]">50,000 tokens/day</span>
+              <span className="rounded-lg bg-[#f0ebff] px-3 py-1.5 text-sm font-medium text-[#7c5cfc] capitalize dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]">{plan}</span>
+              <span className="text-sm text-[#6b7280] dark:text-[#8b8698]">50,000 tokens/day</span>
             </div>
             <Link
               href="/account/subscription"

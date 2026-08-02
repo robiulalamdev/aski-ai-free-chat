@@ -97,25 +97,25 @@ function SubscriptionContent() {
     switch (slug) {
       case "free":
         return (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0ebff]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
             <Shield className="h-6 w-6 text-[#7c5cfc]" />
           </div>
         )
       case "pro":
         return (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dcfce7]">
-            <FileText className="h-6 w-6 text-[#22c55e]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dcfce7] dark:bg-emerald-900/30">
+            <FileText className="h-6 w-6 text-[#22c55e] dark:text-emerald-400" />
           </div>
         )
       case "enterprise":
         return (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dbeafe]">
-            <Building2 className="h-6 w-6 text-[#3b82f6]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dbeafe] dark:bg-blue-900/30">
+            <Building2 className="h-6 w-6 text-[#3b82f6] dark:text-blue-400" />
           </div>
         )
       default:
         return (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0ebff]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
             <Zap className="h-6 w-6 text-[#7c5cfc]" />
           </div>
         )
@@ -126,8 +126,8 @@ function SubscriptionContent() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#1a1a2e]">Subscription</h1>
-        <p className="mt-2 text-[#6b7280]">Manage your plan, usage and billing details</p>
+        <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Subscription</h1>
+        <p className="mt-2 text-[#6b7280] dark:text-[#8b8698]">Manage your plan, usage and billing details</p>
       </div>
 
       {/* Success/Error Message */}
@@ -136,8 +136,8 @@ function SubscriptionContent() {
           className={cn(
             "mb-6 rounded-xl border px-4 py-3 text-sm",
             message.type === "success"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
+              ? "border-green-200 bg-green-50 text-green-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+              : "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
           )}
         >
           {message.text}
@@ -145,27 +145,27 @@ function SubscriptionContent() {
       )}
 
       {/* Usage Card */}
-      <div className="mb-8 rounded-2xl border border-[#e5e7eb] bg-white p-6">
+      <div className="mb-8 rounded-2xl border border-[#e5e7eb] bg-white p-6 dark:border-[#2a2540] dark:bg-[#1a1726]">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
               <Settings className="h-5 w-5 text-[#7c5cfc]" />
             </div>
             <div>
-              <h3 className="font-semibold text-[#1a1a2e]">Today&apos;s Usage</h3>
-              <p className="text-sm text-[#6b7280]">Tokens used</p>
+              <h3 className="font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Today&apos;s Usage</h3>
+              <p className="text-sm text-[#6b7280] dark:text-[#8b8698]">Tokens used</p>
             </div>
           </div>
           <Link
             href="/account/billing-history"
-            className="flex items-center gap-2 rounded-xl border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f5f5f7]"
+            className="flex items-center gap-2 rounded-xl border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f5f5f7] dark:border-[#2a2540] dark:bg-[#1a1726] dark:text-[#e8e4f0] dark:hover:bg-[#231f35]"
           >
             <FileText className="h-4 w-4" />
             Billing History
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="h-3 overflow-hidden rounded-full bg-[#f0ebff] mb-3">
+        <div className="h-3 overflow-hidden rounded-full bg-[#f0ebff] mb-3 dark:bg-[#7c5cfc]/10">
           <div
             className="h-full rounded-full bg-[#7c5cfc]"
             style={{ width: `${Math.min((dailyTokens / (currentPlanData?.maxTokensPerDay || 50000)) * 100, 100)}%` }}
@@ -173,7 +173,7 @@ function SubscriptionContent() {
         </div>
         <div className="flex items-center justify-between">
           <p className="text-xs text-[#9ca3af]">Resets daily at midnight UTC</p>
-          <p className="text-sm font-medium text-[#1a1a2e]">
+          <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">
             {dailyTokens.toLocaleString()} / {(currentPlanData?.maxTokensPerDay || 50000).toLocaleString()}
           </p>
         </div>
@@ -192,10 +192,10 @@ function SubscriptionContent() {
               className={cn(
                 "relative flex flex-col rounded-2xl border p-6 transition-all",
                 isCurrent
-                  ? "border-[#22c55e]/30 bg-[#dcfce7]/30"
+                  ? "border-[#22c55e]/30 bg-[#dcfce7]/30 dark:border-emerald-700/40 dark:bg-emerald-900/20"
                   : plan.slug === "pro"
-                  ? "border-[#7c5cfc]/30 bg-[#f0ebff]/30"
-                  : "border-[#e5e7eb] bg-white"
+                  ? "border-[#7c5cfc]/30 bg-[#f0ebff]/30 dark:border-[#8b6fff]/30 dark:bg-[#7c5cfc]/10"
+                  : "border-[#e5e7eb] bg-white dark:border-[#2a2540] dark:bg-[#1a1726]"
               )}
             >
               {/* Current Plan Badge */}
@@ -217,18 +217,18 @@ function SubscriptionContent() {
               {/* Plan Header */}
               <div className="mb-4">
                 <div className="mb-3">{getPlanIcon(plan.slug)}</div>
-                <h3 className="text-xl font-bold text-[#1a1a2e]">{plan.name}</h3>
-                <p className="mt-1 text-sm text-[#6b7280]">{plan.description}</p>
+                <h3 className="text-xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">{plan.name}</h3>
+                <p className="mt-1 text-sm text-[#6b7280] dark:text-[#8b8698]">{plan.description}</p>
               </div>
 
               {/* Price */}
               <div className="mb-5">
                 {plan.price === 0 ? (
-                  <span className="text-4xl font-bold text-[#1a1a2e]">Free</span>
+                  <span className="text-4xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Free</span>
                 ) : (
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-[#1a1a2e]">${plan.price}</span>
-                    <span className="text-sm text-[#6b7280]">/month</span>
+                    <span className="text-4xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">${plan.price}</span>
+                    <span className="text-sm text-[#6b7280] dark:text-[#8b8698]">/month</span>
                   </div>
                 )}
               </div>
@@ -238,20 +238,20 @@ function SubscriptionContent() {
                 <div className={cn(
                   "flex items-center gap-2 rounded-xl px-4 py-3",
                   plan.slug === "pro" || plan.slug === "enterprise"
-                    ? "bg-[#dcfce7]/50"
-                    : "bg-[#f0ebff]/50"
+                    ? "bg-[#dcfce7]/50 dark:bg-emerald-900/30"
+                    : "bg-[#f0ebff]/50 dark:bg-[#7c5cfc]/10"
                 )}>
                   <Zap className={cn(
                     "h-4 w-4",
                     plan.slug === "pro" || plan.slug === "enterprise"
-                      ? "text-[#22c55e]"
-                      : "text-[#7c5cfc]"
+                      ? "text-[#22c55e] dark:text-emerald-400"
+                      : "text-[#7c5cfc] dark:text-[#8b6fff]"
                   )} />
                   <span className={cn(
                     "text-sm font-medium",
                     plan.slug === "pro" || plan.slug === "enterprise"
-                      ? "text-[#22c55e]"
-                      : "text-[#7c5cfc]"
+                      ? "text-[#22c55e] dark:text-emerald-400"
+                      : "text-[#7c5cfc] dark:text-[#8b6fff]"
                   )}>
                     {plan.maxTokensPerDay.toLocaleString()} tokens/day
                   </span>
@@ -261,7 +261,7 @@ function SubscriptionContent() {
               {/* Features List */}
               <ul className="mb-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm text-[#1a1a2e]">
+                  <li key={feature} className="flex items-start gap-3 text-sm text-[#1a1a2e] dark:text-[#e8e4f0]">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#22c55e]" />
                     {FEATURE_MAP[feature] || feature}
                   </li>
@@ -271,7 +271,7 @@ function SubscriptionContent() {
               {/* Action Button */}
               <div className="mt-auto">
                 {isCurrent ? (
-                  <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#22c55e]/30 bg-[#dcfce7]/50 px-4 py-3 text-sm font-medium text-[#22c55e]">
+                  <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#22c55e]/30 bg-[#dcfce7]/50 px-4 py-3 text-sm font-medium text-[#22c55e] dark:border-emerald-700/40 dark:bg-emerald-900/20 dark:text-emerald-400">
                     <Check className="h-4 w-4" />
                     Current Plan
                   </div>
@@ -283,7 +283,7 @@ function SubscriptionContent() {
                       "flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
                       plan.slug === "pro"
                         ? "bg-[#7c5cfc] text-white shadow-lg shadow-[#7c5cfc]/20 hover:shadow-[#7c5cfc]/30 hover:brightness-110 active:scale-[0.98]"
-                        : "border border-[#e5e7eb] bg-white text-[#1a1a2e] hover:bg-[#f5f5f7] active:scale-[0.98]",
+                        : "border border-[#e5e7eb] bg-white text-[#1a1a2e] hover:bg-[#f5f5f7] active:scale-[0.98] dark:border-[#2a2540] dark:bg-[#1a1726] dark:text-[#e8e4f0] dark:hover:bg-[#231f35]",
                       (isCheckout || !plan.isActive) && "opacity-50"
                     )}
                   >
@@ -296,7 +296,7 @@ function SubscriptionContent() {
                     )}
                   </button>
                 ) : (
-                  <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#e5e7eb] bg-white px-4 py-3 text-sm font-medium text-[#6b7280] cursor-default">
+                  <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#e5e7eb] bg-white px-4 py-3 text-sm font-medium text-[#6b7280] cursor-default dark:border-[#2a2540] dark:bg-[#1a1726] dark:text-[#8b8698]">
                     Current Plan
                   </div>
                 )}
@@ -309,39 +309,39 @@ function SubscriptionContent() {
       {/* Bottom Features */}
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f0ebff]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
             <Lock className="h-5 w-5 text-[#7c5cfc]" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a2e]">Secure & Private</h4>
-            <p className="mt-0.5 text-xs text-[#6b7280]">Your data is encrypted and never shared</p>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Secure & Private</h4>
+            <p className="mt-0.5 text-xs text-[#6b7280] dark:text-[#8b8698]">Your data is encrypted and never shared</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#dbeafe]">
-            <RefreshCw className="h-5 w-5 text-[#3b82f6]" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#dbeafe] dark:bg-blue-900/30">
+            <RefreshCw className="h-5 w-5 text-[#3b82f6] dark:text-blue-400" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a2e]">Cancel Anytime</h4>
-            <p className="mt-0.5 text-xs text-[#6b7280]">No long-term contracts or hidden fees</p>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Cancel Anytime</h4>
+            <p className="mt-0.5 text-xs text-[#6b7280] dark:text-[#8b8698]">No long-term contracts or hidden fees</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#dcfce7]">
-            <Clock className="h-5 w-5 text-[#22c55e]" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#dcfce7] dark:bg-emerald-900/30">
+            <Clock className="h-5 w-5 text-[#22c55e] dark:text-emerald-400" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a2e]">Instant Upgrade</h4>
-            <p className="mt-0.5 text-xs text-[#6b7280]">Get access immediately after payment</p>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Instant Upgrade</h4>
+            <p className="mt-0.5 text-xs text-[#6b7280] dark:text-[#8b8698]">Get access immediately after payment</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ffedd5]">
-            <Headphones className="h-5 w-5 text-[#f97316]" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ffedd5] dark:bg-orange-900/30">
+            <Headphones className="h-5 w-5 text-[#f97316] dark:text-orange-400" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a2e]">24/7 Support</h4>
-            <p className="mt-0.5 text-xs text-[#6b7280]">Our team is here to help you succeed</p>
+            <h4 className="text-sm font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">24/7 Support</h4>
+            <p className="mt-0.5 text-xs text-[#6b7280] dark:text-[#8b8698]">Our team is here to help you succeed</p>
           </div>
         </div>
       </div>

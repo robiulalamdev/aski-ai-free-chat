@@ -63,7 +63,7 @@ export default function SecurityPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Security</h1>
-        <p className="mt-2 text-[#6b7280]">Manage your password and security settings</p>
+        <p className="mt-2 text-[#6b7280] dark:text-[#8b8698]">Manage your password and security settings</p>
       </div>
 
       {/* Messages */}
@@ -82,12 +82,12 @@ export default function SecurityPage() {
         {/* Password Card */}
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
               <Key className="h-5 w-5 text-[#7c5cfc]" />
             </div>
             <div>
               <h3 className="text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Password</h3>
-              <p className="text-sm text-[#6b7280]">Last changed: never</p>
+              <p className="text-sm text-[#6b7280] dark:text-[#8b8698]">Last changed: never</p>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors dark:hover:text-[#8b8698]"
                 >
                   {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -127,7 +127,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowNew(!showNew)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors dark:hover:text-[#8b8698]"
                 >
                   {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -163,7 +163,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] transition-colors dark:hover:text-[#8b8698]"
                 >
                   {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -189,7 +189,7 @@ export default function SecurityPage() {
         {/* Session Info */}
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
               <Clock className="h-5 w-5 text-[#7c5cfc]" />
             </div>
             <h3 className="text-base font-semibold text-[#1a1a2e] dark:text-[#e8e4f0]">Session</h3>
@@ -198,14 +198,14 @@ export default function SecurityPage() {
             <div className="flex items-center justify-between py-3 border-b border-[#e2e5f1] dark:border-[#2a2540]">
               <div>
                 <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">Access Token</p>
-                <p className="text-xs text-[#6b7280]">Expires in 1 hour</p>
+                <p className="text-xs text-[#6b7280] dark:text-[#8b8698]">Expires in 1 hour</p>
               </div>
               <span className="rounded-lg bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">Active</span>
             </div>
             <div className="flex items-center justify-between py-3">
               <div>
                 <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">Refresh Token</p>
-                <p className="text-xs text-[#6b7280]">Expires in 7 days</p>
+                <p className="text-xs text-[#6b7280] dark:text-[#8b8698]">Expires in 7 days</p>
               </div>
               <span className="rounded-lg bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">Active</span>
             </div>
@@ -220,7 +220,7 @@ export default function SecurityPage() {
             </div>
             <h3 className="text-base font-semibold text-red-600 dark:text-red-400">Danger Zone</h3>
           </div>
-          <p className="mb-4 text-sm text-[#6b7280]">Permanently delete your account and all data</p>
+          <p className="mb-4 text-sm text-[#6b7280] dark:text-[#8b8698]">Permanently delete your account and all data</p>
           <button className="rounded-xl border border-red-300 bg-white px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors dark:border-red-700 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30">
             Delete Account
           </button>

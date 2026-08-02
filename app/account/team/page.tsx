@@ -65,11 +65,11 @@ export default function TeamPage() {
   if (!hasAccess) {
     return (
       <div className="glass-card rounded-2xl p-12 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebff] mx-auto mb-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebff] mx-auto mb-4 dark:bg-[#7c5cfc]/10">
           <Lock className="h-8 w-8 text-[#7c5cfc]" />
         </div>
         <h2 className="text-xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0] mb-2">Premium Feature</h2>
-        <p className="text-sm text-[#6b7280] mb-6">Team Management requires a paid plan. Upgrade to invite and manage team members.</p>
+        <p className="text-sm text-[#6b7280] dark:text-[#8b8698] mb-6">Team Management requires a paid plan. Upgrade to invite and manage team members.</p>
         <a
           href="/account/subscription"
           className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6d4ce6] px-6 py-3 text-sm font-medium text-white shadow-lg shadow-[#7c5cfc]/25 transition-all duration-300 hover:shadow-[#7c5cfc]/40 hover:brightness-110"
@@ -90,7 +90,7 @@ export default function TeamPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Team Management</h1>
-          <p className="mt-2 text-[#6b7280]">Invite and manage team members</p>
+          <p className="mt-2 text-[#6b7280] dark:text-[#8b8698]">Invite and manage team members</p>
         </div>
         <button
           onClick={() => setShowInvite(true)}
@@ -118,7 +118,7 @@ export default function TeamPage() {
           <div className="glass-card w-full max-w-md rounded-2xl p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ebff] dark:bg-[#7c5cfc]/10">
                   <UserPlus className="h-5 w-5 text-[#7c5cfc]" />
                 </div>
                 <h2 className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">Invite Member</h2>
@@ -127,7 +127,7 @@ export default function TeamPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="mb-4 text-sm text-[#6b7280]">Enter the email of the user you want to invite. They must already have a NexaChat account.</p>
+            <p className="mb-4 text-sm text-[#6b7280] dark:text-[#8b8698]">Enter the email of the user you want to invite. They must already have a NexaChat account.</p>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#9ca3af]" />
               <input
@@ -158,7 +158,7 @@ export default function TeamPage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f3f9] mx-auto mb-4 dark:bg-[#231f35]">
               <Users className="h-8 w-8 text-[#9ca3af]" />
             </div>
-            <p className="text-sm text-[#6b7280]">No team members yet. Invite someone to get started.</p>
+            <p className="text-sm text-[#6b7280] dark:text-[#8b8698]">No team members yet. Invite someone to get started.</p>
           </div>
         ) : (
           members.map((member) => (
@@ -169,7 +169,7 @@ export default function TeamPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#1a1a2e] dark:text-[#e8e4f0]">{member.user.firstName} {member.user.lastName}</p>
-                  <p className="text-xs text-[#6b7280]">{member.user.email}</p>
+                  <p className="text-xs text-[#6b7280] dark:text-[#8b8698]">{member.user.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
