@@ -32,9 +32,9 @@ const productLinks = [
 ]
 
 const companyLinks = [
-  { label: "About Us", href: "#" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms of Service", href: "#" },
+  { label: "About Us", href: "/about" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
 ]
 
 export function Footer() {
