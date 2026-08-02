@@ -9,7 +9,6 @@ import {
   CreditCard,
   Shield,
   LogOut,
-  Brain,
   Menu,
   X,
   ChevronLeft,
@@ -72,9 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex items-center gap-3 px-5 py-5">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
-              <Brain className="h-4 w-4 text-white" />
-            </div>
+            <img src="/logo.png" alt="NexaChat" className="h-4 w-4 object-contain" />
             <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-white dark:ring-[#14111e]" />
           </div>
           <div>
@@ -175,9 +172,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
-              <Brain className="h-4 w-4 text-white" />
-            </div>
+            <img src="/logo.png" alt="NexaChat" className="h-4 w-4 object-contain" />
             <span className="text-sm font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat Admin</span>
           </div>
           <button

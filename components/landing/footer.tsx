@@ -1,6 +1,5 @@
 "use client"
 
-import { Brain } from "lucide-react"
 import Link from "next/link"
 
 const socialLinks = [
@@ -50,9 +49,7 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-[var(--glow-purple)]">
-                <Brain className="h-4.5 w-4.5 text-white" />
-              </div>
+              <img src="/logo.png" alt="NexaChat" className="h-9 w-9 object-contain" />
               <span className="text-lg font-bold text-foreground">NexaChat</span>
             </Link>
             <p className="mt-3 text-sm text-muted-foreground max-w-xs leading-relaxed">

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Loader2, Shield, Eye, EyeOff, Brain, Mail, Lock, ArrowRight, ChevronLeft } from "lucide-react"
+import { Loader2, Shield, Eye, EyeOff, Mail, Lock, ArrowRight, ChevronLeft } from "lucide-react"
 import { adminLoginAction } from "@/app/actions/admin"
 
 export default function AdminLoginPage() {
@@ -51,9 +51,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
+            <img src="/logo.png" alt="NexaChat" className="h-6 w-6 object-contain" />
             <span className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
           </div>
           <div className="mt-3">

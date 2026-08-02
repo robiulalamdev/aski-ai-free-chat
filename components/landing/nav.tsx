@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, Brain, LogOut, ArrowRight, MessageSquare } from "lucide-react"
+import { Menu, X, LogOut, ArrowRight, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getCurrentUserAction, logoutAction } from "@/app/actions/auth"
@@ -34,9 +34,7 @@ export function Nav() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[rgba(124,92,252,0.25)] transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(124,92,252,0.4)] group-hover:brightness-110">
-            <Brain className="h-5 w-5 text-white" />
-          </div>
+          <img src="/logo.png" alt="NexaChat" className="h-9 w-9 object-contain" />
           <span className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
         </Link>
 
@@ -50,12 +48,6 @@ export function Nav() {
           </Link>
           <Link href="#faq" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
             FAQ
-          </Link>
-          <Link href="#" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
-            Blog
-          </Link>
-          <Link href="#" className="rounded-xl px-4 py-2 text-sm font-medium text-[#6b7280] hover:text-[#1a1a2e] hover:bg-[rgba(124,92,252,0.08)] dark:hover:text-[#e8e4f0] dark:hover:bg-[rgba(139,111,255,0.1)] transition-all duration-200">
-            Docs
           </Link>
         </div>
 
@@ -115,12 +107,6 @@ export function Nav() {
           </Link>
           <Link href="#faq" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
             FAQ
-          </Link>
-          <Link href="#" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
-            Blog
-          </Link>
-          <Link href="#" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#6b7280] hover:bg-[rgba(124,92,252,0.08)] hover:text-[#1a1a2e] dark:hover:bg-[rgba(139,111,255,0.1)] dark:hover:text-[#e8e4f0] transition-all duration-200">
-            Docs
           </Link>
           <div className="my-2 border-t border-[rgba(124,92,252,0.12)]" />
           {user ? (

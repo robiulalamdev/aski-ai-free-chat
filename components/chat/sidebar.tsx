@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Plus, Trash2, Pencil, Check, X, MessageSquare, Brain, LogOut, User, Settings, ChevronUp, Code, FileText } from "lucide-react"
+import { Plus, Trash2, Pencil, Check, X, MessageSquare, LogOut, User, Settings, ChevronUp, Code, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -77,9 +77,7 @@ export function Sidebar({
     >
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 pt-5 pb-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
-          <Brain className="h-5 w-5 text-white" />
-        </div>
+        <img src="/logo.png" alt="NexaChat" className="h-9 w-9 object-contain" />
         <span className="text-lg font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
       </div>
 

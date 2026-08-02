@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import Link from "next/link"
-import { Brain, Loader2, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { Loader2, Mail, Lock, User, ArrowRight } from "lucide-react"
 import { registerAction } from "@/app/actions/auth"
 
 export default function SignupPage() {
@@ -41,9 +41,7 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/25">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
+            <img src="/logo.png" alt="NexaChat" className="h-6 w-6 object-contain" />
             <span className="text-2xl font-bold text-[#1a1a2e] dark:text-[#e8e4f0]">NexaChat</span>
           </Link>
         </div>

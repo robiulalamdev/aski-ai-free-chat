@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Sparkles, Shield, Zap, MessageSquare, Brain, Send, ThumbsUp, ThumbsDown, Copy } from "lucide-react"
+import { ArrowRight, Sparkles, Shield, Zap, MessageSquare, Send, ThumbsUp, ThumbsDown, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Hero() {
@@ -80,9 +80,7 @@ export function Hero() {
             <div className="glass-card rounded-2xl p-4 sm:p-5 animate-float">
               {/* Chat Header */}
               <div className="flex items-center gap-3 pb-4 border-b border-[var(--glass-border)]">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
-                  <Brain className="h-4 w-4 text-white" />
-                </div>
+                <img src="/logo.png" alt="NexaChat" className="h-8 w-8 object-contain" />
                 <span className="text-sm font-semibold text-foreground">NexaChat</span>
                 <div className="ml-auto h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
               </div>
