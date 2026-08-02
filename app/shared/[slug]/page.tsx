@@ -68,7 +68,7 @@ export default function SharedChatPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#f0ebff] via-[#f8f9fc] to-[#e8e0ff] dark:from-[#0f0d18] dark:via-[#14111e] dark:to-[#1a1726]">
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-[#f0ebff] via-[#f8f9fc] to-[#e8e0ff] dark:from-[#0f0d18] dark:via-[#14111e] dark:to-[#1a1726]">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#7c5cfc]/20 border-t-[#7c5cfc]" />
       </div>
     )
@@ -79,9 +79,9 @@ export default function SharedChatPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#f0ebff] via-[#f8f9fc] to-[#e8e0ff] dark:from-[#0f0d18] dark:via-[#14111e] dark:to-[#1a1726]">
-      {/* Header */}
-      <header className="border-b border-[#e2e5f1] dark:border-[#2a2540] bg-white dark:bg-[#14111e]">
+    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-[#f0ebff] via-[#f8f9fc] to-[#e8e0ff] dark:from-[#0f0d18] dark:via-[#14111e] dark:to-[#1a1726]">
+      {/* Header - fixed */}
+      <header className="shrink-0 border-b border-[#e2e5f1] dark:border-[#2a2540] bg-white dark:bg-[#14111e]">
         <div className="mx-auto max-w-5xl flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cfc] to-[#6d4ce6] shadow-lg shadow-[#7c5cfc]/20">
@@ -105,8 +105,8 @@ export default function SharedChatPage() {
         </div>
       </header>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col mx-auto max-w-5xl w-full px-4 py-4">
+      {/* Chat Area - scrollable */}
+      <div className="flex-1 min-h-0 flex flex-col mx-auto max-w-5xl w-full px-4 py-4">
         {/* Scrollable messages area */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 py-4">
           {/* Date badge */}
@@ -168,8 +168,8 @@ export default function SharedChatPage() {
           </div>
         </div>
 
-        {/* Disabled input */}
-        <div className="px-2 pt-4 pb-2">
+        {/* Disabled input - fixed bottom */}
+        <div className="shrink-0 px-2 pt-4 pb-2">
           <div className="flex items-center gap-3">
             <div className="flex flex-1 items-center gap-3 rounded-2xl border border-[#e2e5f1] dark:border-[#2a2540] bg-white dark:bg-[#1a1726] px-4 py-3 opacity-60">
               <Lock className="h-4 w-4 text-[#9ca3af] shrink-0" />
@@ -185,8 +185,8 @@ export default function SharedChatPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-b from-transparent to-[#f0ebff]/40 dark:to-[#1a1726]/50">
+      {/* Footer - fixed */}
+      <footer className="shrink-0 bg-gradient-to-b from-transparent to-[#f0ebff]/40 dark:to-[#1a1726]/50">
         <div className="mx-auto max-w-5xl px-6 py-4 text-center">
           <p className="text-xs text-[#9ca3af] flex items-center justify-center gap-1.5 mb-1">
             <Shield className="h-3.5 w-3.5" />
