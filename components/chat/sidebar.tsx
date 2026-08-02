@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Plus, Trash2, Pencil, Check, X, MessageSquare, Brain, LogOut, User, Settings, ChevronUp, Code, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,6 +34,9 @@ export function Sidebar({
   user,
   onLogout,
   onToolSelect,
+  hasMore,
+  loadingMore,
+  onLoadMore,
 }: {
   conversations: Conversation[]
   activeId: string | null
@@ -45,15 +48,25 @@ export function Sidebar({
   user?: { firstName: string; lastName: string; email: string; plan: string; features: string[] } | null
   onLogout?: () => void
   onToolSelect?: (toolId: string) => void
+  hasMore?: boolean
+  loadingMore?: boolean
+  onLoadMore?: () => void
 }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
-  const normalChats = sorted.filter((c) => !c.toolType)
-  const toolChats = sorted.filter((c) => c.toolType)
   const fullName = user ? `${user.firstName} ${user.lastName}` : "User"
   const userInitial = user ? user.firstName.charAt(0).toUpperCase() : "U"
+
+  const handleScroll = () => {
+    const el = scrollRef.current
+    if (!el) return
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
+      onLoadMore?.()
+    }
+  }
 
   return (
     <div
@@ -86,99 +99,90 @@ export function Sidebar({
         <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9ca3af]">Conversations</span>
       </div>
 
-      {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto px-2 space-y-0.5">
-        {normalChats.length === 0 && (
+      {/* Conversations List (normal + tool chats mixed) */}
+      <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto px-2 space-y-0.5">
+        {sorted.length === 0 && (
           <p className="px-3 py-4 text-center text-xs text-[#9ca3af]">No conversations yet</p>
         )}
 
-        {normalChats.map((conv) => (
-          <div
-            key={conv.id}
-            className={cn(
-              "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
-              conv.id === activeId
-                ? "bg-[#f0ebff] text-[#7c5cfc] dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]"
-                : "text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0]"
-            )}
-          >
-            <MessageSquare className="h-4 w-4 shrink-0 opacity-50" />
-
-            {editingId === conv.id ? (
-              <div className="flex flex-1 items-center gap-1">
-                <Input
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  className="h-7 text-xs bg-white/50 dark:bg-[#231f35]/50 border-[#e2e5f1] dark:border-[#2a2540] text-[#1a1a2e] dark:text-[#e8e4f0]"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      onRename(conv.id, editValue)
-                      setEditingId(null)
-                    }
-                    if (e.key === "Escape") setEditingId(null)
-                  }}
-                />
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-[#7c5cfc]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
-                  <Check className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-red-500" onClick={() => setEditingId(null)}>
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ) : (
-              <button onClick={() => onSelect(conv.id)} className="flex-1 truncate text-left">
-                {conv.title || "New Chat"}
-              </button>
-            )}
-
-            {editingId !== conv.id && (
-              <div className="hidden items-center gap-0.5 group-hover:flex">
-                <span className="text-[10px] text-[#9ca3af] mr-1">{timeAgo(conv.updatedAt)}</span>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-[#7c5cfc]" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
-                  <Pencil className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-red-500" onClick={() => onDelete(conv.id)}>
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Tool Conversations */}
-        {toolChats.length > 0 && (
-          <>
-            <div className="pt-3 pb-1 px-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9ca3af]">Tool Chats</span>
-            </div>
-            {toolChats.map((conv) => {
-              const toolDef = TOOL_ITEMS.find((t) => t.id === conv.toolType)
-              const Icon = toolDef?.icon || MessageSquare
-              return (
-                <div
-                  key={conv.id}
-                  className={cn(
-                    "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
-                    conv.id === activeId
-                      ? "bg-[#f0ebff] text-[#7c5cfc] dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]"
-                      : "text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0]"
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0 opacity-50" />
-                  <button onClick={() => onSelect(conv.id)} className="flex-1 truncate text-left">
-                    {conv.title || "New Chat"}
-                  </button>
-                  <div className="hidden items-center gap-0.5 group-hover:flex">
-                    <span className="text-[10px] text-[#9ca3af] mr-1">{timeAgo(conv.updatedAt)}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-red-500" onClick={() => onDelete(conv.id)}>
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
+        {sorted.map((conv) => {
+          const toolDef = conv.toolType ? TOOL_ITEMS.find((t) => t.id === conv.toolType) : undefined
+          const Icon = toolDef?.icon || MessageSquare
+          const isTool = !!conv.toolType
+          return (
+            <div
+              key={conv.id}
+              className={cn(
+                "group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
+                conv.id === activeId
+                  ? "bg-[#f0ebff] text-[#7c5cfc] dark:bg-[#7c5cfc]/10 dark:text-[#8b6fff]"
+                  : "text-[#6b7280] hover:bg-[#f1f3f9] hover:text-[#1a1a2e] dark:hover:bg-[#231f35] dark:hover:text-[#e8e4f0]"
+              )}
+            >
+              {isTool ? (
+                <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br shadow-sm", toolDef?.color)}>
+                  <Icon className="h-3 w-3 text-white" />
                 </div>
-              )
-            })}
-          </>
+              ) : (
+                <MessageSquare className="h-4 w-4 shrink-0 opacity-50" />
+              )}
+
+              {editingId === conv.id ? (
+                <div className="flex flex-1 items-center gap-1">
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    className="h-7 text-xs bg-white/50 dark:bg-[#231f35]/50 border-[#e2e5f1] dark:border-[#2a2540] text-[#1a1a2e] dark:text-[#e8e4f0]"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        onRename(conv.id, editValue)
+                        setEditingId(null)
+                      }
+                      if (e.key === "Escape") setEditingId(null)
+                    }}
+                  />
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-[#7c5cfc]" onClick={() => { onRename(conv.id, editValue); setEditingId(null) }}>
+                    <Check className="h-3 w-3" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-[#6b7280] hover:text-red-500" onClick={() => setEditingId(null)}>
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <button onClick={() => onSelect(conv.id)} className="flex-1 truncate text-left">
+                  {conv.title || "New Chat"}
+                </button>
+              )}
+
+              {editingId !== conv.id && (
+                <div className="hidden items-center gap-0.5 group-hover:flex">
+                  <span className="text-[10px] text-[#9ca3af] mr-1">{timeAgo(conv.updatedAt)}</span>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-[#7c5cfc]" onClick={() => { setEditingId(conv.id); setEditValue(conv.title) }}>
+                    <Pencil className="h-3 w-3" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-[#9ca3af] hover:text-red-500" onClick={() => onDelete(conv.id)}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          )
+        })}
+
+        {/* Load more */}
+        {hasMore && (
+          <div className="flex items-center justify-center py-3">
+            <div
+              className={cn(
+                "h-4 w-4 animate-spin rounded-full border-2 border-[#7c5cfc]/30 border-t-[#7c5cfc]",
+                !loadingMore && "opacity-0"
+              )}
+            />
+          </div>
+        )}
+        {!hasMore && sorted.length > 0 && (
+          <p className="py-3 text-center text-[11px] text-[#9ca3af]">End of history</p>
         )}
       </div>
 

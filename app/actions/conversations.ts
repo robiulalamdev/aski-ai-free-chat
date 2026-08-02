@@ -40,25 +40,33 @@ export async function createConversation(title?: string, toolType?: string) {
   }
 }
 
-export async function getUserConversations() {
+export async function getUserConversationsPage(cursor?: string, limit = 20) {
   const user = await getUser()
-  if (!user) return []
+  if (!user) return { conversations: [], nextCursor: null }
 
   const convs = await prisma.conversation.findMany({
     where: { userId: user.userId },
-    include: { messages: { orderBy: { createdAt: "asc" } } },
-    orderBy: { updatedAt: "desc" },
+    orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+    take: limit + 1,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   })
 
-  return convs.map((c) => ({
-    id: c.id,
-    title: c.title,
-    toolType: c.toolType,
-    messages: c.messages.map((m) => ({ id: m.id, role: m.role as "user" | "assistant", content: m.content, createdAt: m.createdAt.getTime() })),
-    createdAt: c.createdAt.getTime(),
-    updatedAt: c.updatedAt.getTime(),
-    modelId: "default",
-  }))
+  const hasMore = convs.length > limit
+  const page = hasMore ? convs.slice(0, limit) : convs
+  const nextCursor = hasMore ? page[page.length - 1].id : null
+
+  return {
+    conversations: page.map((c) => ({
+      id: c.id,
+      title: c.title,
+      toolType: c.toolType,
+      messages: [] as { id: string; role: "user" | "assistant"; content: string; createdAt: number }[],
+      createdAt: c.createdAt.getTime(),
+      updatedAt: c.updatedAt.getTime(),
+      modelId: "default",
+    })),
+    nextCursor,
+  }
 }
 
 export async function getConversationById(id: string) {

@@ -12,12 +12,14 @@ import { AuthProvider, useAuth } from "@/components/providers/auth-provider"
 import type { Conversation, Message } from "@/types/chat"
 import {
   createConversation,
-  getUserConversations,
+  getUserConversationsPage,
   getConversationById,
   addMessageToConversation,
   updateConversationTitle,
   deleteUserConversation,
 } from "@/app/actions/conversations"
+
+const PAGE_SIZE = 20
 
 const TOOL_URL_MAP: Record<string, string> = {
   code_generator: "code-generator",
@@ -56,6 +58,10 @@ function makeMsg(role: "user" | "assistant", content: string): Message {
   return { id: crypto.randomUUID(), role, content, createdAt: Date.now() }
 }
 
+function toMeta(conv: Conversation): Conversation {
+  return { ...conv, messages: [] }
+}
+
 function ChatContent() {
   const pathname = usePathname()
   const [initialized, setInitialized] = useState(false)
@@ -67,22 +73,45 @@ function ChatContent() {
 
   const activeIdRef = useRef<string | null>(null)
   const activeToolRef = useRef<string | null>(null)
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [activeTool, setActiveTool] = useState<string | null>(null)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([])
+  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(true)
 
-  const activeConversation = conversations.find((c) => c.id === activeIdRef.current)
-  const isNewChat = !activeIdRef.current
-  const isToolChat = !!activeToolRef.current
+  const isNewChat = !activeId
+  const isToolChat = !!activeTool
 
   // Load conversations on mount
   useEffect(() => {
-    getUserConversations().then((convs) => {
-      setConversations(convs)
+    getUserConversationsPage().then((res) => {
+      setConversations(res.conversations)
+      setNextCursor(res.nextCursor)
+      setHasMore(res.nextCursor !== null)
       setInitialized(true)
     })
   }, [])
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore || !nextCursor) return
+    setLoadingMore(true)
+    try {
+      const res = await getUserConversationsPage(nextCursor, PAGE_SIZE)
+      setConversations((prev) => {
+        const existing = new Set(prev.map((c) => c.id))
+        return [...prev, ...res.conversations.filter((c) => !existing.has(c.id))]
+      })
+      setNextCursor(res.nextCursor)
+      setHasMore(res.nextCursor !== null)
+    } finally {
+      setLoadingMore(false)
+    }
+  }, [loadingMore, hasMore, nextCursor])
 
   // Load conversation from URL (only on direct navigation)
   useEffect(() => {
@@ -96,24 +125,36 @@ function ChatContent() {
       if (urlId === "new") {
         activeIdRef.current = null
         activeToolRef.current = null
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setActiveId(null)
+        setActiveTool(null)
+        setActiveConversation(null)
         setLoadingConversation(false)
       } else {
         activeIdRef.current = urlId
         activeToolRef.current = null
+        setActiveId(urlId)
+        setActiveTool(null)
         setLoadingConversation(true)
         getConversationById(urlId).then((conv) => {
           if (!conv) {
             activeIdRef.current = null
+            activeToolRef.current = null
+            setActiveId(null)
+            setActiveTool(null)
+            setActiveConversation(null)
             window.history.replaceState(null, "", "/chat/new")
             setLoadingConversation(false)
             return
           }
           activeToolRef.current = conv.toolType || null
+          setActiveTool(conv.toolType || null)
           setConversations((prev) => {
             const exists = prev.find((c) => c.id === conv.id)
             if (exists) return prev
-            return [conv, ...prev.filter((c) => c.id !== conv.id)]
+            return [toMeta(conv), ...prev.filter((c) => c.id !== conv.id)]
           })
+          setActiveConversation(conv)
           setDisplayMessages(conv.messages)
           setLoadingConversation(false)
         })
@@ -126,40 +167,55 @@ function ChatContent() {
       if (id === "new") {
         activeIdRef.current = null
         activeToolRef.current = toolType
+        setActiveId(null)
+        setActiveTool(toolType)
+        setActiveConversation(null)
         setLoadingConversation(false)
       } else {
         activeIdRef.current = id
         activeToolRef.current = toolType
+        setActiveId(id)
+        setActiveTool(toolType)
         setLoadingConversation(true)
         getConversationById(id!).then((conv) => {
           if (!conv) {
             activeIdRef.current = null
             activeToolRef.current = null
+            setActiveId(null)
+            setActiveTool(null)
+            setActiveConversation(null)
             window.history.replaceState(null, "", "/chat/new")
             setLoadingConversation(false)
             return
           }
           activeToolRef.current = conv.toolType || toolType
+          setActiveTool(conv.toolType || toolType)
           setConversations((prev) => {
             const exists = prev.find((c) => c.id === conv.id)
             if (exists) return prev
-            return [conv, ...prev.filter((c) => c.id !== conv.id)]
+            return [toMeta(conv), ...prev.filter((c) => c.id !== conv.id)]
           })
+          setActiveConversation(conv)
           setDisplayMessages(conv.messages)
           setLoadingConversation(false)
         })
       }
     }
-  }, [pathname, initialized]) // eslint-disable-line
+  }, [pathname, initialized])
 
   const syncConversations = useCallback(async () => {
-    const convs = await getUserConversations()
-    setConversations(convs)
+    const res = await getUserConversationsPage()
+    setConversations(res.conversations)
+    setNextCursor(res.nextCursor)
+    setHasMore(res.nextCursor !== null)
   }, [])
 
   const handleNew = useCallback(() => {
     activeIdRef.current = null
     activeToolRef.current = null
+    setActiveId(null)
+    setActiveTool(null)
+    setActiveConversation(null)
     setDisplayMessages([])
     setStreamingText("")
     setIsGenerating(false)
@@ -167,26 +223,54 @@ function ChatContent() {
     if (window.innerWidth < 1024) setSidebarOpen(false)
   }, [])
 
-  const handleSelect = useCallback((id: string) => {
-    activeIdRef.current = id
-    const conv = conversations.find((c) => c.id === id)
-    activeToolRef.current = conv?.toolType || null
-    setDisplayMessages(conv?.messages || [])
-    setStreamingText("")
-    setIsGenerating(false)
+  const handleSelect = useCallback(
+    (id: string) => {
+      activeIdRef.current = id
+      const conv = conversations.find((c) => c.id === id)
+      activeToolRef.current = conv?.toolType || null
+      setActiveId(id)
+      setActiveTool(conv?.toolType || null)
+      setActiveConversation(conv ? { ...conv, messages: [] } : null)
+      setDisplayMessages([])
+      setStreamingText("")
+      setIsGenerating(false)
 
-    if (conv?.toolType) {
-      const slug = TOOL_URL_MAP[conv.toolType] || conv.toolType
-      window.history.replaceState(null, "", `/t/${slug}/${id}`)
-    } else {
-      window.history.replaceState(null, "", `/c/${id}`)
-    }
-    if (window.innerWidth < 1024) setSidebarOpen(false)
-  }, [conversations])
+      if (conv?.toolType) {
+        const slug = TOOL_URL_MAP[conv.toolType] || conv.toolType
+        window.history.replaceState(null, "", `/t/${slug}/${id}`)
+      } else {
+        window.history.replaceState(null, "", `/c/${id}`)
+      }
+      if (window.innerWidth < 1024) setSidebarOpen(false)
+
+      setLoadingConversation(true)
+      getConversationById(id).then((full) => {
+        setLoadingConversation(false)
+        if (!full) {
+          activeIdRef.current = null
+          activeToolRef.current = null
+          setActiveId(null)
+          setActiveTool(null)
+          setActiveConversation(null)
+          setDisplayMessages([])
+          window.history.replaceState(null, "", "/chat/new")
+          return
+        }
+        activeToolRef.current = full.toolType || null
+        setActiveTool(full.toolType || null)
+        setActiveConversation(full)
+        setDisplayMessages(full.messages)
+      })
+    },
+    [conversations]
+  )
 
   const handleToolSelect = useCallback((toolId: string) => {
     activeIdRef.current = null
     activeToolRef.current = toolId
+    setActiveId(null)
+    setActiveTool(toolId)
+    setActiveConversation(null)
     setDisplayMessages([])
     setStreamingText("")
     setIsGenerating(false)
@@ -200,6 +284,9 @@ function ChatContent() {
     if (activeIdRef.current === id) {
       activeIdRef.current = null
       activeToolRef.current = null
+      setActiveId(null)
+      setActiveTool(null)
+      setActiveConversation(null)
       setDisplayMessages([])
       window.history.replaceState(null, "", "/chat/new")
     }
@@ -235,14 +322,17 @@ function ChatContent() {
         }
         currentId = conv.id
         activeIdRef.current = conv.id
+        setActiveId(conv.id)
         isNewConversation = true
-        setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)])
+        setActiveConversation(conv)
+        setConversations((prev) => [toMeta(conv), ...prev.filter((c) => c.id !== conv.id)])
       }
 
       // Save user message to DB
       const updatedConv = await addMessageToConversation(currentId, "user", content)
       if (updatedConv) {
-        setConversations((prev) => [updatedConv, ...prev.filter((c) => c.id !== updatedConv.id)])
+        setActiveConversation(updatedConv)
+        setConversations((prev) => [toMeta(updatedConv), ...prev.filter((c) => c.id !== updatedConv.id)])
       }
 
       // Generate AI title in background (non-blocking)
@@ -282,7 +372,8 @@ function ChatContent() {
 
       const finalConv = await addMessageToConversation(currentId, "assistant", fullResponse)
       if (finalConv) {
-        setConversations((prev) => [finalConv, ...prev.filter((c) => c.id !== finalConv.id)])
+        setActiveConversation(finalConv)
+        setConversations((prev) => [toMeta(finalConv), ...prev.filter((c) => c.id !== finalConv.id)])
       }
     } finally {
       setIsGenerating(false)
@@ -305,7 +396,7 @@ function ChatContent() {
       fullResponse = await processMessage(msgsForAI, (token) => {
         setStreamingText((prev) => prev + token)
       }, activeToolRef.current)
-    } catch (err) {
+    } catch {
       fullResponse = "Sorry, an error occurred while generating the response."
     }
 
@@ -316,7 +407,8 @@ function ChatContent() {
     if (activeIdRef.current) {
       const finalConv = await addMessageToConversation(activeIdRef.current, "assistant", fullResponse)
       if (finalConv) {
-        setConversations((prev) => [finalConv, ...prev.filter((c) => c.id !== finalConv.id)])
+        setActiveConversation(finalConv)
+        setConversations((prev) => [toMeta(finalConv), ...prev.filter((c) => c.id !== finalConv.id)])
       }
     }
     setIsGenerating(false)
@@ -328,7 +420,10 @@ function ChatContent() {
       const aiMsg = makeMsg("assistant", streamingText)
       setDisplayMessages((prev) => [...prev, aiMsg])
       addMessageToConversation(activeIdRef.current!, "assistant", streamingText).then((conv) => {
-        if (conv) setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)])
+        if (conv) {
+          setActiveConversation(conv)
+          setConversations((prev) => [toMeta(conv), ...prev.filter((c) => c.id !== conv.id)])
+        }
       })
     }
     setStreamingText("")
@@ -343,14 +438,11 @@ function ChatContent() {
     )
   }
 
-  // Get latest AI message for preview
-  const latestAiMessage = [...displayMessages].reverse().find((m) => m.role === "assistant")
-
   return (
     <div className="flex h-screen bg-[#f8f9fc] dark:bg-[#0f0d18]">
       <Sidebar
         conversations={conversations}
-        activeId={activeIdRef.current}
+        activeId={activeId}
         onNew={handleNew}
         onSelect={handleSelect}
         onDelete={handleDelete}
@@ -359,15 +451,17 @@ function ChatContent() {
         user={user}
         onLogout={logout}
         onToolSelect={handleToolSelect}
+        hasMore={hasMore}
+        loadingMore={loadingMore}
+        onLoadMore={loadMore}
       />
 
       <div className="flex flex-1 flex-col min-w-0">
         <ChatHeader
-          title={activeConversation?.title || "New Chat"}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
-          conversations={conversations}
-          activeConversationId={activeIdRef.current}
+          activeConversation={activeConversation}
+          activeConversationId={activeId}
         />
 
         <div className="flex flex-1 min-h-0">
@@ -386,7 +480,7 @@ function ChatContent() {
                   <p className="mt-2 text-sm text-[#6b7280]">Ask me anything — I&apos;m powered by AI.</p>
                   {isToolChat && (
                     <p className="mt-1 text-xs text-[#7c5cfc]">
-                      {activeToolRef.current === "code_generator" ? "Describe what you want to build" : "Tell me about your experience"}
+                      {activeTool === "code_generator" ? "Describe what you want to build" : "Tell me about your experience"}
                     </p>
                   )}
                 </div>
@@ -397,7 +491,7 @@ function ChatContent() {
                 isGenerating={isGenerating}
                 streamingText={streamingText}
                 onRegenerate={displayMessages.length >= 2 ? handleRegenerate : undefined}
-                toolType={activeToolRef.current}
+                toolType={activeTool}
               />
             )}
 
@@ -407,7 +501,7 @@ function ChatContent() {
           {/* Tool Preview Panel */}
           {isToolChat && (
             <ToolPreviewPanel
-              toolType={activeToolRef.current!}
+              toolType={activeTool!}
               messages={displayMessages}
               streamingText={isGenerating ? streamingText : undefined}
               isGenerating={isGenerating}

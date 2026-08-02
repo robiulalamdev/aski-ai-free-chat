@@ -9,19 +9,16 @@ import type { Conversation } from "@/types/chat"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function ChatHeader({
-  title,
   onToggleSidebar,
   sidebarOpen,
-  conversations,
+  activeConversation,
   activeConversationId,
 }: {
-  title: string
   onToggleSidebar: () => void
   sidebarOpen: boolean
-  conversations?: Conversation[]
+  activeConversation?: Conversation | null
   activeConversationId?: string | null
 }) {
-  const activeConversation = conversations?.find((c) => c.id === activeConversationId)
   const hasMessages = activeConversation && activeConversation.messages.length > 0
   const isResume = activeConversation?.toolType === "resume_builder"
 
