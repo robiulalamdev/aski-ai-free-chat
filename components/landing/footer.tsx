@@ -1,3 +1,5 @@
+"use client"
+
 import { Brain } from "lucide-react"
 import Link from "next/link"
 
@@ -42,7 +44,7 @@ const companyLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--glass-border)] bg-transparent">
+    <footer className="border-t border-[var(--glass-border)] bg-transparent relative">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
@@ -101,7 +103,7 @@ export function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div>
+          <div className="group relative">
             <h4 className="text-sm font-semibold text-foreground">Newsletter</h4>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
               Stay updated with the latest news and features from NexaChat.
@@ -110,13 +112,26 @@ export function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--input-glass-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 transition-all"
+                readOnly
+                className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--input-glass-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground"
               />
-              <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white shadow-lg shadow-[var(--glow-purple)] hover:brightness-110 transition-all duration-200">
+              <button
+                disabled
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white shadow-lg shadow-[var(--glow-purple)]"
+              >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </button>
+            </div>
+
+            {/* Coming Soon Overlay - shows on hover */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/40 dark:bg-[#1a1726]/40 backdrop-blur-[2px] border border-[var(--glass-border)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              <div className="text-center px-4">
+                <div className="text-2xl mb-2">✨</div>
+                <p className="text-sm font-semibold text-foreground">Coming Soon!</p>
+                <p className="text-xs text-muted-foreground mt-1">We&apos;ll add newsletter subscription soon.</p>
+              </div>
             </div>
           </div>
         </div>
