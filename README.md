@@ -1,5 +1,8 @@
 # NexaChat
 
+<img width="1920" height="805" alt="Screenshot 2026-08-04 at 10 13 34 PM" src="https://github.com/user-attachments/assets/4af0aa80-527d-44a5-b301-9a1576fcea9d" />
+
+
 <p align="center">
   AI-powered chat application with subscription plans, in-chat AI tools, an admin dashboard, and Stripe-powered payments.
 </p>
